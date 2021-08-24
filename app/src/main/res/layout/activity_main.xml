@@ -5,41 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:padding="10dp">
-
     <LinearLayout
-        android:layout_alignParentBottom="true"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/btn_home"
-            android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/m_bottom_navigation"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home"/>
-
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/btn_qa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/qa"/>
-
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/btn_function"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/function"/>
-
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/btn_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/me"/>
-
+            app:itemIconTint="@xml/bottom_navigation_item_selector"
+            app:itemTextColor="@xml/bottom_navigation_item_selector"
+            app:menu="@xml/bottom_navigation_menu"/>
     </LinearLayout>
+
 
 </RelativeLayout>
