@@ -2,6 +2,7 @@ package com.fairychild.edukguser;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompatSideChannelService;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,21 +19,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navigation=(BottomNavigationView) findViewById(R.id.m_bottom_navigation);
-        navigation.setOnNavigationItemReselectedListener((BottomNavigationView.OnNavigationItemReselectedListener) mOnNavigationItemSelectedListener);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()){
-                case R.id.navigation_home:
-                    return true;
-                case R.id.navigation_query:
-                    return true;
-                case R.id.navigation_functions:
-                    return true;
                 case R.id.navigation_me:
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(MainActivity.this, MeActivity.class);
                     startActivity(intent);
+                    return true;
             }
             return false;
         }
