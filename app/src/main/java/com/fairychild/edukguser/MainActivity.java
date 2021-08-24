@@ -3,7 +3,10 @@ package com.fairychild.edukguser;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompatSideChannelService;
+import androidx.fragment.app.Fragment;
 
+import android.app.ActionBar;
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -29,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, MeActivity.class);
                     startActivity(intent);
                     return true;
+                case R.id.navigation_home:
+                    item.setChecked(true);
+                    return true;
+                case R.id.navigation_functions:
+                    item.setChecked(true);
+                    break;
+                case R.id.navigation_query:
+                    item.setChecked(true);
+                    break;
             }
             return false;
         }
