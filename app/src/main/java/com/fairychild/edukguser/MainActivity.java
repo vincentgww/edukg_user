@@ -19,6 +19,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.fairychild.edukguser.HomeFragment;
 import com.fairychild.edukguser.LoginFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private ViewPager mViewPager;
     //适配器
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
-
+    //Chip Group
     private MenuItem menuItem;
 
     @Override
