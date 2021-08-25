@@ -27,14 +27,14 @@ public class LoginActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        String url = "http://47.93.101.225:8080/login";
+                        String json = "{\n" +
+                                " \"account\":\"" + etPhone.getText() + "\",\n" +
+                                " \"password\":\"" + etPassword.getText() + "\"\n" +
+                                "}";
                         try {
-                            String url = "47.93.101.225:8080/login";
-                            String json = "{\n" +
-                                    " \"account\":\"" + etPhone.getText() + "\",\n" +
-                                    " \"password\":\"" + etPassword.getText() + "\"\n" +
-                                    "}";
                             String response = OkHttp.post(url, json);
-
+                            System.out.println(response);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
