@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EdukgUser">
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".MeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

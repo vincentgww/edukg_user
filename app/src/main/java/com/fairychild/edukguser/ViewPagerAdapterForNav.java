@@ -4,7 +4,7 @@ import java.util.List;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
+public class ViewPagerAdapterForNav extends SmartFragmentStatePagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
 

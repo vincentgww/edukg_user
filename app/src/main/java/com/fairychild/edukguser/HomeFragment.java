@@ -1,5 +1,7 @@
 package com.fairychild.edukguser;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,14 @@ public class HomeFragment extends Fragment {
         HomeFragment indexFragment = new HomeFragment();
         return indexFragment;
     }
+    MeFragment.FragmentListener listener;
 
+    private Context parent;
+    @Override
+    public void onAttach(Context context) {
+        listener = (MeFragment.FragmentListener) context;
+        super.onAttach(context);
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
