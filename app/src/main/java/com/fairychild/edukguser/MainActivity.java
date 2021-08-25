@@ -13,7 +13,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.fairychild.edukguser.home.HomeFragment;
+import com.fairychild.edukguser.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initElement(){
         mBottomNavigationView = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation_view);
-        mViewPager = (ViewPager)findViewById(R.id.activity_main_view_pager);
+        mViewPager = (ViewPager)findViewById(R.id.viewpager);
     }
 
     private void initFragments(){

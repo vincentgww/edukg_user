@@ -1,29 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".MainActivity">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        >
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.appbar.MaterialToolbar
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="@string/main_tile"
+                app:menu="@menu/top_app_bar"
+                app:navigationIcon="@drawable/ic_menu_white_2x"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"/>
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/activity_main_view_pager"
+        <!-- Note: A RecyclerView can also be used -->
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!--<androidx.core.widget.NestedScrollView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    </androidx.viewpager.widget.ViewPager>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+           />
+
+    </androidx.core.widget.NestedScrollView>-->
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/activity_main_bottom_navigation_view"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         app:itemBackground="@null"
+        android:background="@color/purple_500"
         app:itemIconTint="@drawable/bottom_navigation_view_selector"
         app:itemTextColor="@drawable/bottom_navigation_view_selector"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation_menu">
-        <!--app:labelVisibilityMode="labeled"该属性固定住图标与文字，
-            具体效果参见上方效果图展示-->
     </com.google.android.material.bottomnavigation.BottomNavigationView>
+
 </LinearLayout>
+
+

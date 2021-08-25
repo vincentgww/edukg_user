@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/title_graph"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/title_graph"
         android:supportsRtl="true"
         android:theme="@style/Theme.EdukgUser">
         <activity android:name=".LoginActivity"></activity>

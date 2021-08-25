@@ -7,4 +7,11 @@
     <string name="home">首页</string>
     <string name="qa">问答</string>
     <string name="function">功能</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="favorite">favorite</string>
+    <string name="search">search</string>
+    <string name="more">more</string>
+    <string name="main_tile">Home</string>
+    <string name="edukg_app">知识图谱·智慧教育</string>
 </resources>
