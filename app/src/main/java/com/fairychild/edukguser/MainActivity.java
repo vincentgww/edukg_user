@@ -82,9 +82,9 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
 
     private void initFragments(){
         mFragments = new ArrayList<>();
-        mFragments.add(HomeFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
+        //mFragments.add(HomeFragment.newInstance());
+        //mFragments.add(HomeFragment.newInstance());
+        //mFragments.add(HomeFragment.newInstance());
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
     }
