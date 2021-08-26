@@ -37,52 +37,17 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(lastView!=null)
-            container.removeAllViews();
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         lastView = view;
         mViewPager = view.findViewById(R.id.pager);
         initFragments();
-        /*mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });*/
         mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getChildFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapterForNav);
         mViewPagerAdapterForNav.setFragments(mFragments);
         mViewPager.setCurrentItem(0);
-        TabLayout layout=view.findViewById(R.id.tab_layout);
-        layout.setupWithViewPager(mViewPager);
-        /*layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                System.out.println(tab.getPosition());
-                mViewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });*/
-        //mViewPager.setOffscreenPageLimit(mFragments.size());
+        TabLayout tabLayout=view.findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setOffscreenPageLimit(mFragments.size());
         return view;
 
     }
@@ -94,8 +59,6 @@ public class HomeFragment extends Fragment {
 
     private void initFragments(){
         mFragments = new ArrayList<>();
-        mFragments.add(TabFragment.newInstance());
-        mFragments.add(TabFragment.newInstance());
         mFragments.add(TabFragment.newInstance());
         mFragments.add(TabFragment.newInstance());
         mFragments.add(TabFragment.newInstance());

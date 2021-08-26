@@ -1,5 +1,6 @@
 package com.fairychild.edukguser;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fairychild.edukguser.HomeFragment;
@@ -34,6 +36,9 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
     //Chip Group
     private MenuItem menuItem;
+    private FragmentTransaction transaction;
+    private FragmentManager mSupportFragmentManager;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -42,7 +47,12 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         initElement();
         initFragments();
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        //FragmentManager fragmentManager = getSupportFragmentManager();
+        mSupportFragmentManager = getSupportFragmentManager();
+        switchFragments(0);
+        //transaction = mSupportFragmentManager.beginTransaction();
+        //transaction.commit();
+        /*mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -66,11 +76,11 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
+        });*/
         //为ViewPager设置适配器
-        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getSupportFragmentManager());
-        mViewPager.setAdapter(mViewPagerAdapterForNav);
-        mViewPagerAdapterForNav.setFragments(mFragments);
+        //mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getSupportFragmentManager());
+        //mViewPager.setAdapter(mViewPagerAdapterForNav);
+        //mViewPagerAdapterForNav.setFragments(mFragments);
         //mViewPager.setOffscreenPageLimit(mFragments.size());
     }
 
@@ -81,16 +91,16 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
             menuItem = item;
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mViewPager.setCurrentItem(0);
+                    switchFragments(0);
                     return true;
                 case R.id.navigation_query:
-                    mViewPager.setCurrentItem(1);
+                    switchFragments(1);
                     return true;
                 case R.id.navigation_functions:
-                    mViewPager.setCurrentItem(2);
+                    switchFragments(2);
                     return true;
                 case R.id.navigation_me:
-                    mViewPager.setCurrentItem(3);
+                    switchFragments(3);
                     return true;
             }
             return false;
@@ -99,7 +109,7 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
 
     private void initElement(){
         mBottomNavigationView = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation_view);
-        mViewPager = (ViewPager)findViewById(R.id.viewpager);
+        //mViewPager = (ViewPager)findViewById(R.id.viewpager);
     }
 
     private void initFragments(){
@@ -111,8 +121,27 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         mFragments.add(LoginFragment.newInstance());
     }
 
+    private void switchFragments(int FragmentId) {
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = mFragments.get(FragmentId);
+        if (!targetFragment.isAdded()) {
+           transaction.add(R.id.frameLayout,targetFragment);
+        }
+        for (Fragment frag : mFragments) {
+
+            if (frag.equals(targetFragment)) {
+                /*先隐藏其他fragment*/
+                transaction.show(frag);
+            }
+            else
+                transaction.hide(frag);
+        }
+        transaction.commit();
+        currentFragment = targetFragment;
+    }
+
     public void switchToLogin(){
-        mViewPager.setCurrentItem(4);
+        switchFragments(4);
     }
 
     public void check(Editable phone, Editable password) {
