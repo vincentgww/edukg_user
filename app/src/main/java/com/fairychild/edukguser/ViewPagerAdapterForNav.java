@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
+public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
     private List<String> pageTitles = new ArrayList<>();
