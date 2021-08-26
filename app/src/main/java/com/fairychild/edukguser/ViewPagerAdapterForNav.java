@@ -1,10 +1,13 @@
 package com.fairychild.edukguser;
+import android.view.View;
+import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-public class ViewPagerAdapterForNav extends SmartFragmentStatePagerAdapter {
+public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
 

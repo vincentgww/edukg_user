@@ -49,7 +49,7 @@
 
     </androidx.core.widget.NestedScrollView>-->
 
-    <androidx.viewpager.widget.ViewPager
+    <com.fairychild.edukguser.NoScrollViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

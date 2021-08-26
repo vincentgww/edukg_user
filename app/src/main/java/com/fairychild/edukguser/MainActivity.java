@@ -1,4 +1,5 @@
 package com.fairychild.edukguser;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener{
+public class MainActivity extends FragmentActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private MenuItem menuItem;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initElement();
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapterForNav);
         mViewPagerAdapterForNav.setFragments(mFragments);
+        //mViewPager.setOffscreenPageLimit(mFragments.size());
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
