@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 public class LoginFragment extends Fragment {
     public interface LoginListener {
-        void check(Editable phone, Editable password);
+        void check(EditText phone, EditText password);
     }
     private Button btnSignIn;
     private EditText etPhone;
@@ -33,7 +33,7 @@ public class LoginFragment extends Fragment {
             btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.check(etPhone.getText(),etPassword.getText());
+                listener.check(etPhone,etPassword);
             }
         });
             return view;

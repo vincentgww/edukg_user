@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -39,6 +40,7 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
     private FragmentTransaction transaction;
     private FragmentManager mSupportFragmentManager;
     private Fragment currentFragment;
+    private boolean firstInit = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -47,41 +49,8 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         initElement();
         initFragments();
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        //FragmentManager fragmentManager = getSupportFragmentManager();
         mSupportFragmentManager = getSupportFragmentManager();
         switchFragments(0);
-        //transaction = mSupportFragmentManager.beginTransaction();
-        //transaction.commit();
-        /*mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (menuItem != null) {
-                    menuItem.setChecked(false);
-                } else {
-                    mBottomNavigationView.getMenu().getItem(0).setChecked(false);
-                }
-                if(position==4)
-                    menuItem = mBottomNavigationView.getMenu().getItem(3);
-                else
-                    menuItem = mBottomNavigationView.getMenu().getItem(position);
-                menuItem.setChecked(true);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });*/
-        //为ViewPager设置适配器
-        //mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getSupportFragmentManager());
-        //mViewPager.setAdapter(mViewPagerAdapterForNav);
-        //mViewPagerAdapterForNav.setFragments(mFragments);
-        //mViewPager.setOffscreenPageLimit(mFragments.size());
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -109,7 +78,6 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
 
     private void initElement(){
         mBottomNavigationView = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation_view);
-        //mViewPager = (ViewPager)findViewById(R.id.viewpager);
     }
 
     private void initFragments(){
@@ -127,15 +95,18 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         if (!targetFragment.isAdded()) {
            transaction.add(R.id.frameLayout,targetFragment);
         }
-        for (Fragment frag : mFragments) {
+        /*for (Fragment frag : mFragments) {
 
             if (frag.equals(targetFragment)) {
-                /*先隐藏其他fragment*/
                 transaction.show(frag);
             }
             else
                 transaction.hide(frag);
-        }
+        }*/
+        if(!firstInit)
+            transaction.hide(currentFragment);
+        firstInit = false;
+        transaction.show(targetFragment);
         transaction.commit();
         currentFragment = targetFragment;
     }
@@ -144,18 +115,18 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         switchFragments(4);
     }
 
-    public void check(Editable phone, Editable password) {
+    public void check(EditText phone, EditText password) {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String url = "http://47.93.101.225:8080/login";
+                String json = "{\n" +
+                        " \"account\":\"" + phone.getText() + "\",\n" +
+                        " \"password\":\"" + password.getText() + "\"\n" +
+                        "}";
                 try {
-                    String url = "47.93.101.225:8080/login";
-                    String json = "{\n" +
-                            " \"account\":\"" + phone + "\",\n" +
-                            " \"password\":\"" + password + "\"\n" +
-                            "}";
                     String response = OkHttp.post(url, json);
-
+                    System.out.println(response);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
