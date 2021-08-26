@@ -87,10 +87,10 @@ public class HomeFragment extends Fragment {
                 mFragments.add(TabFragment.newInstance());
                 mViewPagerAdapterForNav.setFragments(mFragments);
                 addTab("tab"+mFragments.size());
-                mViewPager.setOffscreenPageLimit(mFragments.size());
+                //mViewPager.setOffscreenPageLimit(mFragments.size());
             }
         });
-        mViewPager.setOffscreenPageLimit(mFragments.size());
+        //mViewPager.setOffscreenPageLimit(mFragments.size());
         return view;
 
     }
