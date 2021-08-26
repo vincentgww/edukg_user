@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/tab_layout"
         app:tabMode="scrollable"
-        app:tabContentStart="56dp"/>
+        app:tabSelectedTextColor="@color/red"
+        app:tabIndicatorColor="@color/red" />
 
 
 
