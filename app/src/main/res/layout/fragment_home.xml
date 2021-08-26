@@ -14,7 +14,14 @@
         app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/red"
         app:tabIndicatorColor="@color/red" />
-
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn_blue_pressed"
+        android:textSize="16sp"
+        android:text="添加tab"/>
 
 
     <androidx.viewpager.widget.ViewPager
