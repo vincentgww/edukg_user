@@ -1,6 +1,7 @@
 package com.fairychild.edukguser;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +9,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+
+import com.google.android.material.tabs.TabLayout;
+
 public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
-    private List<String> pageTitles = new ArrayList<>();
+    //private List<TabLayout.Tab> pageTitles = new ArrayList<>();
 
     public ViewPagerAdapterForNav(FragmentManager fm) {
         super(fm);
-        pageTitles.add("tab1");
-        pageTitles.add("tab2");
-        pageTitles.add("tab3");
     }
 
     @Override
@@ -39,8 +40,8 @@ public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
         notifyDataSetChanged();
     }
 
-    @Override
+    /*@Override
     public String getPageTitle(int i){
         return pageTitles.get(i);
-    }
+    }*/
 }
