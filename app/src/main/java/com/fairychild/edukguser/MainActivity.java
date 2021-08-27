@@ -28,7 +28,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener{
+public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -82,9 +82,9 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
 
     private void initFragments(){
         mFragments = new ArrayList<>();
-        //mFragments.add(HomeFragment.newInstance());
-        //mFragments.add(HomeFragment.newInstance());
-        //mFragments.add(HomeFragment.newInstance());
+        mFragments.add(HomeFragment.newInstance());
+        mFragments.add(HomeFragment.newInstance());
+        mFragments.add(HomeFragment.newInstance());
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
     }
@@ -93,10 +93,9 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = mFragments.get(FragmentId);
         if (!targetFragment.isAdded()) {
-           transaction.add(R.id.frameLayout,targetFragment);
+            transaction.add(R.id.frameLayout,targetFragment);
         }
         /*for (Fragment frag : mFragments) {
-
             if (frag.equals(targetFragment)) {
                 transaction.show(frag);
             }

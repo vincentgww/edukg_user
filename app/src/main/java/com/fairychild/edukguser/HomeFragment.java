@@ -30,7 +30,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements View.OnClickListener{
+public class HomeFragment extends Fragment{
     public static HomeFragment newInstance(){
         HomeFragment indexFragment = new HomeFragment();
         return indexFragment;
@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private ViewPager mViewPager;
     List<Fragment> mFragments;
     List<TabLayout.Tab> mTabs;
-    private ImageButton mImgBtn;
+    private Button mImgBtn;
     private ArrayList<ChannelBean> channelBeans;
     String jsonStr="";
     private Gson gson;
@@ -58,9 +58,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         lastView = view;
         mViewPager = view.findViewById(R.id.pager);
-        mImgBtn=view.findViewById(R.id.imgBtn);
-        mImgBtn.setOnClickListener(this);
-        initData();
         initFragments();
         mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getChildFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapterForNav);
@@ -97,17 +94,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
             }
         });
-        Button btnSignIn = view.findViewById(R.id.btn);
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
+        //mViewPager.setOffscreenPageLimit(mFragments.size());
+        mImgBtn= view.findViewById(R.id.imgBtn);
+        mImgBtn.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                mFragments.add(TabFragment.newInstance());
-                mViewPagerAdapterForNav.setFragments(mFragments);
-                addTab("tab"+mFragments.size());
-                //mViewPager.setOffscreenPageLimit(mFragments.size());
+            public void onClick(View v){
+                ChannelActivity.startChannelActivity((AppCompatActivity) getActivity(),channelBeans);
             }
         });
-        //mViewPager.setOffscreenPageLimit(mFragments.size());
+        initData();
         return view;
     }
 
@@ -145,17 +140,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 mViewPagerAdapterForNav.setFragments(mFragments);
                 addTab(channelBeans.get(i).getName());
             }
-        }
-    }
-
-    @Override
-    public void onClick(View v){
-        switch (v.getId()){
-            default:
-                break;
-            case R.id.imgBtn:
-                ChannelActivity.startChannelActivity((AppCompatActivity) getActivity(),channelBeans);
-                break;
         }
     }
 
