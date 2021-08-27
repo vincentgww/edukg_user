@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.andy.library.ChannelActivity;
 import com.andy.library.ChannelBean;
+import com.fairychild.edukguser.Activity.CategoryArrangement;
 import com.fairychild.edukguser.ViewPagerAdapterForNav;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
@@ -30,7 +31,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment implements View.OnClickListener{
     public static HomeFragment newInstance(){
         HomeFragment indexFragment = new HomeFragment();
         return indexFragment;
@@ -59,12 +60,10 @@ public class HomeFragment extends Fragment{
         lastView = view;
         mViewPager = view.findViewById(R.id.pager);
         initFragments();
-        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getChildFragmentManager());
+        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
         mViewPager.setAdapter(mViewPagerAdapterForNav);
-        mViewPagerAdapterForNav.setFragments(mFragments);
         mViewPager.setCurrentItem(0);
         tabLayout=view.findViewById(R.id.tab_layout);
-        //tabLayout.setupWithViewPager(mViewPager);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab){
@@ -77,34 +76,43 @@ public class HomeFragment extends Fragment{
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
-            });
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                mTabs.get(position).select();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
         });
+        //tabLayout.setupWithViewPager(mViewPager);
         //mViewPager.setOffscreenPageLimit(mFragments.size());
         mImgBtn= view.findViewById(R.id.imgBtn);
-        mImgBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                ChannelActivity.startChannelActivity((AppCompatActivity) getActivity(),channelBeans);
-            }
-        });
+        mImgBtn.setOnClickListener(this);
         initData();
         //mViewPager.setOffscreenPageLimit(mFragments.size());
         return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser){
+        super.setUserVisibleHint(isVisibleToUser);
+        if(getUserVisibleHint()){
+            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    mTabs.get(position).select();
+                    //mViewPager.setCurrentItem(position);
+                    //selectTab(position);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        }
+    }
+
+    private void selectTab(int i){
+        mTabs.get(i).select();
     }
 
     @Override
@@ -145,22 +153,63 @@ public class HomeFragment extends Fragment{
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode==ChannelActivity.REQUEST_CODE&&resultCode==ChannelActivity.RESULT_CODE){
-            jsonStr=data.getStringExtra(ChannelActivity.RESULT_JSON_KEY);
-            mTabs.removeAll(mTabs);
-            mFragments.removeAll(mFragments);
-            gson=new Gson();
-            Type type=new TypeToken<ArrayList<ChannelBean>>(){}.getType();
-            channelBeans=gson.fromJson(jsonStr,type);
-            for(int i=0;i<channelBeans.size();i++){
-                if(channelBeans.get(i).isSelect()){
-                    mFragments.add(TabFragment.newInstance());
-                    mViewPagerAdapterForNav.setFragments(mFragments);
-                    addTab(channelBeans.get(i).getName());
+    public void onClick(View V){
+        switch (V.getId()){
+            default:
+                break;
+            case R.id.imgBtn:
+                ArrayList<String> mCategory= new ArrayList<>();
+                ArrayList<String> mDelCategory= new ArrayList<>();
+                Intent intent=new Intent((AppCompatActivity)getActivity(), CategoryArrangement.class);
+                for(int i=0;i<channelBeans.size();i++){
+                    if(channelBeans.get(i).isSelect()){
+                        mCategory.add(channelBeans.get(i).getName());
+                    }
+                    else{
+                        mDelCategory.add(channelBeans.get(i).getName());
+                    }
                 }
-            }
+                intent.putExtra("cat",mCategory);
+                intent.putExtra("delCat",mDelCategory);
+                startActivityForResult(intent,0);
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,@Nullable Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        switch (resultCode){
+            case Activity.RESULT_OK:
+                ArrayList<String> mCategory=new ArrayList<>();
+                ArrayList<String> mDelCategory=new ArrayList<>();
+                mCategory=(ArrayList<String>) (data.getSerializableExtra("cat"));
+                mDelCategory=(ArrayList<String>) (data.getSerializableExtra("delCat"));
+                channelBeans=new ArrayList<ChannelBean>();
+                for(int i=0;i<mCategory.size();i++){
+                    channelBeans.add(new ChannelBean(mCategory.get(i),true));
+                }
+                for(int i=0;i<mDelCategory.size();i++){
+                    channelBeans.add(new ChannelBean(mDelCategory.get(i),false));
+                }
+                tabLayout.removeAllTabs();
+                mFragments.clear();
+                int backStackCount= getFragmentManager().getBackStackEntryCount();
+                for(int i=0;i<backStackCount;i++){
+                    getFragmentManager().popBackStack();
+                }
+                for(int i=0;i<channelBeans.size();i++){
+                    if(channelBeans.get(i).isSelect()){
+                        mFragments.add(TabFragment.newInstance());
+                        System.out.println(channelBeans.get(i).getName());
+                        addTab(channelBeans.get(i).getName());
+                    }
+                }
+                mViewPagerAdapterForNav.notifyDataSetChanged();
+                //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
+                break;
+            default:
+                break;
         }
     }
 }

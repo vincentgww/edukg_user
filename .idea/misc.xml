@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/bg_btn_blue_pressed.xml" value="0.13703703703703704" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/textview_unselect_border.xml" value="0.17239583333333333" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_category_arrangement.xml" value="0.165" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_login.xml" value="0.11979166666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_main.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_me.xml" value="0.1" />
