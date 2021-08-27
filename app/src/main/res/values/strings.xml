@@ -14,4 +14,7 @@
     <string name="more">more</string>
     <string name="main_tile">Home</string>
     <string name="edukg_app">知识图谱·智慧教育</string>
+    <string name="my_favourites">我的收藏</string>
+    <string name="browsing_history">历史浏览</string>
+    <string name="study_report">学习日报</string>
 </resources>

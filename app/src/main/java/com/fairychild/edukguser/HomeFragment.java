@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.fairychild.edukguser.ViewPagerAdapterForNav;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class HomeFragment extends Fragment {
     private View lastView;
     private Context parent;
     private TabLayout tabLayout;
+
+    private MaterialToolbar topAppBar;
+
     @Override
     public void onAttach(Context context) {
         listener = (MeFragment.FragmentListener) context;
@@ -90,6 +94,10 @@ public class HomeFragment extends Fragment {
                 //mViewPager.setOffscreenPageLimit(mFragments.size());
             }
         });
+
+        topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
+        topAppBar.setTitle("首页");
+
         //mViewPager.setOffscreenPageLimit(mFragments.size());
         return view;
 

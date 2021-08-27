@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompatSideChannelService;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.MenuItem;
@@ -87,6 +88,9 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
+        mFragments.add(BrowsingHistoryFragment.newInstance(10));
+        mFragments.add(FavouriteFragment.newInstance(10));
+        mFragments.add(ReportFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -111,8 +115,45 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         currentFragment = targetFragment;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mFragments.size() >= 1) {
+            //显示最顶部那一个
+            showFragment(mFragments.get(mFragments.size()-1));
+        }else {
+            System.out.println(mFragments.size());
+            System.out.println("finish!!!!!");
+            finish();
+        }
+    }
+
+    private void showFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        for (Fragment f : mFragments) {
+            fragmentTransaction.hide(f);
+        }
+        fragmentTransaction.show(fragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
     public void switchToLogin(){
         switchFragments(4);
+    }
+
+    @Override
+    public void switchToBrowsingHistory() {
+        switchFragments(5);
+    }
+
+    @Override
+    public void switchToFavourites() {
+        switchFragments(6);
+    }
+
+    @Override
+    public void switchToReport() {
+        switchFragments(7);
     }
 
     public void check(EditText phone, EditText password) {
@@ -130,7 +171,8 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                            switchFragments(3);
                         }
                     });
                 } catch (Exception e) {

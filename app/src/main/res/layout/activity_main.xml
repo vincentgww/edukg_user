@@ -9,27 +9,7 @@
     android:orientation="vertical"
     android:background="@color/white"
     tools:context=".MainActivity">
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        >
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.appbar.MaterialToolbar
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/topAppBar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:title="@string/main_tile"
-                app:menu="@menu/top_app_bar"
-                app:navigationIcon="@drawable/ic_menu_white_2x"
-                style="@style/Widget.MaterialComponents.Toolbar.Primary"/>
-        </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Note: A RecyclerView can also be used -->
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 

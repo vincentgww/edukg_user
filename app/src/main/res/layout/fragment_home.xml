@@ -5,6 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include layout="@layout/bar_top"/>
+
     <!-- 这个是在容器中央的 -->
     <com.google.android.material.tabs.TabLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
