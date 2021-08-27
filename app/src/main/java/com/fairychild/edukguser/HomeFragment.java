@@ -103,6 +103,7 @@ public class HomeFragment extends Fragment{
             }
         });
         initData();
+        //mViewPager.setOffscreenPageLimit(mFragments.size());
         return view;
     }
 
