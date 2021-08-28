@@ -87,6 +87,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         mImgBtn.setOnClickListener(this);
         initData();
         //mViewPager.setOffscreenPageLimit(mFragments.size());
+
+        topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
+        topAppBar.setTitle("首页");
+
         return view;
     }
 

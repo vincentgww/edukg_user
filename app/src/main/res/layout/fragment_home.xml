@@ -1,40 +1,46 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include layout="@layout/bar_top"/>
 
-    <!-- 这个是在容器中央的 -->
-    <com.google.android.material.tabs.TabLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
+        android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tab_layout"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/red"
-        app:tabIndicatorColor="@color/red"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/imgBtn"/>
-    <Button
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/imgBtn"
-        android:text="Subjects"
-        android:background="@color/light_blue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </androidx.viewpager.widget.ViewPager>
+        <!-- 这个是在容器中央的 -->
+        <com.google.android.material.tabs.TabLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tab_layout"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/red"
+            app:tabIndicatorColor="@color/red"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/imgBtn"/>
+        <Button
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imgBtn"
+            android:text="Subjects"
+            android:background="@color/light_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
 
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </androidx.viewpager.widget.ViewPager>
 
+    </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
+
 

@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (Exception e) {
