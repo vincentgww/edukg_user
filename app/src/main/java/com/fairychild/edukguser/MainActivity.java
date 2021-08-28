@@ -10,6 +10,8 @@ import androidx.core.app.NotificationCompatSideChannelService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 import android.text.Editable;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,16 +22,22 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
-
+import com.fairychild.edukguser.QaFragment;
 import com.fairychild.edukguser.HomeFragment;
 import com.fairychild.edukguser.LoginFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener{
+public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -38,9 +46,13 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
     //Chip Group
     private MenuItem menuItem;
+    private String id;
     private FragmentTransaction transaction;
     private FragmentManager mSupportFragmentManager;
     private Fragment currentFragment;
+    private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
+    private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
+    private String str;
     private boolean firstInit = true;
 
     @Override
@@ -49,8 +61,10 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         setContentView(R.layout.activity_main);
         initElement();
         initFragments();
+        getId();
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
+        //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
     }
 
@@ -84,7 +98,7 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
     private void initFragments(){
         mFragments = new ArrayList<>();
         mFragments.add(HomeFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
+        mFragments.add(QaFragment.newInstance());
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
@@ -97,10 +111,9 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = mFragments.get(FragmentId);
         if (!targetFragment.isAdded()) {
-           transaction.add(R.id.frameLayout,targetFragment);
+            transaction.add(R.id.frameLayout,targetFragment);
         }
         /*for (Fragment frag : mFragments) {
-
             if (frag.equals(targetFragment)) {
                 transaction.show(frag);
             }
@@ -187,4 +200,112 @@ public class MainActivity extends FragmentActivity implements MeFragment.Fragmen
             }
         }).start();
     }
+    public String sendInfo(String course, String inputQuestion){
+        str=null;
+        new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                String url = qaUrl;
+                String json = "{\n" +
+                        " \"course\":\"" + course + "\",\n" +
+                        " \"inputQuestion\":\"" + inputQuestion + "\",\n" +
+                        " \"id\":\"" + id + "\"\n" +
+                        "}";
+                //System.out.println(json);
+                try {
+                    String response = OkHttp.post(url, json);
+                    //System.out.println(response);
+                    //JSONObject jsonObject = new JSONObject(response);
+                    //str = response
+                    EventBus.getDefault().post(new MessageEvent(response));
+                    //qaListener.sendResponse(response);
+                    //System.out.println("response1"+jsonObject);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "发送问题失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+        //System.out.println("response"+str);
+        return str;
+    }
+
+    private void getId(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = loginUrl;
+                String json = "{\n" +
+                        " \"phone\":\"" + "15272961269" + "\",\n" +
+                        " \"password\":\"" + "lcs84615" + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    JSONObject jsonObject = new JSONObject(response);
+                    try{
+                        id = jsonObject.getString("id");
+                    } catch(Exception e){
+                        Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
+                    }
+                    //System.out.println(id);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+    /*public void parseJSONWithJSONObject(String jsonData) {  //解析JSON数据函数
+        try {
+            JSONArray jsonArray = new JSONArray(jsonData);
+            int jsonLen = jsonArray.length();
+            for (int curr = 0; curr < jsonLen; curr++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(curr);
+                String name = jsonObject.getString("name");
+                String msgContent = jsonObject.getString("message");
+                Message message = new Message();
+                Bundle bundle = new Bundle();
+                bundle.putString("name", name);
+                bundle.putString("msgContent", msgContent);  //往Bundle中存放数据
+                message.setData(bundle);//mes利用Bundle传递数据
+                handler.sendMessage(message);//用activity中的handler发送消息
+            }
+        } catch (Exception e) {
+            Looper.prepare();
+            Toast.makeText(getActivity(), "解析json错误!", Toast.LENGTH_SHORT).show();
+            Looper.loop();
+        }
+    }*/
 }

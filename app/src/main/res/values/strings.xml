@@ -7,6 +7,10 @@
     <string name="home">首页</string>
     <string name="qa">问答</string>
     <string name="function">功能</string>
+    <string name="qahint">聪明的机器人即将为您解答疑惑，请选择学科并输入问题的大致描述</string>
+    <string name="subject">学科</string>
+    <string name="qa2">请输入想要查询的内容</string>
+    <string name="query">查询</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="favorite">favorite</string>

@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         app:itemBackground="@null"
-        android:background="@color/purple_500"
+        android:background="#1C86EE"
         app:itemIconTint="@drawable/bottom_navigation_view_selector"
         app:itemTextColor="@drawable/bottom_navigation_view_selector"
         app:labelVisibilityMode="labeled"

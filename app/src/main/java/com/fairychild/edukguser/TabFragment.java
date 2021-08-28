@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+//import android.support.v4.app.Fragment;
 import androidx.fragment.app.Fragment;
 
 public class TabFragment extends Fragment {

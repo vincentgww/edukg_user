@@ -26,7 +26,7 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/central' }//central
         maven { url 'https://maven.aliyun.com/repository/google' }//google
         maven { url 'https://esri.jfrog.io/artifactory/arcgis' }
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
 
         flatDir{
             dirs 'libs'//A依赖B，B依赖C，要想A能访问C的libs，就得添加这个
