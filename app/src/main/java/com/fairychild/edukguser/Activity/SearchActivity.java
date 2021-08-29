@@ -42,6 +42,8 @@ public class SearchActivity extends AppCompatActivity {
     private FragmentManager mSupportFragmentManager;
     private Fragment currentFragment;
 
+    private boolean firstInit = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +141,12 @@ public class SearchActivity extends AppCompatActivity {
             System.out.println(content);
             SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content.size(), content);
             transaction.add(R.id.search_frame_layout, searchResultListFragment);
+            if (!firstInit) {
+                transaction.remove(currentFragment);
+            }
+            firstInit = false;
             transaction.show(searchResultListFragment);
+            currentFragment = searchResultListFragment;
         } catch (JSONException e) {
             e.printStackTrace();
             System.out.println("showFragment wrong!!!!!!!!!!");
