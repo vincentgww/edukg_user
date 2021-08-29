@@ -1,38 +1,39 @@
-package com.fairychild.edukguser;
+package com.fairychild.edukguser.fragment;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 //import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 //import android.support.v4.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.fragment.app.Fragment;
 //import android.support.v4.view.ViewPager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.andy.library.ChannelActivity;
 import com.andy.library.ChannelBean;
 import com.fairychild.edukguser.Activity.CategoryArrangement;
+import com.fairychild.edukguser.Activity.SearchActivity;
+import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.ViewPagerAdapterForNav;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
+
     public static HomeFragment newInstance(){
         HomeFragment indexFragment = new HomeFragment();
         return indexFragment;
@@ -43,10 +44,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     List<Fragment> mFragments;
     List<TabLayout.Tab> mTabs;
     private Button mImgBtn;
+    private ActionMenuItemView mSearch;
     private ArrayList<ChannelBean> channelBeans;
     String jsonStr="";
     private Gson gson;
-    private View lastView;
+
     private Context parent;
     private TabLayout tabLayout;
 
@@ -57,21 +59,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         listener = (MeFragment.FragmentListener) context;
         super.onAttach(context);
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
-        lastView = view;
+
         mViewPager = view.findViewById(R.id.pager);
         initFragments();
-        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
+        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(), getChildFragmentManager(), mFragments);
         mViewPager.setAdapter(mViewPagerAdapterForNav);
         mViewPager.setCurrentItem(0);
+
         tabLayout=view.findViewById(R.id.tab_layout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab){
+                Log.d("tabLayout","---onTabSelected");
                 int position = tab.getPosition();
+                System.out.println("position:" + position);
                 mViewPager.setCurrentItem(position);
             }
             @Override
@@ -81,15 +87,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-        //tabLayout.setupWithViewPager(mViewPager);
-        //mViewPager.setOffscreenPageLimit(mFragments.size());
+
         mImgBtn= view.findViewById(R.id.imgBtn);
         mImgBtn.setOnClickListener(this);
         initData();
-        //mViewPager.setOffscreenPageLimit(mFragments.size());
 
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         topAppBar.setTitle("首页");
+
+        mSearch = (ActionMenuItemView) view.findViewById(R.id.search);
+        mSearch.setOnClickListener(this);
 
         return view;
     }
@@ -133,13 +140,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         t.setText(title);
         tabLayout.addTab(t);
         mTabs.add(t);
-
     }
 
     private void initFragments(){
         mFragments = new ArrayList<>();
         mTabs = new ArrayList<>();
     }
+
     private void initData(){
         channelBeans = new ArrayList<ChannelBean>();
         channelBeans.add(new ChannelBean("BIOLOGY",true));
@@ -162,14 +169,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View V){
+        Intent intent = null;
         switch (V.getId()){
             default:
                 break;
             case R.id.imgBtn:
-                ArrayList<String> mCategory= new ArrayList<>();
-                ArrayList<String> mDelCategory= new ArrayList<>();
-                Intent intent=new Intent((AppCompatActivity)getActivity(), CategoryArrangement.class);
-                for(int i=0;i<channelBeans.size();i++){
+                ArrayList<String> mCategory = new ArrayList<>();
+                ArrayList<String> mDelCategory = new ArrayList<>();
+                intent = new Intent((AppCompatActivity)getActivity(), CategoryArrangement.class);
+                for(int i = 0; i < channelBeans.size(); i++){
                     if(channelBeans.get(i).isSelect()){
                         mCategory.add(channelBeans.get(i).getName());
                     }
@@ -179,6 +187,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
                 intent.putExtra("cat",mCategory);
                 intent.putExtra("delCat",mDelCategory);
+                startActivityForResult(intent,0);
+                break;
+            case R.id.search:
+                intent = new Intent((AppCompatActivity)getActivity(), SearchActivity.class);
                 startActivityForResult(intent,0);
                 break;
         }

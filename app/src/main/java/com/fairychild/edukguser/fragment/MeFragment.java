@@ -1,8 +1,6 @@
-package com.fairychild.edukguser;
+package com.fairychild.edukguser.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.fairychild.edukguser.R;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MeFragment extends Fragment {
     public interface FragmentListener {
@@ -28,12 +26,17 @@ public class MeFragment extends Fragment {
     private Button btnFavourites;
     private Button btnReport;
     private FragmentListener listener;
+    private String id;
+    private String phone;
 
     private MaterialToolbar topAppBar;
 
-    public static MeFragment newInstance(){
-        MeFragment indexFragment = new MeFragment();
-        return indexFragment;
+    public static MeFragment newInstance(Bundle args){
+        MeFragment fragment = new MeFragment();
+        if (args != null) {
+            fragment.setArguments(args);
+        }
+        return fragment;
     }
 
     @Override
@@ -45,7 +48,18 @@ public class MeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_me,container,false);
+        return inflater.inflate(R.layout.fragment_me,container,false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        id = null;
+        phone = null;
+        if (getArguments() != null) {
+            id = getArguments().getString("id", null);
+            phone = getArguments().getString("phone", null);
+        }
 
         btnLogin = view.findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +69,13 @@ public class MeFragment extends Fragment {
                 listener.switchToLogin();
             }
         });
+        if (id != null && phone != null) {
+            btnLogin.setText(phone);
+            btnLogin.setEnabled(false);
+        } else {
+            btnLogin.setText(R.string.login);
+            btnLogin.setEnabled(true);
+        }
         if(btnLogin==null)
             System.out.println("?btnLogin");
 
@@ -93,7 +114,5 @@ public class MeFragment extends Fragment {
 
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         topAppBar.setTitle("个人中心");
-
-        return view;
     }
 }

@@ -1,19 +1,16 @@
-package com.fairychild.edukguser;
+package com.fairychild.edukguser.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 //import android.support.v4.app.Fragment;
 import androidx.fragment.app.Fragment;
+
+import com.fairychild.edukguser.R;
 
 public class TabFragment extends Fragment {
     private View mView;

@@ -1,37 +1,30 @@
 package com.fairychild.edukguser;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompatSideChannelService;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.Message;
-import android.text.Editable;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
-import com.fairychild.edukguser.QaFragment;
-import com.fairychild.edukguser.HomeFragment;
-import com.fairychild.edukguser.LoginFragment;
+
+import com.fairychild.edukguser.fragment.BrowsingHistoryFragment;
+import com.fairychild.edukguser.fragment.FavouriteFragment;
+import com.fairychild.edukguser.fragment.MeFragment;
+import com.fairychild.edukguser.fragment.QaFragment;
+import com.fairychild.edukguser.fragment.HomeFragment;
+import com.fairychild.edukguser.fragment.LoginFragment;
+import com.fairychild.edukguser.fragment.ReportFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.chip.ChipGroup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -55,13 +48,23 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private String str;
     private boolean firstInit = true;
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedPreferencesEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initElement();
-        initFragments();
+
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        sharedPreferencesEditor = sharedPreferences.edit();
+
         getId();
+
+        initFragments();
+
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
         //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
@@ -100,7 +103,10 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(QaFragment.newInstance());
         mFragments.add(HomeFragment.newInstance());
-        mFragments.add(MeFragment.newInstance());
+        Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+        bundle.putString("phone", sharedPreferences.getString("phone", null));
+        mFragments.add(MeFragment.newInstance(bundle));
         mFragments.add(LoginFragment.newInstance());
         mFragments.add(BrowsingHistoryFragment.newInstance(10));
         mFragments.add(FavouriteFragment.newInstance(10));
@@ -181,11 +187,31 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 try {
                     String response = OkHttp.post(url, json);
                     System.out.println(response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    try{
+                        String data = jsonObject.getString("data");
+                        JSONObject dataJSON = new JSONObject(data);
+                        id = dataJSON.getString("id");
+                        sharedPreferencesEditor.putString("id", id);
+                        sharedPreferencesEditor.putString("phone", phone.getText().toString());
+                        sharedPreferencesEditor.putString("password", password.getText().toString());
+                        sharedPreferencesEditor.apply();
+                    } catch(Exception e){
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Toast toast = Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                    }
+                    //System.out.println(id);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                            switchFragments(3);
+                            final Toast toast = Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     });
                 } catch (Exception e) {
@@ -193,13 +219,15 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                            final Toast toast = Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     });
                 }
             }
         }).start();
     }
+
     public String sendInfo(String course, String inputQuestion){
         str=null;
         new Thread(new Runnable() {
@@ -235,43 +263,56 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         return str;
     }
 
-    private void getId(){
+    private void getId() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url = loginUrl;
-                String json = "{\n" +
-                        " \"phone\":\"" + "15272961269" + "\",\n" +
-                        " \"password\":\"" + "lcs84615" + "\"\n" +
-                        "}";
-                try {
-                    String response = OkHttp.post(url, json);
-                    JSONObject jsonObject = new JSONObject(response);
-                    try{
-                        id = jsonObject.getString("id");
-                    } catch(Exception e){
-                        Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
+                String phone = sharedPreferences.getString("phone", null);
+                String password = sharedPreferences.getString("password", null);
+                if (phone != null && password != null) {
+                    String json = "{\n" +
+                            " \"phone\":\"" + "13717760388" + "\",\n" +
+                            " \"password\":\"" + "g1234567" + "\"\n" +
+                            "}";
+                    System.out.println(json);
+                    try {
+                        String response = OkHttp.post(url, json);
+                        System.out.println(response);
+                        JSONObject jsonObject = new JSONObject(response);
+                        try{
+                            id = jsonObject.getString("id");
+                            sharedPreferencesEditor.putString("id", id);
+                            sharedPreferencesEditor.apply();
+                        } catch(Exception e){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        //System.out.println(id);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                    //System.out.println(id);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
-                        }
-                    });
                 }
             }
         }).start();
-
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
@@ -287,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
+
     /*public void parseJSONWithJSONObject(String jsonData) {  //解析JSON数据函数
         try {
             JSONArray jsonArray = new JSONArray(jsonData);

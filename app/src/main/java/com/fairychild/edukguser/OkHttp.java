@@ -20,7 +20,7 @@ public class OkHttp {
         }
     }
 
-    String run(String url) throws IOException {
+    public static String get(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)

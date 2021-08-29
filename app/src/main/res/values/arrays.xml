@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="subjects">
+        <item>biology</item>
+        <item>chemistry</item>
+        <item>chinese</item>
+        <item>english</item>
+        <item>geo</item>
+        <item>history</item>
+        <item>math</item>
+        <item>physics</item>
+        <item>politics</item>
+    </string-array>
+</resources>

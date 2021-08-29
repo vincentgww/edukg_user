@@ -1,4 +1,4 @@
-package com.fairychild.edukguser;
+package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fairychild.edukguser.MyFavouriteRecyclerViewAdapter;
+import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.placeholder.PlaceholderContent;
 
 /**
