@@ -195,6 +195,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
                 tabLayout.removeAllTabs();
                 mFragments.clear();
+                //mViewPagerAdapterForNav.setFragments(mFragments);
                 int backStackCount= getFragmentManager().getBackStackEntryCount();
                 for(int i=0;i<backStackCount;i++){
                     getFragmentManager().popBackStack();
@@ -203,10 +204,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     if(channelBeans.get(i).isSelect()){
                         mFragments.add(TabFragment.newInstance());
                         System.out.println(channelBeans.get(i).getName());
+                        mViewPagerAdapterForNav.setFragments(mFragments);
                         addTab(channelBeans.get(i).getName());
                     }
                 }
-                mViewPagerAdapterForNav.notifyDataSetChanged();
+                //mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
                 break;
             default:
