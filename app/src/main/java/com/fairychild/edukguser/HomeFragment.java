@@ -23,6 +23,7 @@ import com.andy.library.ChannelActivity;
 import com.andy.library.ChannelBean;
 import com.fairychild.edukguser.Activity.CategoryArrangement;
 import com.fairychild.edukguser.ViewPagerAdapterForNav;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,7 +42,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private ViewPager mViewPager;
     List<Fragment> mFragments;
     List<TabLayout.Tab> mTabs;
-    private Button mImgBtn;
+    private FloatingActionButton mImgBtn;
     private ArrayList<ChannelBean> channelBeans;
     String jsonStr="";
     private Gson gson;
