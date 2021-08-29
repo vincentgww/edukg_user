@@ -11,4 +11,8 @@
         <item>physics</item>
         <item>politics</item>
     </string-array>
+    <string-array name="sort_orders">
+        <item>标题长度</item>
+        <item>类别名长度</item>
+    </string-array>
 </resources>

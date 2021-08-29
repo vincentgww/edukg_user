@@ -10,12 +10,16 @@ import androidx.fragment.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
 
+import com.fairychild.edukguser.Activity.SearchActivity;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +32,8 @@ public class SearchResultListFragment extends Fragment {
     private ArrayList<Knowledge> content;
 
     private ListView listView;
+
+    private Spinner sortOrderSpinner;
 
     public SearchResultListFragment() {
     }
@@ -58,10 +64,53 @@ public class SearchResultListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_search_result_list, container, false);
+
+        sortOrderSpinner = view.findViewById(R.id.sort_order_spinner);
+        sortOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String order = adapterView.getItemAtPosition(i).toString();
+                if (order.equals("标题长度")) {
+                    changeSortOrder(1);
+                } else if (order.equals("类别名长度")){
+                    changeSortOrder(2);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         listView = view.findViewById(R.id.result_list_view);
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
         adapter.setData(content, false);
         listView.setAdapter(adapter);
         return view;
+    }
+
+    public void changeSortOrder(int mode) {
+        SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
+        switch (mode) {
+            case 1:
+                content.sort(new Comparator<Knowledge>() {
+                    @Override
+                    public int compare(Knowledge knowledge, Knowledge t1) {
+                        return Integer.compare(knowledge.getLabel().length(), t1.getLabel().length());
+                    }
+                });
+                adapter.setData(content, true);
+                break;
+            case 2:
+                content.sort(new Comparator<Knowledge>() {
+                    @Override
+                    public int compare(Knowledge knowledge, Knowledge t1) {
+                        return Integer.compare(knowledge.getCategory().length(), t1.getCategory().length());
+                    }
+                });
+                adapter.setData(content, true);
+                break;
+        }
     }
 }

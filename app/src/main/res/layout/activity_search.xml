@@ -27,15 +27,13 @@
             android:id="@+id/search_content"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="50dp"
-            android:layout_toEndOf="@+id/back_button"/>
+            android:layout_height="50dp" />
 
         <Button
             android:id="@+id/real_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="搜索"
-            android:layout_toEndOf="@id/search_content"/>
+            android:text="搜索" />
 
     </LinearLayout>
 

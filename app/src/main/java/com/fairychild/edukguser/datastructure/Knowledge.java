@@ -3,7 +3,7 @@ package com.fairychild.edukguser.datastructure;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Knowledge implements Parcelable {
+public class Knowledge implements Parcelable{
     private String label;
     private String category;
     private String uri;
@@ -60,4 +60,6 @@ public class Knowledge implements Parcelable {
     public String getUri() {
         return uri;
     }
+
+
 }
