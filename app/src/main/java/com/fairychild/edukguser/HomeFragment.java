@@ -77,6 +77,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mTabs.get(position).select();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         //tabLayout.setupWithViewPager(mViewPager);
         //mViewPager.setOffscreenPageLimit(mFragments.size());
         mImgBtn= view.findViewById(R.id.imgBtn);
@@ -86,30 +102,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         return view;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser){
-        super.setUserVisibleHint(isVisibleToUser);
-        if(getUserVisibleHint()){
-            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    mTabs.get(position).select();
-                    //mViewPager.setCurrentItem(position);
-                    //selectTab(position);
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
-        }
-    }
 
     private void selectTab(int i){
         mTabs.get(i).select();
@@ -146,10 +138,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         for(int i=0;i<channelBeans.size();i++){
             if(channelBeans.get(i).isSelect()){
                 mFragments.add(TabFragment.newInstance());
-                mViewPagerAdapterForNav.setFragments(mFragments);
                 addTab(channelBeans.get(i).getName());
             }
         }
+        mViewPagerAdapterForNav.setFragments(mFragments);
     }
 
     @Override
@@ -205,7 +197,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         addTab(channelBeans.get(i).getName());
                     }
                 }
-                mViewPagerAdapterForNav.notifyDataSetChanged();
+                mViewPagerAdapterForNav.setFragments(mFragments);
                 //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
                 break;
             default:
