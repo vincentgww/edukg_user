@@ -36,7 +36,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.KnowledgeCheckListener {
+public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
+        KnowledgeCheckFragment.KnowledgeCheckListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private Fragment currentFragment;
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
+    private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private String str;
     private boolean firstInit = true;
 
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                     JSONObject jsonObject = new JSONObject(response);
                     try{
                         id = jsonObject.getString("id");
+                        System.out.println(id);
                     } catch(Exception e){
                         Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
                     }
@@ -214,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "服务器连接成功!", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (Exception e) {
@@ -232,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onStart() {
@@ -248,5 +251,32 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
 
     public void knowledgeCheck(){
         switchFragments(5);
+    }
+
+    public void search_point(String s,String course){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = searchPointUrl;
+                String json = "{\n" +
+                        " \"context\":\"" + s + "\",\n" +
+                        " \"course\":\"" + course + "\",\n" +
+                        " \"id\":\"" + id + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    EventBus.getDefault().post(new MessageEvent(response));
+                    //System.out.println(id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 }

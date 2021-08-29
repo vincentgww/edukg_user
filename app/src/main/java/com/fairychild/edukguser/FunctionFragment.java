@@ -12,10 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class FunctionFragment extends Fragment {
-    public interface KnowledgeCheckListener {
+    public interface FunctionListener {
         void knowledgeCheck();
     }
-    private KnowledgeCheckListener listener;
+    private FunctionListener listener;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class FunctionFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        listener = (KnowledgeCheckListener) context;
+        listener = (FunctionListener) context;
         super.onAttach(context);
     }
 
