@@ -36,11 +36,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener {
+public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.KnowledgeCheckListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
-    private ViewPager mViewPager;
     //适配器
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
     //Chip Group
@@ -98,9 +97,10 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments = new ArrayList<>();
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(QaFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
+        mFragments.add(FunctionFragment.newInstance());
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
+        mFragments.add(KnowledgeCheckFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -245,25 +245,8 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
-    /*public void parseJSONWithJSONObject(String jsonData) {  //解析JSON数据函数
-        try {
-            JSONArray jsonArray = new JSONArray(jsonData);
-            int jsonLen = jsonArray.length();
-            for (int curr = 0; curr < jsonLen; curr++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(curr);
-                String name = jsonObject.getString("name");
-                String msgContent = jsonObject.getString("message");
-                Message message = new Message();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", name);
-                bundle.putString("msgContent", msgContent);  //往Bundle中存放数据
-                message.setData(bundle);//mes利用Bundle传递数据
-                handler.sendMessage(message);//用activity中的handler发送消息
-            }
-        } catch (Exception e) {
-            Looper.prepare();
-            Toast.makeText(getActivity(), "解析json错误!", Toast.LENGTH_SHORT).show();
-            Looper.loop();
-        }
-    }*/
+
+    public void knowledgeCheck(){
+        switchFragments(5);
+    }
 }

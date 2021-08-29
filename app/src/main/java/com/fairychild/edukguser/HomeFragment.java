@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     }
     MeFragment.FragmentListener listener;
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
-    private ViewPager mViewPager;
+    private MyViewPager mViewPager;
     List<Fragment> mFragments;
     List<TabLayout.Tab> mTabs;
     private FloatingActionButton mImgBtn;
