@@ -20,9 +20,6 @@
         android:roundIcon="@drawable/title_graph"
         android:supportsRtl="true"
         android:theme="@style/Theme.EdukgUser">
-        <activity
-            android:name=".Activity.SearchActivity"
-            android:exported="true" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

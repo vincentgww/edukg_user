@@ -11,7 +11,6 @@
     <string name="subject">学科</string>
     <string name="qa2">请输入想要查询的内容</string>
     <string name="query">查询</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="favorite">favorite</string>
     <string name="search">search</string>
@@ -21,4 +20,7 @@
     <string name="my_favourites">我的收藏</string>
     <string name="browsing_history">历史浏览</string>
     <string name="study_report">学习日报</string>
+    <string name="username">username</string>
+    <string name="phone_number">Phone number</string>
+    <string name="register">注册</string>
 </resources>

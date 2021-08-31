@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +13,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.fairychild.edukguser.Activity.SearchActivity;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+
+import info.debatty.java.stringsimilarity.Jaccard;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +28,10 @@ import java.util.Comparator;
  */
 public class SearchResultListFragment extends Fragment {
 
+    private String searchContent;
     private Integer size;
     private ArrayList<Knowledge> content;
+    private Jaccard jaccard = new Jaccard();
 
     private ListView listView;
 
@@ -37,11 +39,12 @@ public class SearchResultListFragment extends Fragment {
 
     public SearchResultListFragment() {
     }
-    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content) {
+    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content, String searchContent) {
         SearchResultListFragment fragment = new SearchResultListFragment();
         Bundle args = new Bundle();
         args.putInt("size", size);
         args.putParcelableArrayList("content", content);
+        args.putString("searchContent", searchContent);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,6 +60,7 @@ public class SearchResultListFragment extends Fragment {
         if (getArguments() != null) {
             size = getArguments().getInt("size");
             content = getArguments().getParcelableArrayList("content");
+            searchContent = getArguments().getString("searchContent");
         }
     }
 
@@ -69,12 +73,7 @@ public class SearchResultListFragment extends Fragment {
         sortOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String order = adapterView.getItemAtPosition(i).toString();
-                if (order.equals("标题长度")) {
-                    changeSortOrder(1);
-                } else if (order.equals("类别名长度")){
-                    changeSortOrder(2);
-                }
+                changeSortOrder(i);
             }
 
             @Override
@@ -93,6 +92,14 @@ public class SearchResultListFragment extends Fragment {
     public void changeSortOrder(int mode) {
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
         switch (mode) {
+            case 0:
+                content.sort(new Comparator<Knowledge>() {
+                    @Override
+                    public int compare(Knowledge knowledge, Knowledge t1) {
+                        int result1 =  Double.compare(jaccard.distance(searchContent, knowledge.getLabel()), jaccard.distance(searchContent, t1.getLabel()));
+                        return result1 == 0 ? Double.compare(jaccard.distance(searchContent, knowledge.getCategory()), jaccard.distance(searchContent, t1.getCategory())) : result1;
+                    }
+                });
             case 1:
                 content.sort(new Comparator<Knowledge>() {
                     @Override

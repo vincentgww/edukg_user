@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,41 +21,43 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.andy.library.ChannelBean;
 import com.fairychild.edukguser.Activity.CategoryArrangement;
-import com.fairychild.edukguser.Activity.SearchActivity;
+import com.fairychild.edukguser.MyViewPager;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.ViewPagerAdapterForNav;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
+    public interface FragmentListener {
+        void switchToSearch();
+    }
+
     public static HomeFragment newInstance(){
         HomeFragment indexFragment = new HomeFragment();
         return indexFragment;
     }
-    MeFragment.FragmentListener listener;
+
+    HomeFragment.FragmentListener listener;
+
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
-    private ViewPager mViewPager;
+    private MyViewPager mViewPager;
+    private FloatingActionButton mImgBtn;
+    private TabLayout tabLayout;
+    private MaterialToolbar topAppBar;
+    private ActionMenuItemView mBtnSearch;
+
     List<Fragment> mFragments;
     List<TabLayout.Tab> mTabs;
-    private Button mImgBtn;
-    private ActionMenuItemView mSearch;
     private ArrayList<ChannelBean> channelBeans;
-    String jsonStr="";
-    private Gson gson;
-
-    private Context parent;
-    private TabLayout tabLayout;
-
-    private MaterialToolbar topAppBar;
 
     @Override
     public void onAttach(Context context) {
-        listener = (MeFragment.FragmentListener) context;
+        listener = (HomeFragment.FragmentListener) context;
         super.onAttach(context);
     }
 
@@ -88,15 +89,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        mImgBtn= view.findViewById(R.id.imgBtn);
+        mImgBtn = view.findViewById(R.id.imgBtn);
         mImgBtn.setOnClickListener(this);
-        initData();
 
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         topAppBar.setTitle("首页");
 
-        mSearch = (ActionMenuItemView) view.findViewById(R.id.search);
-        mSearch.setOnClickListener(this);
+        mBtnSearch = view.findViewById(R.id.search);
+        mBtnSearch.setOnClickListener(this);
+
+        initData();
 
         return view;
     }
@@ -190,8 +192,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 startActivityForResult(intent,0);
                 break;
             case R.id.search:
-                intent = new Intent((AppCompatActivity)getActivity(), SearchActivity.class);
-                startActivityForResult(intent,0);
+                listener.switchToSearch();
                 break;
         }
     }
@@ -214,6 +215,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
                 tabLayout.removeAllTabs();
                 mFragments.clear();
+                //mViewPagerAdapterForNav.setFragments(mFragments);
                 int backStackCount= getFragmentManager().getBackStackEntryCount();
                 for(int i=0;i<backStackCount;i++){
                     getFragmentManager().popBackStack();
@@ -222,10 +224,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     if(channelBeans.get(i).isSelect()){
                         mFragments.add(TabFragment.newInstance());
                         System.out.println(channelBeans.get(i).getName());
+                        mViewPagerAdapterForNav.setFragments(mFragments);
                         addTab(channelBeans.get(i).getName());
                     }
                 }
-                mViewPagerAdapterForNav.notifyDataSetChanged();
+                //mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
                 break;
             default:

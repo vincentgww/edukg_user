@@ -14,8 +14,11 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.fairychild.edukguser.MessageEvent;
@@ -38,11 +41,14 @@ public class QaFragment extends Fragment implements View.OnClickListener{
     public interface QaListener {
         String sendInfo(String course, String inputQuestion);
     }
+    private static final String[] m={"chinese","math","english","biology","physics"};
     private List<Msg> msgList = new ArrayList<>();
     private EditText inputText;
     private Button send;
     private RecyclerView msgRecyclerView;
     private MsgAdapter adapter;
+    private ArrayAdapter<String> arr_adapter;
+    private String course;
     boolean isRunning = false;
     private boolean isSend=false;
     private QaListener listener;
@@ -84,6 +90,22 @@ public class QaFragment extends Fragment implements View.OnClickListener{
         inputText = view.findViewById(R.id.input_text);
         send=view.findViewById(R.id.send);
         send.setOnClickListener(this);
+        Spinner spinner =  view.findViewById(R.id.Spinner_qa);
+        arr_adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,m);
+        arr_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(arr_adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+                course = m[pos];
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -108,6 +130,8 @@ public class QaFragment extends Fragment implements View.OnClickListener{
             JSONArray arr = new JSONArray(obj.getString("data"));
             obj = arr.getJSONObject(0);
             String ans = obj.getString("message");
+            if(ans.equals(""))
+                ans = obj.getString("value");
             handleMessage(ans,false);
             System.out.println("obj: "+ans);
         } catch(Exception e){
@@ -140,32 +164,11 @@ public class QaFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view){
         String content = inputText.getText().toString();
-        //@SuppressLint("SimpleDateFormat")
-        //String date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
-        //StringBuilder sb = new StringBuilder();
-       // msgEntity = myName;
-        //sb.append(msgEntity).append(" "+content);
-        //msgEntity = sb.toString();
         if(!"".equals(content)){
-            /*Message message = new Message();
-            Bundle bundle = new Bundle();
-            bundle.putString("name", myName);
-            bundle.putString("msgContent", msgEntity);  //往Bundle中存放数据
-            message.setData(bundle);//mes利用Bundle传递数据
-            handler.sendMessage(message);//用activity中的handler发送消息
-            inputText.setText("");
-            isSend = true;
-            curr++;*/
             handleMessage(content, true);
             inputText.setText("");
-            //sb.delete(0,sb.length());
-            String [] info = content.split("\\+");
-            if(info.length!=2)
-                handleMessage("输入格式错误!",false);
-            else
-                listener.sendInfo(info[0],info[1]);
+            listener.sendInfo(course,content);
         }
-        //System.out.println("response2"+obj);
     }
 
     private void handleMessage(String content, boolean meSend){
@@ -202,31 +205,4 @@ public class QaFragment extends Fragment implements View.OnClickListener{
         super.onStop();
     }
 }
-   /*class Send implements Runnable{
-        @Override
-        public void run(){           //发送线程
-            while(isRunning){
-                if(isSend){
-                    RequestBody requestBody = new FormBody.Builder()
-                            .add("course",myName)
-                            .add("inputQuestion",msgEntity)
-                            .build();
-                    try {
-                        OkHttpClient client = new OkHttpClient();
-                        Request request2 = new Request.Builder()
-                                // 指定访问的服务器地址
-                                .url(Resource.DiffUrl).post(requestBody)
-                                .build();
-                        Response response = client.newCall(request2).execute();
-                        String responseData = response.body().string();
-                        isSend = false;
-                    } catch (Exception e) {
-                        Looper.prepare();
-                        Toast.makeText(ChatRoom.this, "发送失败！",
-                                Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                }
-            }
-        }
-    }*/
+

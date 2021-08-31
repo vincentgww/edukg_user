@@ -3,6 +3,8 @@ import androidx.fragment.app.FragmentManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,16 +13,18 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
-import com.fairychild.edukguser.fragment.BrowsingHistoryFragment;
-import com.fairychild.edukguser.fragment.FavouriteFragment;
+import com.fairychild.edukguser.fragment.FunctionFragment;
+import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
-import com.fairychild.edukguser.fragment.ReportFragment;
+import com.fairychild.edukguser.fragment.RegisterFragment;
+
+import com.fairychild.edukguser.fragment.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,11 +34,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener {
+public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
+        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
-    private ViewPager mViewPager;
     //适配器
     private ViewPagerAdapterForNav mViewPagerAdapterForNav;
     //Chip Group
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private Fragment currentFragment;
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
+    private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private String str;
     private boolean firstInit = true;
 
@@ -102,15 +107,15 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments = new ArrayList<>();
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(QaFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
-        Bundle bundle = new Bundle();
-        bundle.putString("id", id);
-        bundle.putString("phone", sharedPreferences.getString("phone", null));
-        mFragments.add(MeFragment.newInstance(bundle));
+        mFragments.add(FunctionFragment.newInstance());
+        mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
-        mFragments.add(BrowsingHistoryFragment.newInstance(10));
-        mFragments.add(FavouriteFragment.newInstance(10));
-        mFragments.add(ReportFragment.newInstance());
+        mFragments.add(KnowledgeCheckFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
+        mFragments.add(SearchFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -119,13 +124,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         if (!targetFragment.isAdded()) {
             transaction.add(R.id.frameLayout,targetFragment);
         }
-        /*for (Fragment frag : mFragments) {
-            if (frag.equals(targetFragment)) {
-                transaction.show(frag);
-            }
-            else
-                transaction.hide(frag);
-        }*/
         if(!firstInit)
             transaction.hide(currentFragment);
         firstInit = false;
@@ -159,20 +157,36 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void switchToLogin(){
         switchFragments(4);
     }
+    public void switchToRegister() {switchFragments(6);}
+
+    @Override
+    public String getIdFromSP() {
+        return sharedPreferences.getString("id", null);
+    }
+
+    @Override
+    public String getPhoneFromSP() {
+        return sharedPreferences.getString("phone", null);
+    }
 
     @Override
     public void switchToBrowsingHistory() {
-        switchFragments(5);
+        switchFragments(7);
     }
 
     @Override
     public void switchToFavourites() {
-        switchFragments(6);
+        switchFragments(8);
     }
 
     @Override
     public void switchToReport() {
-        switchFragments(7);
+        switchFragments(9);
+    }
+
+    @Override
+    public void switchToSearch() {
+        switchFragments(10);
     }
 
     public void check(EditText phone, EditText password) {
@@ -228,6 +242,37 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         }).start();
     }
 
+    public void checkReg(TextInputEditText phone, TextInputEditText password){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url="http://47.93.101.225:8080/register";
+                String json = "{\n" +
+                        " \"account\":\"" + phone.getText() + "\",\n" +
+                        " \"password\":\"" + password.getText() + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    System.out.println(response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
     public String sendInfo(String course, String inputQuestion){
         str=null;
         new Thread(new Runnable() {
@@ -272,8 +317,8 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 String password = sharedPreferences.getString("password", null);
                 if (phone != null && password != null) {
                     String json = "{\n" +
-                            " \"phone\":\"" + "13717760388" + "\",\n" +
-                            " \"password\":\"" + "g1234567" + "\"\n" +
+                            " \"phone\":\"" + "15272961269" + "\",\n" +
+                            " \"password\":\"" + "lcs84615" + "\"\n" +
                             "}";
                     System.out.println(json);
                     try {
@@ -315,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onStart() {
@@ -329,25 +374,34 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         super.onStop();
     }
 
-    /*public void parseJSONWithJSONObject(String jsonData) {  //解析JSON数据函数
-        try {
-            JSONArray jsonArray = new JSONArray(jsonData);
-            int jsonLen = jsonArray.length();
-            for (int curr = 0; curr < jsonLen; curr++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(curr);
-                String name = jsonObject.getString("name");
-                String msgContent = jsonObject.getString("message");
-                Message message = new Message();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", name);
-                bundle.putString("msgContent", msgContent);  //往Bundle中存放数据
-                message.setData(bundle);//mes利用Bundle传递数据
-                handler.sendMessage(message);//用activity中的handler发送消息
+    public void knowledgeCheck(){
+        switchFragments(5);
+    }
+
+    public void search_point(String s,String course){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = searchPointUrl;
+                String json = "{\n" +
+                        " \"context\":\"" + s + "\",\n" +
+                        " \"course\":\"" + course + "\",\n" +
+                        " \"id\":\"" + id + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    EventBus.getDefault().post(new MessageEvent(response));
+                    //System.out.println(id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
-        } catch (Exception e) {
-            Looper.prepare();
-            Toast.makeText(getActivity(), "解析json错误!", Toast.LENGTH_SHORT).show();
-            Looper.loop();
-        }
-    }*/
+        }).start();
+    }
 }

@@ -1,6 +1,7 @@
 package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,23 +21,29 @@ public class MeFragment extends Fragment {
         void switchToBrowsingHistory();
         void switchToFavourites();
         void switchToReport();
+        void switchToRegister();
+        String getIdFromSP();
+        String getPhoneFromSP();
     }
+
     private Button btnLogin;
     private Button btnBrowsingHistory;
     private Button btnFavourites;
     private Button btnReport;
+    private Button btnRegister;
+
     private FragmentListener listener;
-    private String id;
-    private String phone;
 
     private MaterialToolbar topAppBar;
 
-    public static MeFragment newInstance(Bundle args){
-        MeFragment fragment = new MeFragment();
-        if (args != null) {
-            fragment.setArguments(args);
-        }
-        return fragment;
+    private String id;
+    private String phone;
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedPreferencesEditor;
+
+    public static MeFragment newInstance(){
+        return new MeFragment();
     }
 
     @Override
@@ -54,12 +61,8 @@ public class MeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        id = null;
-        phone = null;
-        if (getArguments() != null) {
-            id = getArguments().getString("id", null);
-            phone = getArguments().getString("phone", null);
-        }
+        id = listener.getIdFromSP();
+        phone = listener.getPhoneFromSP();
 
         btnLogin = view.findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +114,15 @@ public class MeFragment extends Fragment {
         });
         if(btnReport==null)
             System.out.println("?btnReport");
+
+        btnRegister=view.findViewById(R.id.btn_register);
+        btnRegister.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                //跳转至注册界面
+                listener.switchToRegister();
+            }
+        });
 
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         topAppBar.setTitle("个人中心");
