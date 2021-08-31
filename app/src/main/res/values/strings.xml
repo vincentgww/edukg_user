@@ -18,4 +18,6 @@
     <string name="more">more</string>
     <string name="main_tile">Home</string>
     <string name="edukg_app">知识图谱·智慧教育</string>
+    <string name="username">username</string>
+    <string name="phone_number">Phone number</string>
 </resources>

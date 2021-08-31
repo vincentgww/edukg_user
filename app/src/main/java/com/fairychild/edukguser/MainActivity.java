@@ -26,6 +26,7 @@ import com.fairychild.edukguser.HomeFragment;
 import com.fairychild.edukguser.LoginFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
-        KnowledgeCheckFragment.KnowledgeCheckListener {
+        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -129,12 +131,43 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void switchToLogin(){
         switchFragments(4);
     }
+    public void switchToRegister() {switchFragments(6);}
 
     public void check(EditText phone, EditText password) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url = "http://47.93.101.225:8080/login";
+                String json = "{\n" +
+                        " \"account\":\"" + phone.getText() + "\",\n" +
+                        " \"password\":\"" + password.getText() + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    System.out.println(response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+    public void checkReg(TextInputEditText phone, TextInputEditText password){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url="http://47.93.101.225:8080/register";
                 String json = "{\n" +
                         " \"account\":\"" + phone.getText() + "\",\n" +
                         " \"password\":\"" + password.getText() + "\"\n" +

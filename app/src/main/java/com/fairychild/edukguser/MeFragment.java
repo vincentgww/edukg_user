@@ -18,9 +18,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MeFragment extends Fragment {
     public interface FragmentListener {
         void switchToLogin();
+        void switchToRegister();
     }
     private Button btnLogin;
     private FragmentListener listener;
+    private Button btnRegister;
 
     public static MeFragment newInstance(){
         MeFragment indexFragment = new MeFragment();
@@ -41,12 +43,21 @@ public class MeFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 跳转到个人界面
+                // 跳转到登录界面
                 listener.switchToLogin();
             }
         });
         if(btnLogin==null)
             System.out.println("?");
+        btnRegister=view.findViewById(R.id.btn_register);
+        btnRegister.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                //跳转至注册界面
+                listener.switchToRegister();
+            }
+        });
+
         return view;
     }
 }
