@@ -71,10 +71,10 @@ public class KnowledgeCheckFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        System.out.println(event.message);
+        System.out.println(event.getMessage());
         String ans = "";
         try {
-            JSONObject obj = new JSONObject(event.message);
+            JSONObject obj = new JSONObject(event.getMessage());
             //JSONArray arr = new JSONArray(obj.getString("data"));
             JSONObject obj2 = new JSONObject(obj.getString("data"));
             JSONArray arr = obj2.getJSONArray("results");

@@ -15,7 +15,7 @@ import com.fairychild.edukguser.R;
 
 public class FunctionFragment extends Fragment {
     public interface FunctionListener {
-        void knowledgeCheck();
+        void switchToKnowledgeCheck();
     }
     private FunctionListener listener;
     @Nullable
@@ -27,7 +27,7 @@ public class FunctionFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
-                        listener.knowledgeCheck();
+                        listener.switchToKnowledgeCheck();
                     }
                 }
         );

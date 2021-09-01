@@ -10,27 +10,8 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-
-
-
-
-    <!--<androidx.core.widget.NestedScrollView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-           />
-
-    </androidx.core.widget.NestedScrollView>-->
-
     <FrameLayout
-        android:id="@+id/frameLayout"
+        android:id="@+id/main_frame_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>

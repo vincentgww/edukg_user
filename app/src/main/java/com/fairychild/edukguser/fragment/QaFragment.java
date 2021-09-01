@@ -39,7 +39,7 @@ import com.fairychild.edukguser.Msg;
 public class QaFragment extends Fragment implements View.OnClickListener{
 
     public interface QaListener {
-        String sendInfo(String course, String inputQuestion);
+        void sendInfo(String course, String inputQuestion);
     }
     private static final String[] m={"chinese","math","english","biology","physics"};
     private List<Msg> msgList = new ArrayList<>();
@@ -126,7 +126,7 @@ public class QaFragment extends Fragment implements View.OnClickListener{
     public void onMessageEvent(MessageEvent event) {
         //System.out.println(event.message);
         try {
-            JSONObject obj = new JSONObject(event.message);
+            JSONObject obj = new JSONObject(event.getMessage());
             JSONArray arr = new JSONArray(obj.getString("data"));
             obj = arr.getJSONObject(0);
             String ans = obj.getString("message");

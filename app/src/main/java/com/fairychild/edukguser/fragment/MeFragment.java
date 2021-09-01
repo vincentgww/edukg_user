@@ -119,7 +119,6 @@ public class MeFragment extends Fragment {
         btnRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                //跳转至注册界面
                 listener.switchToRegister();
             }
         });

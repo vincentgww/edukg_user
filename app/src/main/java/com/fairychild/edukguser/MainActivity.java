@@ -3,11 +3,9 @@ import androidx.fragment.app.FragmentManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -36,21 +34,21 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
         KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener {
-    List<Fragment> mFragments;
+
     //组件
     private BottomNavigationView mBottomNavigationView;
-    //适配器
-    private ViewPagerAdapterForNav mViewPagerAdapterForNav;
     //Chip Group
-    private MenuItem menuItem;
     private String id;
+
+    private List<Fragment> mFragments;
     private FragmentTransaction transaction;
     private FragmentManager mSupportFragmentManager;
     private Fragment currentFragment;
+
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
-    private String str;
+
     private boolean firstInit = true;
 
     private SharedPreferences sharedPreferences;
@@ -61,46 +59,59 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 组件捆绑
         initElement();
 
+        // 获取轻量缓存
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
 
+        // 获取接口许可id
         getId();
 
+        System.out.println(0);
+
+        // 初始化fragments列表
         initFragments();
 
+        System.out.println(1);
+
+        // 设置底部导航栏监听器
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        System.out.println(2);
+
+        // 获取fragment管理器
         mSupportFragmentManager = getSupportFragmentManager();
-        //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
+
+        System.out.println(3);
+
         switchFragments(0);
+
+        System.out.println(4);
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(MenuItem item) {
-            menuItem = item;
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    switchFragments(0);
-                    return true;
-                case R.id.navigation_query:
-                    switchFragments(1);
-                    return true;
-                case R.id.navigation_functions:
-                    switchFragments(2);
-                    return true;
-                case R.id.navigation_me:
-                    switchFragments(3);
-                    return true;
-            }
-            return false;
+    @SuppressLint("NonConstantResourceId")
+    private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                switchFragments(0);
+                return true;
+            case R.id.navigation_query:
+                switchFragments(1);
+                return true;
+            case R.id.navigation_functions:
+                switchFragments(2);
+                return true;
+            case R.id.navigation_me:
+                switchFragments(3);
+                return true;
         }
+        return false;
     };
 
     private void initElement(){
-        mBottomNavigationView = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation_view);
+        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.activity_main_bottom_navigation_view);
     }
 
     private void initFragments(){
@@ -110,83 +121,58 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(FunctionFragment.newInstance());
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = mFragments.get(FragmentId);
-        if (!targetFragment.isAdded()) {
-            transaction.add(R.id.frameLayout,targetFragment);
-        }
-        if(!firstInit)
-            transaction.hide(currentFragment);
-        firstInit = false;
-        transaction.show(targetFragment);
-        transaction.commit();
-        currentFragment = targetFragment;
+        transaction.addToBackStack(null).replace(R.id.main_frame_layout, targetFragment).commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (mFragments.size() >= 1) {
-            //显示最顶部那一个
-            showFragment(mFragments.get(mFragments.size()-1));
-        }else {
-            System.out.println(mFragments.size());
-            System.out.println("finish!!!!!");
-            finish();
-        }
-    }
-
-    private void showFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for (Fragment f : mFragments) {
-            fragmentTransaction.hide(f);
-        }
-        fragmentTransaction.show(fragment);
-        fragmentTransaction.commit();
-    }
-
+    public void switchToHome() {switchFragments(0);}
+    public void switchToQa() {switchFragments(1);}
+    public void switchToFunction() {switchFragments(2);}
+    public void switchToMe() {switchFragments(3);}
     @Override
     public void switchToLogin(){
         switchFragments(4);
     }
-    public void switchToRegister() {switchFragments(6);}
+    public void switchToRegister() {switchFragments(5);}
+    public void switchToKnowledgeCheck(){
+        switchFragments(6);
+    }
+    public void switchToSearch() {
+        switchFragments(7);
+    }
+    public void switchToBrowsingHistory() {
+        switchFragments(8);
+    }
+    public void switchToFavourites() {
+        switchFragments(9);
+    }
+    public void switchToReport() {
+        switchFragments(10);
+    }
+
+    @Override
+    public void onBackPressed() {
+        System.out.println("MainActivity:onBackPressed");
+        if (mFragments.size() >= 1) {
+            mSupportFragmentManager.popBackStack();
+        } else {
+            finish();
+        }
+    }
 
     @Override
     public String getIdFromSP() {
         return sharedPreferences.getString("id", null);
     }
-
-    @Override
     public String getPhoneFromSP() {
         return sharedPreferences.getString("phone", null);
-    }
-
-    @Override
-    public void switchToBrowsingHistory() {
-        switchFragments(7);
-    }
-
-    @Override
-    public void switchToFavourites() {
-        switchFragments(8);
-    }
-
-    @Override
-    public void switchToReport() {
-        switchFragments(9);
-    }
-
-    @Override
-    public void switchToSearch() {
-        switchFragments(10);
     }
 
     public void check(EditText phone, EditText password) {
@@ -220,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             }
                         });
                     }
-                    //System.out.println(id);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -273,8 +258,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         }).start();
     }
 
-    public String sendInfo(String course, String inputQuestion){
-        str=null;
+    public void sendInfo(String course, String inputQuestion){
         new Thread(new Runnable() {
             @Override
             public synchronized void run() {
@@ -284,15 +268,9 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         " \"inputQuestion\":\"" + inputQuestion + "\",\n" +
                         " \"id\":\"" + id + "\"\n" +
                         "}";
-                //System.out.println(json);
                 try {
                     String response = OkHttp.post(url, json);
-                    //System.out.println(response);
-                    //JSONObject jsonObject = new JSONObject(response);
-                    //str = response
                     EventBus.getDefault().post(new MessageEvent(response));
-                    //qaListener.sendResponse(response);
-                    //System.out.println("response1"+jsonObject);
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
@@ -304,8 +282,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 }
             }
         }).start();
-        //System.out.println("response"+str);
-        return str;
     }
 
     private void getId() {
@@ -337,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                                 }
                             });
                         }
-                        //System.out.println(id);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -358,10 +333,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         }).start();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        //Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
-    }
     @Override
     public void onStart() {
         super.onStart();
@@ -372,10 +343,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
-
-    public void knowledgeCheck(){
-        switchFragments(5);
     }
 
     public void search_point(String s,String course){
@@ -391,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 try {
                     String response = OkHttp.post(url, json);
                     EventBus.getDefault().post(new MessageEvent(response));
-                    //System.out.println(id);
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
@@ -403,5 +369,10 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 }
             }
         }).start();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+
     }
 }
