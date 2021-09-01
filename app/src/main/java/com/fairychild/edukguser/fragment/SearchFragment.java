@@ -113,7 +113,6 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 searchContentString = searchContent.getText().toString();
-                System.out.println(searchContentString);
                 String id = listener.getIdFromSP();
                 if (!searchContentString.equals("") && subject != null && id != null) {
                     String url = "http://open.edukg.cn/opedukg/api/typeOpen/open/instanceList"
@@ -167,7 +166,7 @@ public class SearchFragment extends Fragment {
             ArrayList<Knowledge> content = new ArrayList<Knowledge>();
             content = gson.fromJson(data, new TypeToken<ArrayList<Knowledge>>(){}.getType());
             System.out.println(content);
-            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content.size(), content, searchContentString);
+            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content, searchContentString, subject);
             transaction.add(R.id.search_frame_layout, searchResultListFragment);
             if (!firstInit) {
                 transaction.remove(currentFragment);
@@ -177,7 +176,6 @@ public class SearchFragment extends Fragment {
             currentFragment = searchResultListFragment;
         } catch (JSONException e) {
             e.printStackTrace();
-            System.out.println("showFragment wrong!!!!!!!!!!");
         }
         transaction.commit();
     }

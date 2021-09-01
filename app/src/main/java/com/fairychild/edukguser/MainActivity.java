@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fairychild.edukguser.fragment.DetailFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
@@ -21,6 +22,7 @@ import com.fairychild.edukguser.fragment.LoginFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
+import com.fairychild.edukguser.fragment.SearchResultListFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -29,11 +31,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
-        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener {
+        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener, SearchResultListFragment.DetailListener {
 
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -43,11 +46,12 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private List<Fragment> mFragments;
     private FragmentTransaction transaction;
     private FragmentManager mSupportFragmentManager;
-    private Fragment currentFragment;
+    private Fragment currentFragment = null;
 
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
+    private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName";
 
     private boolean firstInit = true;
 
@@ -124,12 +128,14 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
+        mFragments.add(DetailFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = mFragments.get(FragmentId);
         transaction.addToBackStack(null).replace(R.id.main_frame_layout, targetFragment).commit();
+        currentFragment = targetFragment;
     }
 
     public void switchToHome() {switchFragments(0);}
@@ -156,12 +162,20 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void switchToReport() {
         switchFragments(10);
     }
+    public void switchToDetail() {
+        switchFragments(8);
+    }
 
     @Override
     public void onBackPressed() {
         System.out.println("MainActivity:onBackPressed");
         if (mFragments.size() >= 1) {
-            mSupportFragmentManager.popBackStack();
+            try {
+                mSupportFragmentManager.popBackStack();
+            } catch (Exception e) {
+                e.printStackTrace();
+                finish();
+            }
         } else {
             finish();
         }
@@ -374,5 +388,34 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
 
+    }
+
+    @Override
+    public void getDetail(String subject, String name) {
+        if (subject == null | name == null) {
+            Toast.makeText(MainActivity.this, "学科和实体名不得为空", Toast.LENGTH_SHORT).show();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = detailUrl
+                        + "?course=" + subject
+                        + "&name=" + name
+                        + "&id=" + id;
+                try {
+                    String response = OkHttp.get(url);
+                    switchToDetail();
+                    ((DetailFragment) currentFragment).setData(response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "获取内容失败，请重试！", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 }

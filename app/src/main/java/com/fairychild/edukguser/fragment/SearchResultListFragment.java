@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.fairychild.edukguser.MainActivity;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
 
@@ -28,8 +29,14 @@ import info.debatty.java.stringsimilarity.Jaccard;
  */
 public class SearchResultListFragment extends Fragment {
 
+    public interface DetailListener {
+        void getDetail(String subject, String name);
+    }
+
+    private SearchResultListFragment.DetailListener listener;
+
+    private String subject;
     private String searchContent;
-    private Integer size;
     private ArrayList<Knowledge> content;
     private Jaccard jaccard = new Jaccard();
 
@@ -39,12 +46,12 @@ public class SearchResultListFragment extends Fragment {
 
     public SearchResultListFragment() {
     }
-    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content, String searchContent) {
+    public static SearchResultListFragment newInstance(ArrayList<Knowledge> content, String searchContent, String subject) {
         SearchResultListFragment fragment = new SearchResultListFragment();
         Bundle args = new Bundle();
-        args.putInt("size", size);
         args.putParcelableArrayList("content", content);
         args.putString("searchContent", searchContent);
+        args.putString("subject", subject);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,15 +59,16 @@ public class SearchResultListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        listener = (MainActivity) getActivity();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            size = getArguments().getInt("size");
             content = getArguments().getParcelableArrayList("content");
             searchContent = getArguments().getString("searchContent");
+            subject = getArguments().getString("subject");
         }
     }
 
@@ -86,6 +94,13 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
         adapter.setData(content, false);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String name = adapter.getItem(i).getLabel();
+                listener.getDetail(subject, name);
+            }
+        });
         return view;
     }
 
