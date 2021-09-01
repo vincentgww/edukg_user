@@ -16,7 +16,7 @@
 
     <!--<androidx.core.widget.NestedScrollView
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
+        android:layout_width="match_parent"java.lang.ClassCastException: com.fairychild.edukguser.MainActivity cannot be cast
         android:layout_height="0dp"
         android:layout_weight="1"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">

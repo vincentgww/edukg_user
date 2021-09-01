@@ -20,6 +20,7 @@ import com.fairychild.edukguser.fragment.MeFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
+import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
+        mFragments.add(QuizFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -376,6 +378,9 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
 
     public void knowledgeCheck(){
         switchFragments(5);
+    }
+    public void quizSearch(){
+        switchFragments(11);
     }
 
     public void search_point(String s,String course){

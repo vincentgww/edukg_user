@@ -72,7 +72,7 @@ public class CategoryArrangement extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(mCategory.size() == 0){
-                    Toast.makeText(getApplicationContext(), "必须至少选择一个频道", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "必须至少选择一个学科", Toast.LENGTH_LONG).show();
                     return;
                 }
                 Intent intent = getIntent();
