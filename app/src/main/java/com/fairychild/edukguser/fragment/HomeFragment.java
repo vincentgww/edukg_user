@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.andy.library.ChannelBean;
 import com.fairychild.edukguser.Activity.CategoryArrangement;
+import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.MyViewPager;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.ViewPagerAdapterForNav;
@@ -73,7 +74,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(), getChildFragmentManager(), mFragments);
         mViewPager.setAdapter(mViewPagerAdapterForNav);
         mViewPager.setCurrentItem(0);
-
         tabLayout=view.findViewById(R.id.tab_layout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 Log.d("tabLayout","---onTabSelected");
                 int position = tab.getPosition();
                 System.out.println("position:" + position);
-                EventBus.getDefault().post(channelBeans.get(position).getName());
+                EventBus.getDefault().post(new MessageEvent(channelBeans.get(position).getName()));
                 mViewPager.setCurrentItem(position);
             }
             @Override
@@ -170,6 +170,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 addTab(channelBeans.get(i).getName());
             }
         }
+        EventBus.getDefault().post(new MessageEvent(channelBeans.get(0).getName()));
     }
 
     @Override

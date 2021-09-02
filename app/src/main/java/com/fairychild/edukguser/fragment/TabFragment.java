@@ -16,21 +16,35 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 
+import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.OkHttp;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.SubItem;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class TabFragment extends ListFragment implements OnScrollListener {
-    //private View mView;
+    private static final String TAG = "Cannot invoke method length() on null object";
     private ListView listView;
     Activity mactivity;
     private int visibleLastIndex=0;
@@ -40,7 +54,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     private Button loadMoreButton;
     private List<SubItem> items;
     private SubItemAdapter mAdapter;
-    private String cur_subject;
+    private String cur_subject="biology";
 
     @Nullable
     @Override
@@ -56,10 +70,11 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
         listView.addFooterView(loadmoreView);
         mactivity=getActivity();
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
         initAdapter();
         setListAdapter(mAdapter);
         listView.setOnScrollListener(this);
+        loadMoreButton.setOnClickListener(this::LoadMore);
     }
 
     public static TabFragment newInstance(){
@@ -73,28 +88,50 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             @Override
             public void run() {
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
-                try{
-                    String response= OkHttp.get(url);
-                    JSONObject jsonObject = new JSONObject(response);
-                    try{
-                        String data = jsonObject.getString("data");
-                        JSONObject dataJSON = new JSONObject(data);
-                        ArrayList<String> datalist= (ArrayList<String>) dataJSON.get("page");
-                        for(int i=0;i<datalist.size();i++){
-                            JSONObject dJson=new JSONObject(datalist.get(i));
-                            String cur_entity=dJson.getString("entity_name");
-                            SubItem cur_item=new SubItem(cur_entity,cur_subject,cur_subject);
-                            items.add(cur_item);
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
+                OkHttpClient okHttpClient=new OkHttpClient();
+                Request request=new Request.Builder().get().url(url).build();
+                Call call=okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
                     }
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        final String res=response.body().string();
+                        mactivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try{
+                                    JSONObject jsonObject=new JSONObject(res);
+                                    String data=jsonObject.getString("data");
+                                    JSONObject tjson=new JSONObject(data);
+                                    String page=tjson.getString("page");
+                                    JSONArray jsonArray=new JSONArray(page);
+                                    for(int i=0;i<jsonArray.length();i++){
+                                        try {
+                                            tjson=jsonArray.getJSONObject(i);
+                                            String cur_title=tjson.getString("entity_name");
+                                            SubItem cur_item=new SubItem(cur_title,cur_subject,cur_subject);
+                                            items.add(cur_item);
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    mAdapter=new SubItemAdapter(mactivity,items);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                    }
+                });
+
             }
         });
-        mAdapter=new SubItemAdapter(mactivity,items);
+        //mAdapter=new SubItemAdapter(mactivity,items);
     }
 
     @Override
@@ -111,43 +148,72 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             Log.i("LOADMORE", "loading...");
         }
     }
-    public void loadMore(View view){
+    public void LoadMore(View view){
         loadMoreButton.setText("loading...");
         cur_page++;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
-                try{
-                    String response= OkHttp.get(url);
-                    JSONObject jsonObject = new JSONObject(response);
-                    try{
-                        String data = jsonObject.getString("data");
-                        JSONObject dataJSON = new JSONObject(data);
-                        ArrayList<String> datalist= (ArrayList<String>) dataJSON.get("page");
-                        for(int i=0;i<datalist.size();i++){
-                            JSONObject dJson=new JSONObject(datalist.get(i));
-                            String cur_entity=dJson.getString("entity_name");
-                            SubItem cur_item=new SubItem(cur_entity,cur_subject,cur_subject);
-                            items.add(cur_item);
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
+                OkHttpClient okHttpClient=new OkHttpClient();
+                Request request=new Request.Builder().get().url(url).build();
+                Call call=okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
                     }
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                mAdapter.notifyDataSetChanged();
-                listView.setSelection(visibleLastIndex - visibleItemCount + 1);
-                loadMoreButton.setText("Load more");
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        final String res=response.body().string();
+                        mactivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try{
+                                    JSONObject jsonObject=new JSONObject(res);
+                                    String data=jsonObject.getString("data");
+                                    JSONObject tjson=new JSONObject(data);
+                                    String page=tjson.getString("page");
+                                    JSONArray jsonArray=new JSONArray(page);
+                                    for(int i=0;i<jsonArray.length();i++){
+                                        try {
+                                            tjson=jsonArray.getJSONObject(i);
+                                            String cur_title=tjson.getString("entity_name");
+                                            SubItem cur_item=new SubItem(cur_title,cur_subject,cur_subject);
+                                            items.add(cur_item);
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    mAdapter.notifyDataSetChanged();
+                                    listView.setSelection(visibleLastIndex - visibleItemCount + 1);
+                                    loadMoreButton.setText("Load more");
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                    }
+                });
             }
         });
     }
 
-    @Subscribe
-    public void onEvent(String data){
-        cur_subject=data;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event){
+        Log.d(TAG,event.message.toLowerCase(Locale.ROOT));
+        cur_subject=event.message.toLowerCase(Locale.ROOT);
+        Log.d(TAG,cur_subject);
     }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
     @Override
     public void onDestroy(){
         super.onDestroy();
