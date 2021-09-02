@@ -28,6 +28,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +81,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 Log.d("tabLayout","---onTabSelected");
                 int position = tab.getPosition();
                 System.out.println("position:" + position);
+                EventBus.getDefault().post(channelBeans.get(position).getName());
                 mViewPager.setCurrentItem(position);
             }
             @Override
