@@ -46,15 +46,15 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_tab,container,false);
-        listView=view.findViewById(R.id.list);
-        loadmoreView=inflater.inflate(R.layout.load_more,null);
+        listView=getListView();
+        loadmoreView=getLayoutInflater().inflate(R.layout.load_more,null);
         loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
         listView.addFooterView(loadmoreView);
         mactivity=getActivity();
+        EventBus.getDefault().register(this);
         initAdapter();
         setListAdapter(mAdapter);
         listView.setOnScrollListener(this);
-        EventBus.getDefault().register(this);
         return view;
     }
 

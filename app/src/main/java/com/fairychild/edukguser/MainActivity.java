@@ -340,12 +340,12 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             });
                         }
                         //System.out.println(id);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
