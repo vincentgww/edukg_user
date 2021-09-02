@@ -36,14 +36,17 @@ public class detailFragment extends Fragment {
     private RecyclerView itemRecyclerView2;
     private ItemAdapter adapter1;
     private ItemAdapter adapter2;
+    private int idx;
     public interface detailListener {
         void get_detail(String entity_name, String course);
+        void delete_fragment(int idx);
     }
     detailListener listener;
     String name,course;
-    detailFragment(String entity_name, String course){
+    detailFragment(String entity_name, String course, int idx){
         super();
         name = entity_name;
+        this.idx = idx;
         this.course = course;
     }
 
@@ -134,8 +137,8 @@ public class detailFragment extends Fragment {
     }
 
 
-    public static detailFragment newInstance(String entity_name, String course){
-        detailFragment indexFragment = new detailFragment(entity_name, course);
+    public static detailFragment newInstance(String entity_name, String course, int idx){
+        detailFragment indexFragment = new detailFragment(entity_name, course, idx);
         return indexFragment;
     }
 
@@ -148,6 +151,7 @@ public class detailFragment extends Fragment {
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+        listener.delete_fragment(idx);
         super.onStop();
     }
 }

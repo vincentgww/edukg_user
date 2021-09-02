@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mSupportFragmentManager = getSupportFragmentManager();
         //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
+        //show_detail_fragment("李白","chinese");
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -111,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments = new ArrayList<>();
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(QaFragment.newInstance());
-        //mFragments.add(FunctionFragment.newInstance());
-        mFragments.add(detailFragment.newInstance("李白","chinese"));
+        mFragments.add(FunctionFragment.newInstance());
+        //mFragments.add(detailFragment.newInstance("李白","chinese"));
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
@@ -137,6 +138,24 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         transaction.commit();
         currentFragment = targetFragment;
     }
+
+    public void show_detail_fragment(String label,String course){
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = detailFragment.newInstance(label,course,mFragments.size());
+        mFragments.add(targetFragment);
+        transaction.add(R.id.frameLayout,targetFragment);
+        transaction.hide(currentFragment);
+        transaction.show(targetFragment);
+        transaction.commit();
+        currentFragment = targetFragment;
+    }
+
+    public void delete_fragment(int idx){
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = mFragments.get(idx);
+        transaction.remove(targetFragment);
+    }
+
 
     @Override
     public void onBackPressed() {
