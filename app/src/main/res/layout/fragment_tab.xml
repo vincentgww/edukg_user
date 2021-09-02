@@ -6,7 +6,7 @@
 
     <!-- 这个是在容器中央的 -->
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/sublist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

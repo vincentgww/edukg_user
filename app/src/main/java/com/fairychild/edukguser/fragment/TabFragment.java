@@ -65,14 +65,14 @@ public class TabFragment extends ListFragment implements OnScrollListener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        listView=getListView();
+        mactivity=getActivity();
+        //EventBus.getDefault().register(this);
+        listView=(ListView)view.findViewById(R.id.sublist);
         loadmoreView=getLayoutInflater().inflate(R.layout.load_more,null);
         loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
         listView.addFooterView(loadmoreView);
-        mactivity=getActivity();
-        //EventBus.getDefault().register(this);
         initAdapter();
-        setListAdapter(mAdapter);
+        listView.setAdapter(mAdapter);
         listView.setOnScrollListener(this);
         loadMoreButton.setOnClickListener(this::LoadMore);
     }
@@ -84,7 +84,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
 
     private void initAdapter(){
         items=new ArrayList<>();
-        new Thread(new Runnable() {
+        mactivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
@@ -95,6 +95,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
+                        Log.d(TAG,"get failed");
                     }
 
                     @Override
@@ -151,7 +152,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     public void LoadMore(View view){
         loadMoreButton.setText("loading...");
         cur_page++;
-        new Thread(new Runnable() {
+        mactivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
@@ -162,11 +163,13 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
+                        Log.d(TAG,"get failed");
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         final String res=response.body().string();
+                        //Log.d(TAG,res);
                         mactivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -188,7 +191,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                                     }
                                     mAdapter.notifyDataSetChanged();
                                     listView.setSelection(visibleLastIndex - visibleItemCount + 1);
-                                    loadMoreButton.setText("Load more");
+                                    loadMoreButton.setText("Load more...");
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
@@ -199,13 +202,14 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                 });
             }
         });
+        //loadMoreButton.setText("Load more...");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event){
-        Log.d(TAG,event.message.toLowerCase(Locale.ROOT));
+        //Log.d(TAG,event.message.toLowerCase(Locale.ROOT));
         cur_subject=event.message.toLowerCase(Locale.ROOT);
-        Log.d(TAG,cur_subject);
+        //Log.d(TAG,cur_subject);
     }
 
     @Override
