@@ -54,20 +54,17 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     private Button loadMoreButton;
     private List<SubItem> items;
     private SubItemAdapter mAdapter;
-    private String cur_subject="biology";
+    private String cur_subject;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_tab,container,false);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mactivity=getActivity();
         //EventBus.getDefault().register(this);
-        listView=(ListView)view.findViewById(R.id.sublist);
+        cur_subject=getArguments().getString("arg").toLowerCase(Locale.ROOT);
+        listView=(ListView)view.findViewById(android.R.id.list);
         loadmoreView=getLayoutInflater().inflate(R.layout.load_more,null);
         loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
         listView.addFooterView(loadmoreView);
@@ -75,10 +72,19 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         listView.setAdapter(mAdapter);
         listView.setOnScrollListener(this);
         loadMoreButton.setOnClickListener(this::LoadMore);
+        return view;
     }
 
-    public static TabFragment newInstance(){
+    //@Override
+    //public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+    //}
+
+    public static TabFragment newInstance(String arg){
         TabFragment indexFragment = new TabFragment();
+        Bundle bundle=new Bundle();
+        bundle.putString("arg",arg);
+        indexFragment.setArguments(bundle);
         return indexFragment;
     }
 
@@ -87,6 +93,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         mactivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                System.out.println(cur_subject);
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
                 OkHttpClient okHttpClient=new OkHttpClient();
                 Request request=new Request.Builder().get().url(url).build();
@@ -100,7 +107,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        final String res=response.body().string();
+                        String res=response.body().string();
                         mactivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -108,11 +115,12 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                                     JSONObject jsonObject=new JSONObject(res);
                                     String data=jsonObject.getString("data");
                                     JSONObject tjson=new JSONObject(data);
-                                    String page=tjson.getString("page");
-                                    JSONArray jsonArray=new JSONArray(page);
-                                    for(int i=0;i<jsonArray.length();i++){
+                                    JSONArray page=tjson.getJSONArray("page");
+                                    //JSONArray page = new JSONArray(page_str);
+                                    //JSONArray jsonArray=new JSONArray(page);
+                                    for(int i=0;i<page.length();i++){
                                         try {
-                                            tjson=jsonArray.getJSONObject(i);
+                                            tjson=page.getJSONObject(i);
                                             String cur_title=tjson.getString("entity_name");
                                             SubItem cur_item=new SubItem(cur_title,cur_subject,cur_subject);
                                             items.add(cur_item);
@@ -151,10 +159,12 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     }
     public void LoadMore(View view){
         loadMoreButton.setText("loading...");
+        System.out.println(cur_page);
         cur_page++;
         mactivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                System.out.println(cur_subject);
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
                 OkHttpClient okHttpClient=new OkHttpClient();
                 Request request=new Request.Builder().get().url(url).build();
@@ -168,7 +178,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        final String res=response.body().string();
+                        String res=response.body().string();
                         //Log.d(TAG,res);
                         mactivity.runOnUiThread(new Runnable() {
                             @Override
@@ -177,11 +187,10 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                                     JSONObject jsonObject=new JSONObject(res);
                                     String data=jsonObject.getString("data");
                                     JSONObject tjson=new JSONObject(data);
-                                    String page=tjson.getString("page");
-                                    JSONArray jsonArray=new JSONArray(page);
-                                    for(int i=0;i<jsonArray.length();i++){
+                                    JSONArray page=tjson.getJSONArray("page");
+                                    for(int i=0;i<page.length();i++){
                                         try {
-                                            tjson=jsonArray.getJSONObject(i);
+                                            tjson=page.getJSONObject(i);
                                             String cur_title=tjson.getString("entity_name");
                                             SubItem cur_item=new SubItem(cur_title,cur_subject,cur_subject);
                                             items.add(cur_item);
@@ -205,22 +214,22 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         //loadMoreButton.setText("Load more...");
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event){
-        //Log.d(TAG,event.message.toLowerCase(Locale.ROOT));
-        cur_subject=event.message.toLowerCase(Locale.ROOT);
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onMessageEvent(MessageEvent event){
+//        Log.d(TAG,event.message.toLowerCase(Locale.ROOT));
+//        cur_subject=event.message.toLowerCase(Locale.ROOT);
         //Log.d(TAG,cur_subject);
-    }
+//    }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
+    //@Override
+//    public void onStart(){
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
+//    @Override
+//    public void onDestroy(){
+//        super.onDestroy();
+//        EventBus.getDefault().unregister(this);
+//    }
 }

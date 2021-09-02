@@ -75,13 +75,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         mViewPager.setAdapter(mViewPagerAdapterForNav);
         mViewPager.setCurrentItem(0);
         tabLayout=view.findViewById(R.id.tab_layout);
+        //tabLayout.setupWithViewPager(mViewPager);
+        //tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 Log.d("tabLayout","---onTabSelected");
                 int position = tab.getPosition();
                 System.out.println("position:" + position);
-                EventBus.getDefault().post(new MessageEvent(channelBeans.get(position).getName()));
+                //EventBus.getDefault().post(new MessageEvent(channelBeans.get(position).getName()));
                 mViewPager.setCurrentItem(position);
             }
             @Override
@@ -158,19 +160,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         channelBeans.add(new ChannelBean("CHEMISTRY",true));
         channelBeans.add(new ChannelBean("CHINESE",true));
         channelBeans.add(new ChannelBean("ENGLISH",false));
-        channelBeans.add(new ChannelBean("GEOGRAPHY",false));
+        channelBeans.add(new ChannelBean("GEO",false));
         channelBeans.add(new ChannelBean("HISTORY",false));
-        channelBeans.add(new ChannelBean("MATHS",false));
+        channelBeans.add(new ChannelBean("MATH",false));
         channelBeans.add(new ChannelBean("PHYSICS",false));
         channelBeans.add(new ChannelBean("POLITICS",false));
         for(int i=0;i<channelBeans.size();i++){
             if(channelBeans.get(i).isSelect()){
-                mFragments.add(TabFragment.newInstance());
+                mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName()));
                 mViewPagerAdapterForNav.setFragments(mFragments);
                 addTab(channelBeans.get(i).getName());
             }
         }
-        EventBus.getDefault().post(new MessageEvent(channelBeans.get(0).getName()));
+        //EventBus.getDefault().post(new MessageEvent(channelBeans.get(0).getName()));
     }
 
     @Override
@@ -226,7 +228,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
                 for(int i=0;i<channelBeans.size();i++){
                     if(channelBeans.get(i).isSelect()){
-                        mFragments.add(TabFragment.newInstance());
+                        mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName()));
                         System.out.println(channelBeans.get(i).getName());
                         mViewPagerAdapterForNav.setFragments(mFragments);
                         addTab(channelBeans.get(i).getName());
