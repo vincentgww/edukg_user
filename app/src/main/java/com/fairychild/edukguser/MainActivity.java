@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         sharedPreferencesEditor.remove("username");
         sharedPreferencesEditor.remove("password");
         sharedPreferencesEditor.remove("id");
-        EventBus.getDefault().post(new LogoutNotice());
     }
 
     public void switchToKnowledgeCheck(){
@@ -406,7 +405,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             userDatabaseHelper = new UserDatabaseHelper(MainActivity.this, username + ".db");
                             db = userDatabaseHelper.getWritableDatabase();
 
-                            EventBus.getDefault().post(new LoginNotice(username));
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
