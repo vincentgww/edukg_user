@@ -68,13 +68,9 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url="http://47.93.101.225:8000/data";
-                String json = "{\n" +
-                        " \"course\":\"" + cur_subject + "\",\n" +
-                        " \"page\":\"" + cur_page + "\",\n" +
-                        "}";
+                String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
                 try{
-                    String response= OkHttp.post(url, json);
+                    String response= OkHttp.get(url);
                     JSONObject jsonObject = new JSONObject(response);
                     try{
                         String data = jsonObject.getString("data");
@@ -94,7 +90,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                 }
             }
         });
-        mAdapter=new SubItemAdapter(getContext(),items);
+        mAdapter=new SubItemAdapter(mactivity,items);
     }
 
     @Override
@@ -117,13 +113,9 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url="http://47.93.101.225:8000/data";
-                String json = "{\n" +
-                        " \"course\":\"" + cur_subject + "\",\n" +
-                        " \"page\":\"" + cur_page + "\",\n" +
-                        "}";
+                String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
                 try{
-                    String response= OkHttp.post(url, json);
+                    String response= OkHttp.get(url);
                     JSONObject jsonObject = new JSONObject(response);
                     try{
                         String data = jsonObject.getString("data");
