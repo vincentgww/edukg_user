@@ -24,6 +24,7 @@ import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
+import com.fairychild.edukguser.fragment.detailFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -36,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
-        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener {
+        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener,
+        detailFragment.detailListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
+    private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
     private String str;
     private boolean firstInit = true;
 
@@ -108,7 +111,8 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments = new ArrayList<>();
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(QaFragment.newInstance());
-        mFragments.add(FunctionFragment.newInstance());
+        //mFragments.add(FunctionFragment.newInstance());
+        mFragments.add(detailFragment.newInstance("李白","chinese"));
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
@@ -340,12 +344,12 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             });
                         }
                         //System.out.println(id);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
@@ -403,6 +407,39 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         @Override
                         public void run() {
                             Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public void get_detail(String entity_name, String course){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = detailUrl + "course="+course+"&name="+entity_name+"&id="+id;
+                /*String json = "{\n" +
+                        " \"course\":\"" + course + "\",\n" +
+                        " \"name\":\"" + entity_name+ "\",\n" +
+                        " \"id\":\"" + id + "\"\n" +
+                        "}";*/
+                try {
+                    String response = OkHttp.get(url);
+                    EventBus.getDefault().post(new MessageEvent(response));
+                    //System.out.println(response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

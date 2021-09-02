@@ -41,7 +41,7 @@ public class QaFragment extends Fragment implements View.OnClickListener{
     public interface QaListener {
         String sendInfo(String course, String inputQuestion);
     }
-    private static final String[] m={"chinese","math","english","biology","physics"};
+    private static final String[] m={"chinese","math","english","biology","physics","geo","politics","chemistry","history"};
     private List<Msg> msgList = new ArrayList<>();
     private EditText inputText;
     private Button send;
@@ -56,23 +56,7 @@ public class QaFragment extends Fragment implements View.OnClickListener{
     private String responseData;
     private int curr;                   //当前显示的消息条数
     private int jsonLen;                //获取到的json列表长度
-    private Handler handler = new Handler(Looper.myLooper()){
-        //获取当前进程的Looper对象传给handler
-        //在目前的Android开发中，子线程不能改变UI，
-        //所以子线程要对UI进行操作需要交给一个Handler对象来执行
-        @Override
-        public void handleMessage(Message message){
-            System.out.println("message: "+message.getData());
-            String message_Name = message.getData().getString("name");
-            String message_msgC = message.getData().getString("msgContent");
-            if(!message_msgC.equals("")){
-                if(message_Name.equals(myName))
-                    addNewMessage(message_msgC, Msg.TYPE_SENT);
-                else
-                    addNewMessage(message_msgC,Msg.TYPE_RECEIVED);
-            }
-        }
-    };
+
     public void addNewMessage(String msg,int type){
         Msg message = new Msg(msg,type);
         msgList.add(message);
@@ -139,27 +123,7 @@ public class QaFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    public void parseJSONWithJSONObject(String jsonData) {  //解析JSON数据函数
-        try {
-            JSONArray jsonArray = new JSONArray(jsonData);
-            jsonLen = jsonArray.length();
-            for (; curr < jsonLen; curr++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(curr);
-                String name = jsonObject.getString("name");
-                String msgContent = jsonObject.getString("message");
-                Message message = new Message();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", name);
-                bundle.putString("msgContent", msgContent);  //往Bundle中存放数据
-                message.setData(bundle);//mes利用Bundle传递数据
-                handler.sendMessage(message);//用activity中的handler发送消息
-            }
-        } catch (Exception e) {
-            Looper.prepare();
-            Toast.makeText(getActivity(), "解析json错误!", Toast.LENGTH_SHORT).show();
-            Looper.loop();
-        }
-    }
+
     String msgEntity;
     @Override
     public void onClick(View view){
