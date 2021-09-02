@@ -46,6 +46,7 @@ public class SearchResultListFragment extends Fragment {
 
     public SearchResultListFragment() {
     }
+
     public static SearchResultListFragment newInstance(ArrayList<Knowledge> content, String searchContent, String subject) {
         SearchResultListFragment fragment = new SearchResultListFragment();
         Bundle args = new Bundle();

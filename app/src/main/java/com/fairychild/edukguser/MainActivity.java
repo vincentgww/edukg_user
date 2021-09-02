@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -15,9 +16,11 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fairychild.edukguser.datastructure.BrowsingHistory;
 import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.datastructure.MessageEvent;
+import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.DetailFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
@@ -45,7 +48,8 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
-        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener, SearchResultListFragment.DetailListener {
+        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener, SearchResultListFragment.DetailListener,
+        BrowsingHistoryListFragment.DataBaseListener{
 
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -134,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(KnowledgeCheckFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
         mFragments.add(DetailFragment.newInstance());
+        mFragments.add(BrowsingHistoryListFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -179,17 +184,17 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void switchToSearch() {
         switchFragments(7);
     }
-    public void switchToBrowsingHistory() {
-        switchFragments(8);
-    }
-    public void switchToFavourites() {
-        switchFragments(9);
-    }
-    public void switchToReport() {
-        switchFragments(10);
-    }
     public void switchToDetail() {
         switchFragments(8);
+    }
+    public void switchToBrowsingHistory() {
+        switchFragments(9);
+    }
+    public void switchToFavourites() {
+        switchFragments(10);
+    }
+    public void switchToReport() {
+        switchFragments(11);
     }
 
     @Override
@@ -516,5 +521,28 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 }
             }
         }).start();
+    }
+
+    @Override
+    public ArrayList<BrowsingHistory> getBrowsingHistory() {
+        String username = sharedPreferences.getString("username", null);
+        ArrayList<BrowsingHistory> browsingHistoryArrayList = null;
+        if (id != null && username != null) {
+            Cursor cursor = db.query("BROWSINGHISTORY", null, null, null, null, null, "ID");
+            if (cursor.moveToFirst()) {
+                browsingHistoryArrayList = new ArrayList<BrowsingHistory>();
+                do {
+                    Integer id = cursor.getInt(cursor.getColumnIndex("ID"));
+                    String course = cursor.getString(cursor.getColumnIndex("COURSE"));
+                    String name = cursor.getString(cursor.getColumnIndex("NAME"));
+                    String time = cursor.getString(cursor.getColumnIndex("TIME"));
+                    browsingHistoryArrayList.add(BrowsingHistory.newInstance(id, course, name, time));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } else {
+            Toast.makeText(MainActivity.this, "请先登录，再查看浏览历史记录", Toast.LENGTH_SHORT).show();
+        }
+        return browsingHistoryArrayList;
     }
 }

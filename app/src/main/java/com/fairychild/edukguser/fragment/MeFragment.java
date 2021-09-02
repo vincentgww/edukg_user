@@ -82,7 +82,7 @@ public class MeFragment extends Fragment {
         btnRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                listener.logout();
+                listener.switchToRegister();
             }
         });
 
