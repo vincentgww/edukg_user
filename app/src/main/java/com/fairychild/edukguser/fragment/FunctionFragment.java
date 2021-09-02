@@ -12,10 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.fairychild.edukguser.R;
+import com.google.android.material.card.MaterialCardView;
 
 public class FunctionFragment extends Fragment {
     public interface FunctionListener {
         void switchToKnowledgeCheck();
+        void switchToQuiz();
     }
     private FunctionListener listener;
     @Nullable
@@ -31,6 +33,13 @@ public class FunctionFragment extends Fragment {
                     }
                 }
         );
+        MaterialCardView card=view.findViewById(R.id.test_card);
+        card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.switchToQuiz();
+            }
+        });
         return view;
     }
 

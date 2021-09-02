@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -28,6 +27,7 @@ import com.fairychild.edukguser.fragment.MeFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
+import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
@@ -49,7 +49,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
         KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener, SearchResultListFragment.DetailListener,
-        BrowsingHistoryListFragment.DataBaseListener{
+        BrowsingHistoryListFragment.DataBaseListener, DetailFragment.detailListener{
 
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -137,8 +137,11 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
-        mFragments.add(DetailFragment.newInstance());
+        mFragments.add(DetailFragment.newInstance("李白","chinese"));
         mFragments.add(BrowsingHistoryListFragment.newInstance());
+        mFragments.add(HomeFragment.newInstance());
+        mFragments.add(HomeFragment.newInstance());
+        mFragments.add(QuizFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -168,15 +171,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         switchFragments(4);
     }
     public void switchToRegister() { switchFragments(5); }
-
-    @Override
-    public void logout() {
-        id = null;
-        sharedPreferencesEditor.remove("username");
-        sharedPreferencesEditor.remove("password");
-        sharedPreferencesEditor.remove("id");
-    }
-
     public void switchToKnowledgeCheck(){
         switchFragments(6);
     }
@@ -194,6 +188,20 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     }
     public void switchToReport() {
         switchFragments(11);
+    }
+    public void switchToQuiz() {
+        switchFragments(12);
+    }
+
+    @Override
+    public void logout() {
+        id = null;
+        sharedPreferencesEditor.remove("username");
+        sharedPreferencesEditor.remove("password");
+        sharedPreferencesEditor.remove("id");
+        db.close();
+        userDatabaseHelper = null;
+        switchToMe();
     }
 
     @Override
@@ -484,31 +492,38 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     }
 
     @Override
-    public void getDetail(String subject, String name) {
-        if (subject == null | name == null) {
+    public void getDetail(String entity_name, String course){
+        if (entity_name == null | course == null) {
             Toast.makeText(MainActivity.this, "学科和实体名不得为空", Toast.LENGTH_SHORT).show();
+            return;
         }
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url = detailUrl
-                        + "?course=" + subject
-                        + "&name=" + name
-                        + "&id=" + id;
+                        + "?course=" + course
+                        + "&name=" + entity_name
+                        + "&id="+id;
                 try {
                     String response = OkHttp.get(url);
                     JSONObject jsonObject = new JSONObject(response);
                     String response_code = jsonObject.getString("code");
                     if (response_code.equals("0")) {
                         ContentValues values = new ContentValues();
-                        values.put("COURSE", subject);
-                        values.put("NAME", name);
+                        values.put("COURSE", course);
+                        values.put("NAME", entity_name);
                         values.put("TIME", df.format(new Date()));
                         db.insert("BROWSINGHISTORY", null, values);
+                        EventBus.getDefault().postSticky(new MessageEvent(response));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                switchToDetail();
+                                Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                    switchToDetail();
-                    ((DetailFragment) currentFragment).setData(response);
-                } catch (IOException | JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -526,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         String username = sharedPreferences.getString("username", null);
         ArrayList<BrowsingHistory> browsingHistoryArrayList = null;
         if (id != null && username != null) {
-            Cursor cursor = db.query("BROWSINGHISTORY", null, null, null, null, null, "ID");
+            Cursor cursor = db.query("BROWSINGHISTORY", null, null, null, null, null, "ID DESC");
             if (cursor.moveToFirst()) {
                 browsingHistoryArrayList = new ArrayList<BrowsingHistory>();
                 do {

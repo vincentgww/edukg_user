@@ -31,18 +31,29 @@
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_login.xml" value="0.11979166666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_main.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_me.xml" value="0.1" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/bar_top.xml" value="0.23777173913043478" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/bottom_navigation_item_selector.xml" value="0.1" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/bottom_navigation_menu.xml" value="0.1" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/channel.xml" value="0.15896739130434784" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_favourite.xml" value="0.2346014492753623" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_home.xml" value="0.165" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_item.xml" value="0.24456521739130435" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_item_list.xml" value="0.2346014492753623" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_knowledgecheck.xml" value="0.17255434782608695" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_login.xml" value="0.11" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_me.xml" value="0.25" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_qa.xml" value="0.15416666666666667" />
-        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_tab.xml" value="0.13802083333333334" />
-        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/function_fragment.xml" value="0.1743659420289855" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_quizsearch.xml" value="0.25" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_report.xml" value="0.23777173913043478" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_search.xml" value="0.165" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_search_result_list.xml" value="0.23777173913043478" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_tab.xml" value="0.165" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/function_fragment.xml" value="0.1" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/item_search_result.xml" value="0.23777173913043478" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/load_more.xml" value="0.11" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/msg_item.xml" value="0.15416666666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/register.xml" value="0.125" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/sublist_item.xml" value="0.335" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/menu/bottom_navigation_item_selector.xml" value="0.165" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/menu/top_app_bar.xml" value="0.11018518518518519" />
