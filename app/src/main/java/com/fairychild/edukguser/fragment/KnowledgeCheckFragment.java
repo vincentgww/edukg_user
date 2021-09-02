@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.fairychild.edukguser.MessageEvent;
+import com.fairychild.edukguser.datastructure.MessageEvent;
 import com.fairychild.edukguser.R;
 
 import org.greenrobot.eventbus.EventBus;

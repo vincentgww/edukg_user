@@ -16,10 +16,10 @@ import com.fairychild.edukguser.R;
 
 public class LoginFragment extends Fragment {
     public interface LoginListener {
-        void check(EditText phone, EditText password);
+        void login(String phone, String password);
     }
     private Button btnSignIn;
-    private EditText etPhone;
+    private EditText etUsername;
     private EditText etPassword;
     private LoginListener listener;
     @Nullable
@@ -28,14 +28,14 @@ public class LoginFragment extends Fragment {
             //setContentView(R.layout.fragment_login);
             View view = inflater.inflate(R.layout.fragment_login,getActivity().findViewById(R.id.login_layout));
             btnSignIn = view.findViewById(R.id.btn_sign_in);
-            etPhone = view.findViewById(R.id.login_phone);
+            etUsername = view.findViewById(R.id.login_username);
             etPassword = view.findViewById(R.id.login_password);
             btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.check(etPhone,etPassword);
-            }
-        });
+                @Override
+                public void onClick(View v) {
+                    listener.login(etUsername.getText().toString(), etPassword.getText().toString());
+                }
+            });
             return view;
     }
 

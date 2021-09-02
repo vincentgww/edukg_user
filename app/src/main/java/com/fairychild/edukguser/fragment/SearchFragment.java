@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,22 +17,24 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.fairychild.edukguser.MainActivity;
-import com.fairychild.edukguser.OkHttp;
+import com.fairychild.edukguser.datastructure.MessageEvent;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class SearchFragment extends Fragment {
 
     public interface FragmentListener {
-        String getIdFromSP();
+        void search(String subject, String searchKey);
     }
 
     private Spinner subjectSpinner;
@@ -41,7 +42,7 @@ public class SearchFragment extends Fragment {
     private String subject;
 
     private EditText searchContent;
-    private String searchContentString;
+    private String searchKey;
 
     private Button backBtn;
     private Button searchBtn;
@@ -110,48 +111,11 @@ public class SearchFragment extends Fragment {
 
         searchBtn = view.findViewById(R.id.real_search);
         searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchContentString = searchContent.getText().toString();
-                String id = listener.getIdFromSP();
-                if (!searchContentString.equals("") && subject != null && id != null) {
-                    String url = "http://open.edukg.cn/opedukg/api/typeOpen/open/instanceList"
-                            + "?course=" + subject
-                            + "&searchKey=" + searchContentString
-                            + "&id=" + id;
-                    System.out.println(url);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                String response = OkHttp.get(url);
-                                mainActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(mainActivity, "搜索成功", Toast.LENGTH_SHORT).show();
-                                        System.out.println(response);
-                                        showFragment(response);
-                                    }
-                                });
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                mainActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(mainActivity, "发送问题失败", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    }).start();
-                } else if (searchContentString.equals("")) {
-                    Toast.makeText(mainActivity, "搜索内容不能为空", Toast.LENGTH_SHORT).show();
-                } else if (id == null) {
-                    Toast.makeText(mainActivity, "您还没有登录，请先登录", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(mainActivity, "请选择学科", Toast.LENGTH_SHORT).show();
-                }
-            }
+             @Override
+             public void onClick(View view) {
+                 searchKey = searchContent.getText().toString();
+                 listener.search(subject, searchKey);
+             }
         });
 
         mSupportFragmentManager = mainActivity.getSupportFragmentManager();
@@ -166,7 +130,7 @@ public class SearchFragment extends Fragment {
             ArrayList<Knowledge> content = new ArrayList<Knowledge>();
             content = gson.fromJson(data, new TypeToken<ArrayList<Knowledge>>(){}.getType());
             System.out.println(content);
-            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content, searchContentString, subject);
+            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content, searchKey, subject);
             transaction.add(R.id.search_frame_layout, searchResultListFragment);
             if (!firstInit) {
                 transaction.remove(currentFragment);
@@ -178,5 +142,27 @@ public class SearchFragment extends Fragment {
             e.printStackTrace();
         }
         transaction.commit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        System.out.println(event.getMessage());
+        try {
+            showFragment(event.getMessage());
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

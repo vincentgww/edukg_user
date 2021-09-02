@@ -1,4 +1,4 @@
-package com.fairychild.edukguser;
+package com.fairychild.edukguser.datastructure;
 
 public class MessageEvent {
     private String message;

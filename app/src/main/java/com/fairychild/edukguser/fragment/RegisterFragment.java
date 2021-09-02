@@ -17,10 +17,10 @@ import androidx.fragment.app.Fragment;
 
 public class RegisterFragment extends Fragment {
     public interface RegisterListener {
-        void checkReg(TextInputEditText phone, TextInputEditText password);
+        void register(String username, String password);
     }
     private Button reg_Btn;
-    private TextInputEditText etPhone;
+    private TextInputEditText etUsername;
     private TextInputEditText etPassword;
     private RegisterListener listener;
     @Nullable
@@ -28,12 +28,12 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @androidx.annotation.Nullable ViewGroup container, @androidx.annotation.Nullable Bundle savedInstanceState){
         View view=inflater.inflate(R.layout.register,getActivity().findViewById(R.id.Register_Layout));
         reg_Btn=view.findViewById(R.id.regBtn);
-        etPhone=view.findViewById(R.id.register_phone);
+        etUsername=view.findViewById(R.id.register_username);
         etPassword=view.findViewById(R.id.register_password);
         reg_Btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                listener.checkReg(etPhone,etPassword);
+                listener.register(etUsername.getText().toString(),etPassword.getText().toString());
             }
         });
         return view;

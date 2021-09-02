@@ -21,7 +21,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.fairychild.edukguser.MessageEvent;
+import com.fairychild.edukguser.datastructure.MessageEvent;
 import com.fairychild.edukguser.MsgAdapter;
 import com.fairychild.edukguser.R;
 
@@ -124,7 +124,7 @@ public class QaFragment extends Fragment implements View.OnClickListener{
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        //System.out.println(event.message);
+        System.out.println(event.getMessage());
         try {
             JSONObject obj = new JSONObject(event.getMessage());
             JSONArray arr = new JSONArray(obj.getString("data"));

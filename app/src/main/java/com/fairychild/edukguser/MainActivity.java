@@ -4,14 +4,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.nfc.Tag;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fairychild.edukguser.datastructure.LoginNotice;
+import com.fairychild.edukguser.datastructure.LogoutNotice;
+import com.fairychild.edukguser.datastructure.MessageEvent;
 import com.fairychild.edukguser.fragment.DetailFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
@@ -23,16 +29,19 @@ import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
 import com.fairychild.edukguser.fragment.SearchResultListFragment;
+import com.fairychild.edukguser.sql.UserDatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.textfield.TextInputEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
@@ -53,10 +62,16 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName";
 
+    @SuppressLint("SimpleDateFormat")
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private boolean firstInit = true;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
+
+    private UserDatabaseHelper userDatabaseHelper;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -73,49 +88,39 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         // 获取接口许可id
         getId();
 
-        System.out.println(0);
-
         // 初始化fragments列表
         initFragments();
-
-        System.out.println(1);
 
         // 设置底部导航栏监听器
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        System.out.println(2);
-
         // 获取fragment管理器
         mSupportFragmentManager = getSupportFragmentManager();
 
-        System.out.println(3);
-
         switchFragments(0);
-
-        System.out.println(4);
     }
 
     @SuppressLint("NonConstantResourceId")
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                switchFragments(0);
+                switchToHome();
                 return true;
             case R.id.navigation_query:
-                switchFragments(1);
+                switchToQa();
                 return true;
             case R.id.navigation_functions:
-                switchFragments(2);
+                switchToFunction();
                 return true;
             case R.id.navigation_me:
-                switchFragments(3);
+                switchToMe();
                 return true;
         }
         return false;
     };
 
     private void initElement(){
-        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.activity_main_bottom_navigation_view);
+        mBottomNavigationView = findViewById(R.id.activity_main_bottom_navigation_view);
     }
 
     private void initFragments(){
@@ -141,12 +146,33 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void switchToHome() {switchFragments(0);}
     public void switchToQa() {switchFragments(1);}
     public void switchToFunction() {switchFragments(2);}
-    public void switchToMe() {switchFragments(3);}
+    public void switchToMe() {
+        switchFragments(3);
+        Log.d("MainActivity", "switchToMe");
+        String username = sharedPreferences.getString("username", null);
+        if (username != null && id != null) {
+            EventBus.getDefault().postSticky(new LoginNotice(username));
+            Log.d("MainActivity", "post new LoginNotice");
+        } else {
+            EventBus.getDefault().postSticky(new LogoutNotice());
+            Log.d("MainActivity", "post new LogoutNotice");
+        }
+    }
     @Override
     public void switchToLogin(){
         switchFragments(4);
     }
-    public void switchToRegister() {switchFragments(5);}
+    public void switchToRegister() { switchFragments(5); }
+
+    @Override
+    public void logout() {
+        id = null;
+        sharedPreferencesEditor.remove("username");
+        sharedPreferencesEditor.remove("password");
+        sharedPreferencesEditor.remove("id");
+        EventBus.getDefault().post(new LogoutNotice());
+    }
+
     public void switchToKnowledgeCheck(){
         switchFragments(6);
     }
@@ -182,81 +208,89 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     }
 
     @Override
-    public String getIdFromSP() {
-        return sharedPreferences.getString("id", null);
-    }
-    public String getPhoneFromSP() {
-        return sharedPreferences.getString("phone", null);
+    public void search(String subject, String searchKey) {
+        if (!searchKey.equals("") && subject != null && id != null) {
+            String url = "http://open.edukg.cn/opedukg/api/typeOpen/open/instanceList"
+                    + "?course=" + subject
+                    + "&searchKey=" + searchKey
+                    + "&id=" + id;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String response = OkHttp.get(url);
+                        JSONObject jsonObject = new JSONObject(response);
+                        String response_code = jsonObject.getString("code");
+                        String message = jsonObject.getString("msg");
+                        if (response_code.equals("0")) {
+                            EventBus.getDefault().post(new MessageEvent(response));
+                            ContentValues values = new ContentValues();
+                            values.put("COURSE", subject);
+                            values.put("SEARCHKEY", searchKey);
+                            values.put("TIME", df.format(new Date()));
+                            db.insert("SEARCHHISTORY", null, values);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "搜索成功", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "搜索失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } else if (searchKey.equals("")) {
+            Toast.makeText(MainActivity.this, "搜索内容不能为空", Toast.LENGTH_SHORT).show();
+        } else if (id == null) {
+            Toast.makeText(MainActivity.this, "您还没有登录，请先登录", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "请选择学科", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void check(EditText phone, EditText password) {
+    public void login(String username, String password) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url = "http://47.93.101.225:8080/login";
                 String json = "{\n" +
-                        " \"account\":\"" + phone.getText() + "\",\n" +
-                        " \"password\":\"" + password.getText() + "\"\n" +
+                        " \"account\":\"" + username + "\",\n" +
+                        " \"password\":\"" + password + "\"\n" +
                         "}";
                 try {
                     String response = OkHttp.post(url, json);
-                    System.out.println(response);
-                    JSONObject jsonObject = new JSONObject(response);
                     try{
-                        String data = jsonObject.getString("data");
-                        JSONObject dataJSON = new JSONObject(data);
-                        id = dataJSON.getString("id");
-                        sharedPreferencesEditor.putString("id", id);
-                        sharedPreferencesEditor.putString("phone", phone.getText().toString());
-                        sharedPreferencesEditor.putString("password", password.getText().toString());
+                        sharedPreferencesEditor.putString("username", username);
+                        sharedPreferencesEditor.putString("password", password);
                         sharedPreferencesEditor.apply();
                     } catch(Exception e){
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                final Toast toast = Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT);
-                                toast.show();
+                                Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            final Toast toast = Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Toast toast = Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    public void checkReg(TextInputEditText phone, TextInputEditText password){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url="http://47.93.101.225:8080/register";
-                String json = "{\n" +
-                        " \"account\":\"" + phone.getText() + "\",\n" +
-                        " \"password\":\"" + password.getText() + "\"\n" +
-                        "}";
-                try {
-                    String response = OkHttp.post(url, json);
-                    System.out.println(response);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (Exception e) {
@@ -270,6 +304,51 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 }
             }
         }).start();
+        getId();
+        switchToMe();
+    }
+
+    public void register(String username, String password){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url="http://47.93.101.225:8080/register";
+                String json = "{\n" +
+                        " \"account\":\"" + username + "\",\n" +
+                        " \"password\":\"" + password + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    JSONObject jsonObject = new JSONObject(response);
+                    String response_code = jsonObject.getString("code");
+                    String message = jsonObject.getString("message");
+                    if (response_code.equals("0")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "注册成功，请登录", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+        switchToLogin();
     }
 
     public void sendInfo(String course, String inputQuestion){
@@ -303,14 +382,13 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
             @Override
             public void run() {
                 String url = loginUrl;
-                String phone = sharedPreferences.getString("phone", null);
+                String username = sharedPreferences.getString("username", null);
                 String password = sharedPreferences.getString("password", null);
-                if (phone != null && password != null) {
+                if (username != null && password != null) {
                     String json = "{\n" +
                             " \"phone\":\"" + "15272961269" + "\",\n" +
                             " \"password\":\"" + "lcs84615" + "\"\n" +
                             "}";
-                    System.out.println(json);
                     try {
                         String response = OkHttp.post(url, json);
                         System.out.println(response);
@@ -319,6 +397,17 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             id = jsonObject.getString("id");
                             sharedPreferencesEditor.putString("id", id);
                             sharedPreferencesEditor.apply();
+
+                            userDatabaseHelper = new UserDatabaseHelper(MainActivity.this, username + ".db");
+                            db = userDatabaseHelper.getWritableDatabase();
+
+                            EventBus.getDefault().post(new LoginNotice(username));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "获取id成功", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } catch(Exception e){
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -327,12 +416,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                                 }
                             });
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
@@ -342,6 +425,13 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             }
                         });
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         }).start();
@@ -404,9 +494,18 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         + "&id=" + id;
                 try {
                     String response = OkHttp.get(url);
+                    JSONObject jsonObject = new JSONObject(response);
+                    String response_code = jsonObject.getString("code");
+                    if (response_code.equals("0")) {
+                        ContentValues values = new ContentValues();
+                        values.put("COURSE", subject);
+                        values.put("NAME", name);
+                        values.put("TIME", df.format(new Date()));
+                        db.insert("BROWSINGHISTORY", null, values);
+                    }
                     switchToDetail();
                     ((DetailFragment) currentFragment).setData(response);
-                } catch (IOException e) {
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
                         @Override
