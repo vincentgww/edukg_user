@@ -167,9 +167,12 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.remove(idx);
     }
 
-
+    public void back_home(){
+        switchFragments(0);
+    }
     @Override
     public void onBackPressed() {
+        System.out.println("you pressed");
         if (mFragments.size() >= 1) {
             //显示最顶部那一个
             showFragment(mFragments.get(mFragments.size()-1));
@@ -473,7 +476,11 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         }).start();
     }
 
-    public void related_quiz(String name){
+    public void go_back(int back_id){
+        switchFragments(back_id);
+    }
+
+    public void related_quiz(String name, int idx){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -486,13 +493,24 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             transaction = mSupportFragmentManager.beginTransaction();
                             question_list = new ArrayList<>();
                             handle_quiz(response);
-                            Fragment targetFragment = QuizFragment.newInstance(name,mFragments.size(),question_list);
-                            mFragments.add(targetFragment);
-                            transaction.add(R.id.frameLayout,targetFragment);
-                            transaction.hide(currentFragment);
-                            transaction.show(targetFragment);
-                            transaction.commit();
-                            currentFragment = targetFragment;
+                            if(question_list.isEmpty()){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Toast toast = Toast.makeText(MainActivity.this, "无相关试题！", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                            else {
+                                Fragment targetFragment = QuizFragment.newInstance(name, mFragments.size(), question_list, idx);
+                                mFragments.add(targetFragment);
+                                transaction.add(R.id.frameLayout, targetFragment);
+                                transaction.hide(currentFragment);
+                                transaction.show(targetFragment);
+                                transaction.commit();
+                                currentFragment = targetFragment;
+                            }
                         }
                     });
                 } catch (Exception e) {
