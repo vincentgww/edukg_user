@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fairychild.edukguser.datastructure.Question;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
@@ -31,6 +32,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
         KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener,
-        detailFragment.detailListener{
+        detailFragment.detailListener,QuizFragment.quizListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private final String quizUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/questionListByUriName?";
     private String str;
     private boolean firstInit = true;
-
+    private List<Question> question_list = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mSupportFragmentManager = getSupportFragmentManager();
         //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
-        show_detail_fragment("李白","chinese");
+        show_detail_fragment("蛋白质","biology");
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -152,6 +154,13 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     }
 
     public void delete_fragment(int idx){
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = mFragments.get(idx);
+        transaction.remove(targetFragment);
+        mFragments.remove(idx);
+    }
+
+    public void delete_quiz(int idx){
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = mFragments.get(idx);
         transaction.remove(targetFragment);
@@ -475,7 +484,8 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         @Override
                         public void run() {
                             transaction = mSupportFragmentManager.beginTransaction();
-                            Fragment targetFragment = QuizFragment.newInstance(name,mFragments.size(),response);
+                            handle_quiz(response);
+                            Fragment targetFragment = QuizFragment.newInstance(name,mFragments.size(),question_list);
                             mFragments.add(targetFragment);
                             transaction.add(R.id.frameLayout,targetFragment);
                             transaction.hide(currentFragment);
@@ -495,5 +505,37 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 }
             }
         }).start();
+    }
+
+    private void handle_quiz (String response){
+        try {
+            JSONObject obj = new JSONObject(response);
+            JSONArray arr = new JSONArray(obj.getString("data"));
+            for(int i=0;i<arr.length();i++){
+                obj = arr.getJSONObject(i);
+                System.out.println(obj);
+                String raw = obj.getString("qBody");
+                String ans = obj.getString("qAnswer");
+                int correct=-1;
+                switch (ans){
+                    case "A":
+                        correct = 0;
+                        break;
+                    case "B":
+                        correct = 1;
+                        break;
+                    case "C":
+                        correct = 2;
+                        break;
+                    case "D":
+                        correct = 3;
+                }
+                String[] blocks = raw.split("[A-D]\\.");
+                Question q = new Question(blocks[0],blocks[1],blocks[2],blocks[3],blocks[4],correct);
+                question_list.add(q);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

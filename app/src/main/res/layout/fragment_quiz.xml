@@ -6,7 +6,7 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/detail_recycler2"
+        android:id="@+id/quiz_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
