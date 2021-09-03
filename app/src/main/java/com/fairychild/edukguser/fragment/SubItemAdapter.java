@@ -28,7 +28,7 @@ public class SubItemAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     public SubItemAdapter(Context context, List<SubItem> items){
         this.items=items;
-        //this.listener=listener;
+        listener=(SubItemAdaptorListener)context;
         inflater=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -63,7 +63,9 @@ public class SubItemAdapter extends BaseAdapter {
         holder.detaiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.show_detail_fragment(holder.label_text.toString(),holder.description_text.toString());
+                System.out.println(holder.label_text.getText().toString());
+                System.out.println(holder.description_text.getText().toString());
+                listener.show_detail_fragment(holder.label_text.getText().toString(),holder.description_text.getText().toString());
             }
         });
         return convertView;

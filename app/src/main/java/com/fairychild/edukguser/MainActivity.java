@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mSupportFragmentManager = getSupportFragmentManager();
         //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
-        show_detail_fragment("李白","chinese");
+        //show_detail_fragment("李白","chinese");
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
