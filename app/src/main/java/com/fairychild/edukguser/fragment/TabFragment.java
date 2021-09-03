@@ -55,29 +55,39 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     private List<SubItem> items;
     private SubItemAdapter mAdapter;
     private String cur_subject;
+    private View rootView;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_tab,container,false);
-        mactivity=getActivity();
-        //EventBus.getDefault().register(this);
-        cur_subject=getArguments().getString("arg").toLowerCase(Locale.ROOT);
-        listView=(ListView)view.findViewById(android.R.id.list);
-        loadmoreView=getLayoutInflater().inflate(R.layout.load_more,null);
-        loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
-        listView.addFooterView(loadmoreView);
-        initAdapter();
-        listView.setAdapter(mAdapter);
-        listView.setOnScrollListener(this);
-        loadMoreButton.setOnClickListener(this::LoadMore);
-        return view;
+        //if(rootView==null){
+            rootView=inflater.inflate(R.layout.fragment_tab,container,false);
+            mactivity=getActivity();
+            //EventBus.getDefault().register(this);
+            cur_subject=getArguments().getString("arg").toLowerCase(Locale.ROOT);
+            listView=(ListView)rootView.findViewById(android.R.id.list);
+            loadmoreView=getLayoutInflater().inflate(R.layout.load_more,null);
+            loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
+            listView.addFooterView(loadmoreView);
+            initAdapter();
+            listView.setAdapter(mAdapter);
+            listView.setOnScrollListener(this);
+            loadMoreButton.setOnClickListener(this::LoadMore);
+        //}
+        return rootView;
     }
 
     //@Override
-    //public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    //public void onDestroyView(){
+      //  super.onDestroyView();
+        //if(rootView!=null){
+          //  ((ViewGroup)rootView.getParent()).removeView(rootView);
+        //}
+    //}
 
+    //@Override
+    //public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     //}
 
     public static TabFragment newInstance(String arg){
