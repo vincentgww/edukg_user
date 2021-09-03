@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<HorizontalScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/test_card"
-    android:layout_width="370dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:layout_margin="8dp">
-<LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    >
-    <TextView
-        android:id="@+id/obj_label"
-        android:layout_width="100dp"
+    android:scrollbars="none">
+    <com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/test_card"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:paddingTop="5dp"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="370dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="10dp"
+            >
+            <TextView
+                android:id="@+id/obj_label"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:paddingTop="5dp"/>
 
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/right_arrow"
-        android:layout_marginEnd="50dp"/>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/right_arrow"
+                android:layout_marginEnd="50dp"/>
 
-    <TextView
-        android:id="@+id/obj_des"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:paddingTop="5dp"/>
+            <TextView
+                android:id="@+id/obj_des"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:paddingTop="5dp"/>
 
-</LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</HorizontalScrollView>
