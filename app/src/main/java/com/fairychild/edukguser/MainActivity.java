@@ -24,6 +24,7 @@ import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
+import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,7 +39,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
         KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener,
-        detailFragment.detailListener{
+        detailFragment.detailListener, SubItemAdapter.SubItemAdaptorListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
     private String str;
     private boolean firstInit = true;
+    //SubItemAdapter itemAdapter;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
