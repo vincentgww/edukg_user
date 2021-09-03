@@ -484,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         @Override
                         public void run() {
                             transaction = mSupportFragmentManager.beginTransaction();
+                            question_list = new ArrayList<>();
                             handle_quiz(response);
                             Fragment targetFragment = QuizFragment.newInstance(name,mFragments.size(),question_list);
                             mFragments.add(targetFragment);
