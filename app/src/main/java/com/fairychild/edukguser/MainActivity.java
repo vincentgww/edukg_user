@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
+    private final String quizUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/questionListByUriName?";
     private String str;
     private boolean firstInit = true;
 
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mSupportFragmentManager = getSupportFragmentManager();
         //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
-        //show_detail_fragment("李白","chinese");
+        show_detail_fragment("李白","chinese");
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
-        mFragments.add(QuizFragment.newInstance());
+        //mFragments.add(QuizFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = mFragments.get(idx);
         transaction.remove(targetFragment);
+        mFragments.remove(idx);
     }
 
 
@@ -245,7 +247,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             }
                         });
                     }
-                    //System.out.println(id);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -312,9 +313,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 //System.out.println(json);
                 try {
                     String response = OkHttp.post(url, json);
-                    //System.out.println(response);
-                    //JSONObject jsonObject = new JSONObject(response);
-                    //str = response
                     EventBus.getDefault().post(new MessageEvent(response));
                     //qaListener.sendResponse(response);
                     //System.out.println("response1"+jsonObject);
@@ -451,6 +449,39 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         @Override
                         public void run() {
                             Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public void related_quiz(String name){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = quizUrl + "uriName="+name+"&id="+id;
+                try {
+                    String response = OkHttp.get(url);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            transaction = mSupportFragmentManager.beginTransaction();
+                            Fragment targetFragment = QuizFragment.newInstance(name,mFragments.size(),response);
+                            mFragments.add(targetFragment);
+                            transaction.add(R.id.frameLayout,targetFragment);
+                            transaction.hide(currentFragment);
+                            transaction.show(targetFragment);
+                            transaction.commit();
+                            currentFragment = targetFragment;
                         }
                     });
                 } catch (Exception e) {

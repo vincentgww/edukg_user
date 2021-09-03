@@ -15,4 +15,6 @@
     <color name="catArrangeDelTextBgColor">#FFFFFF</color>
     <color name="catArrangeTitleColor">#000000</color>
     <color name="catArrangeHintColor">#696969</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>
