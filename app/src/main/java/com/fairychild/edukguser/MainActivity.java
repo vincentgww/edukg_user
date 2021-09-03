@@ -531,9 +531,11 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                     case "D":
                         correct = 3;
                 }
-                String[] blocks = raw.split("[A-D]\\.");
-                Question q = new Question(blocks[0],blocks[1],blocks[2],blocks[3],blocks[4],correct);
-                question_list.add(q);
+                if(raw.length()<1000) {
+                    String[] blocks = raw.split("[A-D]\\.");
+                    Question q = new Question(blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
+                    question_list.add(q);
+                }
             }
         } catch(Exception e){
             e.printStackTrace();

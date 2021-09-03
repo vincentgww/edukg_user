@@ -101,6 +101,14 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             if(submit){
                 //System.out.println("这是第多少个问题？"+position);
                 //System.out.println("正确答案是？"+que.getAns());
+                if(usr!=0)
+                    holder.choiceA.setEnabled(false);
+                if(usr!=1)
+                    holder.choiceB.setEnabled(false);
+                if(usr!=2)
+                    holder.choiceC.setEnabled(false);
+                if(usr!=3)
+                    holder.choiceD.setEnabled(false);
                 int correct = que.getAns();
                 switch(correct){
                     case 0:
