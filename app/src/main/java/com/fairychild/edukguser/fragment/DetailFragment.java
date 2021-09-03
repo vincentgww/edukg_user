@@ -76,7 +76,7 @@ public class DetailFragment extends Fragment {
                 if(des.charAt(0)!='h')
                     itemList2.add(new Item(label,des,false));
             }
-            for(int i=0;i<arr2.length();i++){
+            for(int i=0; i<arr2.length(); i++){
                 JSONObject o = arr2.getJSONObject(i);
                 String label = o.getString("predicate_label");
                 String des;
@@ -93,6 +93,7 @@ public class DetailFragment extends Fragment {
                 }
             }
             addNewItems();
+
             EventBus.getDefault().removeStickyEvent(event);
         } catch(Exception e){
             e.printStackTrace();
