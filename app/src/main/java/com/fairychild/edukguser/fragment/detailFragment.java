@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,7 @@ public class detailFragment extends Fragment {
     public interface detailListener {
         void get_detail(String entity_name, String course);
         void delete_fragment(int idx);
+        void related_quiz(String name);
     }
     detailListener listener;
     String name,course;
@@ -125,6 +127,13 @@ public class detailFragment extends Fragment {
                 itemRecyclerView2.setLayoutManager(layoutManager2);
                 adapter2 = new ItemAdapter(itemList2);
                 itemRecyclerView2.setAdapter(adapter2);
+            }
+        });
+        Button mButton = view.findViewById(R.id.btn_quiz);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.related_quiz(name);
             }
         });
         return view;
