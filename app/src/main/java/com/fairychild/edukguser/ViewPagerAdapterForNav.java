@@ -23,12 +23,14 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
     private List<Fragment> mFragments = new ArrayList<>();
     private Context context;
     private FragmentManager fm;
+    private List<String> tags;
     //private ArrayList<String> tabNames;
     //private List<TabLayout.Tab> pageTitles = new ArrayList<>();
 
     public ViewPagerAdapterForNav(Context context,FragmentManager fm,List<Fragment> fragments) {
         super(fm);
         this.fm=fm;
+        this.tags=new ArrayList<>();
         //this.tabNames=tabNames;
         this.context=context;
         this.mFragments=fragments;
@@ -60,9 +62,20 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
     }
 
     public void setFragments(List<Fragment> fragments) {
+        if(this.tags!=null){
+            FragmentTransaction fragmentTransaction = fm.beginTransaction();
+            for (int i = 0; i < tags.size(); i++) {
+                fragmentTransaction.remove(fm.findFragmentByTag(tags.get(i)));
+            }
+            fragmentTransaction.commit();
+            fm.executePendingTransactions();
+            tags.clear();
+        }
         this.mFragments = fragments;
         notifyDataSetChanged();
     }
+
+
 
     public void removeAllFragments(){
         for(int i=mFragments.size()-1;i>=0;i--){
@@ -76,6 +89,24 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
         FragmentTransaction transaction=fm.beginTransaction();
         transaction.remove(fragment);
         transaction.commitNow();
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        tags.add(makeFragmentName(container.getId(), getItemId(position)));
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        this.fm.beginTransaction().show(fragment).commit();
+        return fragment;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        Fragment fragment = mFragments.get(position);
+        fm.beginTransaction().hide(fragment).commit();
+    }
+
+    private static String makeFragmentName(int viewId, long id) {
+        return "android:switcher:" + viewId + ":" + id;
     }
 
     /*@Override

@@ -239,7 +239,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         addTab(channelBeans.get(i).getName());
                     }
                 }
-                mViewPagerAdapterForNav.notifyDataSetChanged();
+                //mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
                 break;
