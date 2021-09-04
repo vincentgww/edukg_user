@@ -72,7 +72,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             listView.addFooterView(loadmoreView);
             initAdapter();
             try {
-                Thread.sleep(500);
+                Thread.sleep(300);
             }catch (Exception e){
                 e.printStackTrace();
             }

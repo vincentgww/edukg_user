@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
@@ -21,10 +22,14 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
     private Context context;
+    private FragmentManager fm;
+    //private ArrayList<String> tabNames;
     //private List<TabLayout.Tab> pageTitles = new ArrayList<>();
 
     public ViewPagerAdapterForNav(Context context,FragmentManager fm,List<Fragment> fragments) {
         super(fm);
+        this.fm=fm;
+        //this.tabNames=tabNames;
         this.context=context;
         this.mFragments=fragments;
         notifyDataSetChanged();
@@ -57,6 +62,20 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
     public void setFragments(List<Fragment> fragments) {
         this.mFragments = fragments;
         notifyDataSetChanged();
+    }
+
+    public void removeAllFragments(){
+        for(int i=mFragments.size()-1;i>=0;i--){
+            Fragment fragment=mFragments.get(i);
+            mFragments.remove(fragment);
+            removeFragmentInternal(fragment);
+        }
+        notifyDataSetChanged();
+    }
+    private void removeFragmentInternal(Fragment fragment){
+        FragmentTransaction transaction=fm.beginTransaction();
+        transaction.remove(fragment);
+        transaction.commitNow();
     }
 
     /*@Override

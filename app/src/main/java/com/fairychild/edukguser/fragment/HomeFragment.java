@@ -56,6 +56,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     List<Fragment> mFragments;
     List<TabLayout.Tab> mTabs;
+    //ArrayList<String> mTitles;
     private ArrayList<ChannelBean> channelBeans;
 
     @Override
@@ -68,10 +69,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
-
         mViewPager = view.findViewById(R.id.pager);
         initFragments();
-        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(), getChildFragmentManager(), mFragments);
+        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(), getChildFragmentManager());
+        //mViewPagerAdapterForNav.setFragments(mFragments);
         mViewPager.setAdapter(mViewPagerAdapterForNav);
         mViewPager.setCurrentItem(0);
         tabLayout=view.findViewById(R.id.tab_layout);
@@ -102,8 +103,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         mBtnSearch = view.findViewById(R.id.search);
         mBtnSearch.setOnClickListener(this);
-
         initData();
+
 
         return view;
     }
@@ -152,6 +153,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private void initFragments(){
         mFragments = new ArrayList<>();
         mTabs = new ArrayList<>();
+        //mTitles=new ArrayList<>();
     }
 
     private void initData(){
@@ -222,6 +224,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 }
                 tabLayout.removeAllTabs();
                 mFragments.clear();
+                mViewPagerAdapterForNav.removeAllFragments();
+                //mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav.setFragments(mFragments);
                 int backStackCount= getFragmentManager().getBackStackEntryCount();
                 for(int i=0;i<backStackCount;i++){
@@ -235,6 +239,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         addTab(channelBeans.get(i).getName());
                     }
                 }
+                mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav.notifyDataSetChanged();
                 //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
                 break;
