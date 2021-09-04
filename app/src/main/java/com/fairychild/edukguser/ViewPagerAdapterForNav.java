@@ -17,7 +17,7 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
 
-public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
+public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
     private Context context;

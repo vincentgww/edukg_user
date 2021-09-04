@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Load more..."
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:onClick="loadMore"/>
+        style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
 </LinearLayout>

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/detail_linear">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,6 +14,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
+            <Button
+                android:id="@+id/back_button_detail"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_keyboard_return_black_24dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,15 +35,17 @@
                 android:layout_marginStart="5dp"
                 android:text="实体"/>
         </LinearLayout>
+
         <Button
-            android:id="@+id/btn_exam"
+            android:id="@+id/btn_quiz"
             android:layout_width="120dp"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_btn_blue_pressed"
-            android:layout_marginStart="200dp"
             android:layout_marginTop="5dp"
-            android:textSize="16sp"
-            android:text="关联试题"/>
+            android:layout_marginStart="150dp"
+            android:background="@drawable/bg_btn_blue_pressed"
+            android:text="关联试题"
+            android:textSize="16sp" />
+
     </LinearLayout>
     <View
         android:layout_width="370dp"

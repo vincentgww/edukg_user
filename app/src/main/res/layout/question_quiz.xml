@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_que"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" />
+    <RadioGroup android:id="@+id/rg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <RadioButton
+        android:id="@+id/cb_choice1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/cb"
+        android:padding="8dp"
+        android:textColor="@color/colorPrimary" />
+    <RadioButton
+        android:id="@+id/cb_choice2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/cb"
+        android:padding="8dp"
+        android:textColor="@color/colorPrimary" />
+    <RadioButton
+        android:id="@+id/cb_choice3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/cb"
+        android:padding="8dp"
+        android:textColor="@color/colorPrimary" />
+    <RadioButton
+        android:id="@+id/cb_choice4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/cb"
+        android:padding="8dp"
+        android:textColor="@color/colorPrimary" />
+    </RadioGroup>
+
+</LinearLayout>

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fairychild.edukguser.Item;
 import com.fairychild.edukguser.ItemAdapter;
-import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.MessageEvent;
+import com.fairychild.edukguser.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,29 +36,31 @@ public class DetailFragment extends Fragment {
     private RecyclerView itemRecyclerView2;
     private ItemAdapter adapter1;
     private ItemAdapter adapter2;
+    private LinearLayout linear;
+    private int idx;
+
     public interface detailListener {
         void getDetail(String entity_name, String course);
+        void delete_fragment(int idx);
+        void related_quiz(String name, int idx);
+        void switchToHome();
     }
     detailListener listener;
     String name,course;
-    DetailFragment(String entity_name, String course){
+
+    DetailFragment(String entity_name, String course, int idx){
         super();
         name = entity_name;
+        this.idx = idx;
         this.course = course;
     }
 
     public void addNewItems(){
-        /*Item itm = new Item(label,des,subject);
-        if(subject){
-            itemList1.add(itm);
-            adapter1.notifyItemInserted(itemList1.size()-1);
-            msgRecyclerView.scrollToPosition(msgList.size()-1);
-        }
-        itemList.add(message);
-        adapter.notifyItemInserted(msgList.size()-1);
-        msgRecyclerView.scrollToPosition(msgList.size()-1);*/
+        if(itemList1.isEmpty())
+            linear.removeView(itemRecyclerView1);
         adapter1.notifyItemInserted(itemList1.size()-1);
-        itemRecyclerView1.scrollToPosition(itemList1.size()-1);
+        if(itemList2.isEmpty())
+            linear.removeView(itemRecyclerView2);
         adapter2.notifyItemInserted(itemList2.size()-1);
         System.out.println(itemList1.size());
     }
@@ -105,6 +109,7 @@ public class DetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         TextView entity_text= view.findViewById(R.id.entity_name);
+        linear = view.findViewById(R.id.detail_linear);
         entity_text.setText(name);
         listener.getDetail(name, course);
         getActivity().runOnUiThread(new Runnable() {
@@ -124,18 +129,34 @@ public class DetailFragment extends Fragment {
                 itemRecyclerView2.setAdapter(adapter2);
             }
         });
+        Button mButton = view.findViewById(R.id.btn_quiz);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.related_quiz(name,idx);
+            }
+        });
+        Button back_button = view.findViewById(R.id.back_button_detail);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.switchToHome();
+                listener.delete_fragment(idx);
+            }
+        });
         return view;
     }
 
     @Override
     public void onAttach(Context context) {
         listener = (detailListener) context;
+        //mActivity = (MainActivity) context;
         super.onAttach(context);
     }
 
 
-    public static DetailFragment newInstance(String entity_name, String course){
-        DetailFragment indexFragment = new DetailFragment(entity_name, course);
+    public static DetailFragment newInstance(String entity_name, String course, int idx){
+        DetailFragment indexFragment = new DetailFragment(entity_name, course, idx);
         return indexFragment;
     }
 
@@ -144,6 +165,7 @@ public class DetailFragment extends Fragment {
         super.onStart();
         EventBus.getDefault().register(this);
     }
+
 
     @Override
     public void onStop() {

@@ -21,6 +21,7 @@ import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.datastructure.MessageEvent;
 import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.DetailFragment;
+import com.fairychild.edukguser.datastructure.Question;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
@@ -33,12 +34,15 @@ import com.fairychild.edukguser.fragment.RegisterFragment;
 import com.fairychild.edukguser.fragment.SearchFragment;
 import com.fairychild.edukguser.fragment.SearchResultListFragment;
 import com.fairychild.edukguser.sql.UserDatabaseHelper;
+import com.fairychild.edukguser.fragment.SubItemAdapter;
+import com.fairychild.edukguser.fragment.DetailFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -49,7 +53,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
         KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener, SearchResultListFragment.DetailListener,
-        BrowsingHistoryListFragment.DataBaseListener, DetailFragment.detailListener{
+        BrowsingHistoryListFragment.DataBaseListener, DetailFragment.detailListener,QuizFragment.quizListener,SubItemAdapter.SubItemAdaptorListener{
 
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -64,13 +68,14 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
-    private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName";
+    private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
+    private final String quizUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/questionListByUriName?";
 
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private boolean firstInit = true;
-
+    private List<Question> question_list = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
 
@@ -137,11 +142,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(RegisterFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
-        mFragments.add(DetailFragment.newInstance("李白","chinese"));
         mFragments.add(BrowsingHistoryListFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
-        mFragments.add(HomeFragment.newInstance());
-        mFragments.add(QuizFragment.newInstance());
     }
 
     private void switchFragments(int FragmentId) {
@@ -167,31 +168,53 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         }
     }
     @Override
-    public void switchToLogin(){
-        switchFragments(4);
-    }
+    public void switchToLogin(){ switchFragments(4); }
     public void switchToRegister() { switchFragments(5); }
-    public void switchToKnowledgeCheck(){
-        switchFragments(6);
-    }
-    public void switchToSearch() {
-        switchFragments(7);
-    }
-    public void switchToDetail() {
-        switchFragments(8);
-    }
-    public void switchToBrowsingHistory() {
-        switchFragments(9);
-    }
-    public void switchToFavourites() {
-        switchFragments(10);
-    }
-    public void switchToReport() {
-        switchFragments(11);
-    }
+    public void switchToKnowledgeCheck(){ switchFragments(6); }
+
+    @Override
     public void switchToQuiz() {
-        switchFragments(12);
+
     }
+
+    public void switchToSearch() { switchFragments(7); }
+    public void switchToBrowsingHistory() { switchFragments(8); }
+
+    @Override
+    public void switchToFavourites() {
+
+    }
+
+    @Override
+    public void switchToReport() {
+
+    }
+
+    public void show_detail_fragment(String label,String course){
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = DetailFragment.newInstance(label,course,mFragments.size());
+        mFragments.add(targetFragment);
+        transaction.add(R.id.main_frame_layout,targetFragment);
+        transaction.hide(currentFragment);
+        transaction.show(targetFragment);
+        transaction.commit();
+        currentFragment = targetFragment;
+    }
+
+    public void delete_fragment (int idx){
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = mFragments.get(idx);
+        transaction.remove(targetFragment);
+        mFragments.remove(idx);
+    }
+
+    public void delete_quiz (int idx){
+        transaction = mSupportFragmentManager.beginTransaction();
+        Fragment targetFragment = mFragments.get(idx);
+        transaction.remove(targetFragment);
+        mFragments.remove(idx);
+    }
+
 
     @Override
     public void logout() {
@@ -206,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
 
     @Override
     public void onBackPressed() {
-        System.out.println("MainActivity:onBackPressed");
+        Log.d("MainActivity", "onBackPressed");
         if (mFragments.size() >= 1) {
             try {
                 mSupportFragmentManager.popBackStack();
@@ -518,7 +541,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                switchToDetail();
                                 Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -557,5 +579,89 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
             Toast.makeText(MainActivity.this, "请先登录，再查看浏览历史记录", Toast.LENGTH_SHORT).show();
         }
         return browsingHistoryArrayList;
+    }
+
+    public void go_back(int back_id){
+        switchFragments(back_id);
+    }
+
+    public void related_quiz(String name, int idx){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = quizUrl + "uriName="+name+"&id="+id;
+                try {
+                    String response = OkHttp.get(url);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            transaction = mSupportFragmentManager.beginTransaction();
+                            question_list = new ArrayList<>();
+                            handle_quiz(response);
+                            if(question_list.isEmpty()){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Toast toast = Toast.makeText(MainActivity.this, "无相关试题！", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                            else {
+                                Fragment targetFragment = QuizFragment.newInstance(name, mFragments.size(), question_list, idx);
+                                mFragments.add(targetFragment);
+                                transaction.add(R.id.main_frame_layout, targetFragment);
+                                transaction.hide(currentFragment);
+                                transaction.show(targetFragment);
+                                transaction.commit();
+                                currentFragment = targetFragment;
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void handle_quiz (String response){
+        try {
+            JSONObject obj = new JSONObject(response);
+            JSONArray arr = new JSONArray(obj.getString("data"));
+            for(int i=0;i<arr.length();i++){
+                obj = arr.getJSONObject(i);
+                System.out.println(obj);
+                String raw = obj.getString("qBody");
+                String ans = obj.getString("qAnswer");
+                int correct=-1;
+                switch (ans){
+                    case "A":
+                        correct = 0;
+                        break;
+                    case "B":
+                        correct = 1;
+                        break;
+                    case "C":
+                        correct = 2;
+                        break;
+                    case "D":
+                        correct = 3;
+                }
+                if(raw.length()<1000) {
+                    String[] blocks = raw.split("[A-D]\\.");
+                    Question q = new Question(blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
+                    question_list.add(q);
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
