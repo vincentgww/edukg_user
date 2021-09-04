@@ -71,6 +71,12 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
             listView.addFooterView(loadmoreView);
             initAdapter();
+            try {
+                Thread.sleep(500);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            mAdapter=new SubItemAdapter(mactivity,items);
             listView.setAdapter(mAdapter);
             listView.setOnScrollListener(this);
             loadMoreButton.setOnClickListener(this::LoadMore);
@@ -100,7 +106,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
 
     private void initAdapter(){
         items=new ArrayList<>();
-        mactivity.runOnUiThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println(cur_subject);
@@ -118,7 +124,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String res=response.body().string();
-                        mactivity.runOnUiThread(new Runnable() {
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try{
@@ -138,18 +144,18 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                                             e.printStackTrace();
                                         }
                                     }
-                                    mAdapter=new SubItemAdapter(mactivity,items);
+
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
 
                             }
-                        });
+                        }).start();
                     }
                 });
 
             }
-        });
+        }).start();
         //mAdapter=new SubItemAdapter(mactivity,items);
     }
 
@@ -171,7 +177,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         loadMoreButton.setText("loading...");
         System.out.println(cur_page);
         cur_page++;
-        mactivity.runOnUiThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println(cur_subject);
@@ -220,7 +226,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                     }
                 });
             }
-        });
+        }).start();
         //loadMoreButton.setText("Load more...");
     }
 

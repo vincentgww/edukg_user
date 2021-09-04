@@ -159,7 +159,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         channelBeans.add(new ChannelBean("BIOLOGY",true));
         channelBeans.add(new ChannelBean("CHEMISTRY",true));
         channelBeans.add(new ChannelBean("CHINESE",true));
-        channelBeans.add(new ChannelBean("ENGLISH",false));
+        channelBeans.add(new ChannelBean("ENGLISH",true));
         channelBeans.add(new ChannelBean("GEO",false));
         channelBeans.add(new ChannelBean("HISTORY",false));
         channelBeans.add(new ChannelBean("MATH",false));
@@ -212,7 +212,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 ArrayList<String> mDelCategory=new ArrayList<>();
                 mCategory=(ArrayList<String>) (data.getSerializableExtra("cat"));
                 mDelCategory=(ArrayList<String>) (data.getSerializableExtra("delCat"));
-                channelBeans=new ArrayList<ChannelBean>();
+                channelBeans.clear();
+                //channelBeans=new ArrayList<ChannelBean>();
                 for(int i=0;i<mCategory.size();i++){
                     channelBeans.add(new ChannelBean(mCategory.get(i),true));
                 }
