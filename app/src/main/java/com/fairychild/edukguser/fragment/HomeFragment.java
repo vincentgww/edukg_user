@@ -178,10 +178,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private void initData(){
         channelBeans = new ArrayList<ChannelBean>();
-        channelBeans.add(new ChannelBean("BIOLOGY",true));
-        channelBeans.add(new ChannelBean("CHEMISTRY",true));
-        channelBeans.add(new ChannelBean("CHINESE",true));
-        channelBeans.add(new ChannelBean("ENGLISH",true));
+        channelBeans.add(new ChannelBean("BIOLOGY",false));
+        channelBeans.add(new ChannelBean("CHEMISTRY",false));
+        channelBeans.add(new ChannelBean("CHINESE",false));
+        channelBeans.add(new ChannelBean("ENGLISH",false));
         channelBeans.add(new ChannelBean("GEO",false));
         channelBeans.add(new ChannelBean("HISTORY",false));
         channelBeans.add(new ChannelBean("MATH",false));
@@ -234,6 +234,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 ArrayList<String> mDelCategory=new ArrayList<>();
                 mCategory=(ArrayList<String>) (data.getSerializableExtra("cat"));
                 mDelCategory=(ArrayList<String>) (data.getSerializableExtra("delCat"));
+                System.out.println(mCategory);
                 channelBeans.clear();
                 for(int i=0;i<mCategory.size();i++){
                     channelBeans.add(new ChannelBean(mCategory.get(i),true));
@@ -246,16 +247,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 tabLayout.removeAllTabs();
                 mViewPager.setSaveFromParentEnabled(false);
                 //mViewPagerAdapterForNav.notifyDataSetChanged();
-                for(int i=0;i<channelBeans.size();i++){
-                    if(channelBeans.get(i).isSelect()){
-                        //mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName().toLowerCase(Locale.ROOT)));
-                        //mViewPagerAdapterForNav.setFragments(mFragments);
-                        //addTab(channelBeans.get(i).getName());
-                        addFragment(channelBeans.get(i).getName());
-                    }
+                for(int i=0;i<mCategory.size();i++){
+                        addFragment(mCategory.get(i));
+                        mViewPager.setCurrentItem(mFragments.size()-1);
                 }
-                mViewPager.setCurrentItem(mFragments.size()-1);
-                mViewPager.setOffscreenPageLimit(mFragments.size());
+                //mViewPager.setOffscreenPageLimit(mFragments.size());
                 //mViewPager.setSaveFromParentEnabled(false);
                 break;
             default:
