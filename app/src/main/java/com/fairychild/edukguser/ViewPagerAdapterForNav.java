@@ -90,7 +90,7 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
     }
     private void removeFragmentInternal(Fragment fragment){
         FragmentTransaction transaction=fm.beginTransaction();
-        transaction.remove(fragment);
+        transaction.detach(fragment);
         transaction.commitNow();
     }
 

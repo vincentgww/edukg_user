@@ -246,11 +246,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 mFragments.clear();
                 tabLayout.removeAllTabs();
                 mViewPager.setSaveFromParentEnabled(false);
+                //mViewPagerAdapterForNav.removeAllFragments();
                 //mViewPagerAdapterForNav.notifyDataSetChanged();
                 for(int i=0;i<mCategory.size();i++){
                         addFragment(mCategory.get(i));
                         mViewPager.setCurrentItem(mFragments.size()-1);
                 }
+                mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments,mTitles);
+                mViewPager.setAdapter(mViewPagerAdapterForNav);
                 //mViewPager.setOffscreenPageLimit(mFragments.size());
                 //mViewPager.setSaveFromParentEnabled(false);
                 break;
