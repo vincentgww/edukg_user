@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.fragment.app.Fragment;
 //import android.support.v4.view.ViewPager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.andy.library.ChannelBean;
@@ -33,6 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
@@ -54,10 +56,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     private MaterialToolbar topAppBar;
     private ActionMenuItemView mBtnSearch;
 
+
+
     List<Fragment> mFragments;
-    List<TabLayout.Tab> mTabs;
-    //ArrayList<String> mTitles;
+    //List<TabLayout.Tab> mTabs;
+    ArrayList<String> mTitles;
     private ArrayList<ChannelBean> channelBeans;
+    private int mCurrentSelect=0;
 
     @Override
     public void onAttach(Context context) {
@@ -70,22 +75,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         mViewPager = view.findViewById(R.id.pager);
+        tabLayout=view.findViewById(R.id.tab_layout);
+        mImgBtn = view.findViewById(R.id.imgBtn);
+        topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
+        mBtnSearch = view.findViewById(R.id.search);
         initFragments();
-        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(), getChildFragmentManager());
+        initData();
+        mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments,mTitles);
         //mViewPagerAdapterForNav.setFragments(mFragments);
         mViewPager.setAdapter(mViewPagerAdapterForNav);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentSelect=position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mViewPager.setCurrentItem(0);
-        tabLayout=view.findViewById(R.id.tab_layout);
-        //tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setupWithViewPager(mViewPager);
         //tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab){
-                Log.d("tabLayout","---onTabSelected");
-                int position = tab.getPosition();
-                System.out.println("position:" + position);
-                //EventBus.getDefault().post(new MessageEvent(channelBeans.get(position).getName()));
-                mViewPager.setCurrentItem(position);
+                mViewPager.setCurrentItem(tab.getPosition(),false);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -95,48 +117,45 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        mImgBtn = view.findViewById(R.id.imgBtn);
         mImgBtn.setOnClickListener(this);
 
-        topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
+
         topAppBar.setTitle("首页");
 
-        mBtnSearch = view.findViewById(R.id.search);
+
         mBtnSearch.setOnClickListener(this);
-        initData();
-
-
+        //initData();
         return view;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser){
-        super.setUserVisibleHint(isVisibleToUser);
-        if(getUserVisibleHint()){
-            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    //@Override
+    //public void setUserVisibleHint(boolean isVisibleToUser){
+    //    super.setUserVisibleHint(isVisibleToUser);
+    //    if(getUserVisibleHint()){
+    //        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    //            @Override
+    //            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                }
+    //            }
 
-                @Override
-                public void onPageSelected(int position) {
-                    mTabs.get(position).select();
-                    //mViewPager.setCurrentItem(position);
+    //            @Override
+//                public void onPageSelected(int position) {
+                    //Tabs.get(position).select();
+//                    mViewPager.setCurrentItem(position);
                     //selectTab(position);
-                }
+//                }
 
-                @Override
-                public void onPageScrollStateChanged(int state) {
+//                @Override
+//                public void onPageScrollStateChanged(int state) {
 
-                }
-            });
-        }
-    }
+//                }
+//            });
+//        }
+//    }
 
-    private void selectTab(int i){
-        mTabs.get(i).select();
-    }
+    //private void selectTab(int i){
+       // mTabs.get(i).select();
+    //}
 
     @Override
     public void onViewCreated(@Nullable View view, @Nullable Bundle savedInstanceState){
@@ -147,12 +166,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         TabLayout.Tab t = tabLayout.newTab();
         t.setText(title);
         tabLayout.addTab(t);
-        mTabs.add(t);
+        //mTabs.add(t);
     }
 
     private void initFragments(){
         mFragments = new ArrayList<>();
-        mTabs = new ArrayList<>();
+        mTitles=new ArrayList<>();
+        //mTabs = new ArrayList<>();
         //mTitles=new ArrayList<>();
     }
 
@@ -169,12 +189,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         channelBeans.add(new ChannelBean("POLITICS",false));
         for(int i=0;i<channelBeans.size();i++){
             if(channelBeans.get(i).isSelect()){
-                mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName()));
-                mViewPagerAdapterForNav.setFragments(mFragments);
                 addTab(channelBeans.get(i).getName());
+                mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName().toLowerCase(Locale.ROOT)));
+                mTitles.add(channelBeans.get(i).getName());
+                //mViewPagerAdapterForNav.setFragments(mFragments);
             }
         }
-        //EventBus.getDefault().post(new MessageEvent(channelBeans.get(0).getName()));
     }
 
     @Override
@@ -215,36 +235,48 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 mCategory=(ArrayList<String>) (data.getSerializableExtra("cat"));
                 mDelCategory=(ArrayList<String>) (data.getSerializableExtra("delCat"));
                 channelBeans.clear();
-                //channelBeans=new ArrayList<ChannelBean>();
                 for(int i=0;i<mCategory.size();i++){
                     channelBeans.add(new ChannelBean(mCategory.get(i),true));
                 }
                 for(int i=0;i<mDelCategory.size();i++){
                     channelBeans.add(new ChannelBean(mDelCategory.get(i),false));
                 }
-                tabLayout.removeAllTabs();
+                mTitles.clear();
                 mFragments.clear();
-                mViewPagerAdapterForNav.removeAllFragments();
+                tabLayout.removeAllTabs();
+                mViewPager.setSaveFromParentEnabled(false);
                 //mViewPagerAdapterForNav.notifyDataSetChanged();
-                //mViewPagerAdapterForNav.setFragments(mFragments);
-                int backStackCount= getFragmentManager().getBackStackEntryCount();
-                for(int i=0;i<backStackCount;i++){
-                    getFragmentManager().popBackStack();
-                }
                 for(int i=0;i<channelBeans.size();i++){
                     if(channelBeans.get(i).isSelect()){
-                        mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName()));
-                        System.out.println(channelBeans.get(i).getName());
-                        mViewPagerAdapterForNav.setFragments(mFragments);
-                        addTab(channelBeans.get(i).getName());
+                        //mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName().toLowerCase(Locale.ROOT)));
+                        //mViewPagerAdapterForNav.setFragments(mFragments);
+                        //addTab(channelBeans.get(i).getName());
+                        addFragment(channelBeans.get(i).getName());
                     }
                 }
-                //mViewPagerAdapterForNav.notifyDataSetChanged();
-                //mViewPagerAdapterForNav.notifyDataSetChanged();
-                //mViewPagerAdapterForNav=new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments);
+                mViewPager.setCurrentItem(mFragments.size()-1);
+                mViewPager.setOffscreenPageLimit(mFragments.size());
+                //mViewPager.setSaveFromParentEnabled(false);
                 break;
             default:
                 break;
         }
     }
+    private void addFragment(String title){
+        mTitles.add(title);
+        TabLayout.Tab tab=tabLayout.newTab();
+        tab.setText(title);
+        tabLayout.addTab(tab);
+        mFragments.add(TabFragment.newInstance(title.toLowerCase(Locale.ROOT)));
+        mViewPagerAdapterForNav.setFragments(mFragments,mTitles);
+        //mViewPager.setOffscreenPageLimit(mFragments.size());
+    }
+    private void delFragment(){
+        mTitles.clear();
+        tabLayout.removeAllTabs();
+        mFragments.clear();
+        mViewPagerAdapterForNav.setFragments(mFragments,mTitles);
+        mViewPager.setOffscreenPageLimit(mFragments.size());
+    }
 }
+

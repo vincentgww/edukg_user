@@ -72,7 +72,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             listView.addFooterView(loadmoreView);
             initAdapter();
             try {
-                Thread.sleep(300);
+                Thread.sleep(400);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -109,7 +109,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println(cur_subject);
+                System.out.println("tabFragment当前学科为"+cur_subject);
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
                 OkHttpClient okHttpClient=new OkHttpClient();
                 Request request=new Request.Builder().get().url(url).build();
