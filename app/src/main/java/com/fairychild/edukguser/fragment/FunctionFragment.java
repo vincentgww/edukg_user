@@ -16,8 +16,8 @@ import com.google.android.material.card.MaterialCardView;
 
 public class FunctionFragment extends Fragment {
     public interface FunctionListener {
-        void knowledgeCheck();
-        void quizSearch();
+        void switchToKnowledgeCheck();
+        void switchToSearch();
     }
     private FunctionListener listener;
     @Nullable
@@ -29,7 +29,7 @@ public class FunctionFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
-                        listener.knowledgeCheck();
+                        listener.switchToKnowledgeCheck();
                     }
                 }
         );
@@ -37,7 +37,7 @@ public class FunctionFragment extends Fragment {
         card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.quizSearch();
+                listener.switchToSearch();
             }
         });
         return view;

@@ -3,18 +3,24 @@ import androidx.fragment.app.FragmentManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fairychild.edukguser.datastructure.BrowsingHistory;
+import com.fairychild.edukguser.datastructure.LoginNotice;
+import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.datastructure.Question;
+import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
@@ -27,6 +33,7 @@ import com.fairychild.edukguser.fragment.RegisterFragment;
 import com.fairychild.edukguser.fragment.SearchFragment;
 import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
+import com.fairychild.edukguser.sql.UserDatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -36,12 +43,24 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
-        KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener,
-        detailFragment.detailListener,QuizFragment.quizListener,SubItemAdapter.SubItemAdaptorListener{
+public class MainActivity extends AppCompatActivity
+        implements MeFragment.FragmentListener,
+        LoginFragment.LoginListener,
+        QaFragment.QaListener,
+        FunctionFragment.FunctionListener,
+        KnowledgeCheckFragment.KnowledgeCheckListener,
+        RegisterFragment.RegisterListener,
+        SearchFragment.FragmentListener,
+        HomeFragment.FragmentListener,
+        detailFragment.detailListener,
+        QuizFragment.quizListener,
+        SubItemAdapter.SubItemAdaptorListener,
+        BrowsingHistoryListFragment.DataBaseListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -53,6 +72,10 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private FragmentTransaction transaction;
     private FragmentManager mSupportFragmentManager;
     private Fragment currentFragment;
+
+    @SuppressLint("SimpleDateFormat")
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private final String loginUrl = "http://open.edukg.cn/opedukg/api/typeAuth/user/login";
     private final String qaUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/inputQuestion";
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
@@ -61,8 +84,12 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private String str;
     private boolean firstInit = true;
     private List<Question> question_list = new ArrayList<>();
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
+
+    private UserDatabaseHelper userDatabaseHelper;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -80,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
-        //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
     }
 
@@ -91,16 +117,16 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
             menuItem = item;
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    switchFragments(0);
+                    switchToHome();
                     return true;
                 case R.id.navigation_query:
-                    switchFragments(1);
+                    switchToQa();
                     return true;
                 case R.id.navigation_functions:
-                    switchFragments(2);
+                    switchToFunction();
                     return true;
                 case R.id.navigation_me:
-                    switchFragments(3);
+                    switchToMe();
                     return true;
             }
             return false;
@@ -116,16 +142,54 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mFragments.add(HomeFragment.newInstance());
         mFragments.add(QaFragment.newInstance());
         mFragments.add(FunctionFragment.newInstance());
-        //mFragments.add(detailFragment.newInstance("李白","chinese"));
         mFragments.add(MeFragment.newInstance());
         mFragments.add(LoginFragment.newInstance());
+        mFragments.add(RegisterFragment.newInstance());
         mFragments.add(KnowledgeCheckFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
-        mFragments.add(RegisterFragment.newInstance());
+        mFragments.add(BrowsingHistoryListFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
-        //mFragments.add(QuizFragment.newInstance());
+    }
+
+    public void switchToHome() {
+        switchFragments(0);
+    }
+    public void switchToQa() {
+        switchFragments(1);
+    }
+    public void switchToFunction() {
+        switchFragments(2);
+    }
+    public void switchToMe() {
+        switchFragments(3);
+        Log.d("MainActivity", "switchToMe");
+        String username = sharedPreferences.getString("username", null);
+        if (username != null && id != null) {
+            EventBus.getDefault().postSticky(new LoginNotice(username));
+            Log.d("MainActivity", "post new LoginNotice");
+        } else {
+            EventBus.getDefault().postSticky(new LogoutNotice());
+            Log.d("MainActivity", "post new LogoutNotice");
+        }
+    }
+    @Override
+    public void switchToLogin(){
+        switchFragments(4);
+    }
+    public void switchToRegister() {switchFragments(5);}
+    public void switchToKnowledgeCheck(){
+        switchFragments(6);
+    }
+    public void switchToBrowsingHistory() {
+        switchFragments(7);
+    }
+    public void switchToSearch() {
+        switchFragments(8);
+    }
+    public void switchToFavourites() {
+        switchFragments(9);
+    }
+    public void switchToReport() {
+        switchFragments(10);
     }
 
     private void switchFragments(int FragmentId) {
@@ -189,11 +253,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         fragmentTransaction.commit();
     }
 
-    @Override
-    public void switchToLogin(){
-        switchFragments(4);
-    }
-    public void switchToRegister() {switchFragments(6);}
+
 
     @Override
     public String getIdFromSP() {
@@ -201,100 +261,54 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     }
 
     @Override
-    public String getPhoneFromSP() {
-        return sharedPreferences.getString("phone", null);
+    public String getUsernameFromSP() {
+        return sharedPreferences.getString("username", null);
     }
 
     @Override
-    public void switchToBrowsingHistory() {
-        switchFragments(7);
+    public void logout() {
+        Log.d("MainActivity", "logout");
+        id = null;
+        sharedPreferencesEditor.remove("username");
+        sharedPreferencesEditor.remove("password");
+        sharedPreferencesEditor.remove("id");
+        db.close();
+        userDatabaseHelper = null;
+        switchToMe();
     }
 
-    @Override
-    public void switchToFavourites() {
-        switchFragments(8);
-    }
-
-    @Override
-    public void switchToReport() {
-        switchFragments(9);
-    }
-
-    @Override
-    public void switchToSearch() {
-        switchFragments(10);
-    }
-
-    public void check(EditText phone, EditText password) {
+    public void login(String username, String password) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url = "http://47.93.101.225:8080/login";
                 String json = "{\n" +
-                        " \"account\":\"" + phone.getText() + "\",\n" +
-                        " \"password\":\"" + password.getText() + "\"\n" +
+                        " \"account\":\"" + username + "\",\n" +
+                        " \"password\":\"" + password + "\"\n" +
                         "}";
                 try {
                     String response = OkHttp.post(url, json);
                     System.out.println(response);
                     JSONObject jsonObject = new JSONObject(response);
                     try{
-                        String data = jsonObject.getString("data");
-                        JSONObject dataJSON = new JSONObject(data);
-                        id = dataJSON.getString("id");
-                        sharedPreferencesEditor.putString("id", id);
-                        sharedPreferencesEditor.putString("phone", phone.getText().toString());
-                        sharedPreferencesEditor.putString("password", password.getText().toString());
+                        sharedPreferencesEditor.putString("username", username);
+                        sharedPreferencesEditor.putString("password", password);
                         sharedPreferencesEditor.apply();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } catch(Exception e){
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                final Toast toast = Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT);
-                                toast.show();
+                                Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Toast toast = Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Toast toast = Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    public void checkReg(TextInputEditText phone, TextInputEditText password){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url="http://47.93.101.225:8080/register";
-                String json = "{\n" +
-                        " \"account\":\"" + phone.getText() + "\",\n" +
-                        " \"password\":\"" + password.getText() + "\"\n" +
-                        "}";
-                try {
-                    String response = OkHttp.post(url, json);
-                    System.out.println(response);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
-                        }
-                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
@@ -304,6 +318,36 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         }
                     });
                 }
+            }
+        }).start();
+        getId();
+    }
+
+    public void register(String username, String password){
+        new Thread(() -> {
+            String url="http://47.93.101.225:8080/register";
+            String json = "{\n" +
+                    " \"account\":\"" + username + "\",\n" +
+                    " \"password\":\"" + password + "\"\n" +
+                    "}";
+            try {
+                String response = OkHttp.post(url, json);
+                System.out.println(response);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "注册成功，请登录！", Toast.LENGTH_SHORT).show();
+                        switchToLogin();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }).start();
     }
@@ -319,12 +363,9 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                         " \"inputQuestion\":\"" + inputQuestion + "\",\n" +
                         " \"id\":\"" + id + "\"\n" +
                         "}";
-                //System.out.println(json);
                 try {
                     String response = OkHttp.post(url, json);
                     EventBus.getDefault().post(new MessageEvent(response));
-                    //qaListener.sendResponse(response);
-                    //System.out.println("response1"+jsonObject);
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
@@ -336,7 +377,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 }
             }
         }).start();
-        //System.out.println("response"+str);
         return str;
     }
 
@@ -345,14 +385,13 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
             @Override
             public void run() {
                 String url = loginUrl;
-                String phone = sharedPreferences.getString("phone", null);
+                String username = sharedPreferences.getString("username", null);
                 String password = sharedPreferences.getString("password", null);
-                if (phone != null && password != null) {
+                if (username != null && password != null) {
                     String json = "{\n" +
                             " \"phone\":\"" + "15272961269" + "\",\n" +
                             " \"password\":\"" + "lcs84615" + "\"\n" +
                             "}";
-                    System.out.println(json);
                     try {
                         String response = OkHttp.post(url, json);
                         System.out.println(response);
@@ -361,6 +400,10 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                             id = jsonObject.getString("id");
                             sharedPreferencesEditor.putString("id", id);
                             sharedPreferencesEditor.apply();
+
+                            userDatabaseHelper = new UserDatabaseHelper(MainActivity.this, username + ".db");
+                            db = userDatabaseHelper.getWritableDatabase();
+
                         } catch(Exception e){
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -369,13 +412,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                                 }
                             });
                         }
-                        //System.out.println(id);
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
@@ -392,7 +428,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        //Toast.makeText(MainActivity.this, event.message, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onStart() {
@@ -404,13 +439,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
-
-    public void knowledgeCheck(){
-        switchFragments(5);
-    }
-    public void quizSearch(){
-        switchFragments(11);
     }
 
     public void search_point(String s,String course){
@@ -426,7 +454,6 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                 try {
                     String response = OkHttp.post(url, json);
                     EventBus.getDefault().post(new MessageEvent(response));
-                    //System.out.println(id);
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
@@ -444,20 +471,36 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = detailUrl + "course="+course+"&name="+entity_name+"&id="+id;
-                /*String json = "{\n" +
-                        " \"course\":\"" + course + "\",\n" +
-                        " \"name\":\"" + entity_name+ "\",\n" +
-                        " \"id\":\"" + id + "\"\n" +
-                        "}";*/
                 try {
-                    String response = OkHttp.get(url);
+                    Cursor cursor = db.query("DETAIL", new String[]{"CONTENT"},
+                            "COURSE=? AND NAME=?", new String[]{course, entity_name},
+                            null, null, null);
+                    String response = null;
+                    if (cursor.moveToFirst()) {
+                        response = cursor.getString(cursor.getColumnIndex("CONTENT"));
+                    } else {
+                        String url = detailUrl
+                                + "course=" + course
+                                + "&name=" + entity_name
+                                + "&id=" + id;
+                        response = OkHttp.get(url);
+                    }
                     EventBus.getDefault().post(new MessageEvent(response));
-                    //System.out.println(response);
+                    ContentValues values = new ContentValues();
+                    values.put("COURSE", course);
+                    values.put("NAME", entity_name);
+                    values.put("TIME", df.format(new Date()));
+                    db.insert("BROWSINGHISTORY", null, values);
+                    values.clear();
+                    values.put("COURSE", course);
+                    values.put("NAME", entity_name);
+                    values.put("CONTENT", response);
+                    db.insertWithOnConflict("DETAIL", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                    values.clear();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "获取详情成功！", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (Exception e) {
@@ -477,7 +520,9 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = quizUrl + "uriName="+name+"&id="+id;
+                String url = quizUrl
+                        + "uriName=" + name
+                        + "&id=" + id;
                 try {
                     String response = OkHttp.get(url);
                     runOnUiThread(new Runnable() {
@@ -540,5 +585,28 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ArrayList<BrowsingHistory> getBrowsingHistory() {
+        String username = sharedPreferences.getString("username", null);
+        ArrayList<BrowsingHistory> browsingHistoryArrayList = null;
+        if (id != null && username != null) {
+            Cursor cursor = db.query("BROWSINGHISTORY", null, null, null, null, null, "ID DESC");
+            if (cursor.moveToFirst()) {
+                browsingHistoryArrayList = new ArrayList<BrowsingHistory>();
+                do {
+                    Integer id = cursor.getInt(cursor.getColumnIndex("ID"));
+                    String course = cursor.getString(cursor.getColumnIndex("COURSE"));
+                    String name = cursor.getString(cursor.getColumnIndex("NAME"));
+                    String time = cursor.getString(cursor.getColumnIndex("TIME"));
+                    browsingHistoryArrayList.add(BrowsingHistory.newInstance(id, course, name, time));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } else {
+            Toast.makeText(MainActivity.this, "请先登录，再查看浏览历史记录", Toast.LENGTH_SHORT).show();
+        }
+        return browsingHistoryArrayList;
     }
 }

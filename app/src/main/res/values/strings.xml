@@ -24,4 +24,5 @@
     <string name="phone_number">Phone number</string>
     <string name="register">注册</string>
     <string name="testTitle">试题推荐</string>
+    <string name="logout">登出</string>
 </resources>
