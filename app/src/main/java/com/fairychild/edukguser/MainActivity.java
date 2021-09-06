@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fairychild.edukguser.Activity.WebShareActivity;
 import com.fairychild.edukguser.datastructure.Question;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
@@ -29,6 +30,9 @@ import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.share.WbShareHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements MeFragment.FragmentListener,LoginFragment.LoginListener, QaFragment.QaListener, FunctionFragment.FunctionListener ,
         KnowledgeCheckFragment.KnowledgeCheckListener, RegisterFragment.RegisterListener, SearchFragment.FragmentListener, HomeFragment.FragmentListener,
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         getId();
 
         initFragments();
+        WbSdk.install(this,new AuthInfo(this,Constants.APP_KEY,Constants.REDIRECT_URL,Constants.SCOPE));
+
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
@@ -106,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
             return false;
         }
     };
+
 
     private void initElement(){
         mBottomNavigationView = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation_view);
@@ -165,6 +174,16 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         Fragment targetFragment = mFragments.get(idx);
         transaction.remove(targetFragment);
         mFragments.remove(idx);
+    }
+
+    public void weibo_share(String item_title,String item_content){
+        WbShareHandler shareHandler=new WbShareHandler(MainActivity.this);
+        shareHandler.registerApp();
+        Intent i=new Intent(MainActivity.this, WebShareActivity.class);
+        i.putExtra(WebShareActivity.KEY_SHARE_TYPE,WebShareActivity.SHARE_CLIENT);
+        i.putExtra("itemTitle",item_title);
+        i.putExtra("itemContent",item_content);
+        startActivity(i);
     }
 
     public void back_home(){

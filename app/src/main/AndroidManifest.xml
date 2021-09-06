@@ -11,6 +11,8 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ProtectedPermissions"/>
 
     <application
         android:allowBackup="true"
@@ -28,6 +30,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.CategoryArrangement" />
+        <activity android:name=".Activity.WebShareActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

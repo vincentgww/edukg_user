@@ -46,9 +46,11 @@ public class detailFragment extends Fragment {
         void delete_fragment(int idx);
         void related_quiz(String name, int idx);
         void back_home();
+        void weibo_share(String item_title,String item_content);
     }
     detailListener listener;
     String name,course;
+    String simple_description;
 
 
     detailFragment(String entity_name, String course, int idx){
@@ -145,6 +147,18 @@ public class detailFragment extends Fragment {
                 listener.delete_fragment(idx);
             }
         });
+        Button mShareButton=view.findViewById(R.id.detail_share_btn);
+        mShareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                simple_description为当前entity的简要介绍
+                 */
+                simple_description=course;
+                listener.weibo_share(name,simple_description);
+            }
+        });
+
         return view;
     }
 
