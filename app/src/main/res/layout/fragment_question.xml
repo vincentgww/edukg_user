@@ -10,23 +10,24 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:background="@drawable/ic_keyboard_return_black_24dp"/>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/last_question"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:text="上一题"
             style="@style/Widget.MaterialComponents.Button.TextButton"/>
         <Button
             android:id="@+id/next_question"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="210dp"
+            android:layout_alignParentRight="true"
             android:text="下一题"
             style="@style/Widget.MaterialComponents.Button.TextButton"/>
-    </LinearLayout>
+    </RelativeLayout>
     <TextView
         android:id="@+id/question"
         android:layout_width="match_parent"
