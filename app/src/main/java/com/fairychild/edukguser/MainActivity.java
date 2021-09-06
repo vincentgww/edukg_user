@@ -35,6 +35,7 @@ import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
+import com.fairychild.edukguser.fragment.SearchResultListFragment;
 import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
 import com.fairychild.edukguser.sql.UserDatabaseHelper;
@@ -66,7 +67,8 @@ public class MainActivity extends AppCompatActivity
         QuizFragment.quizListener,
         SubItemAdapter.SubItemAdaptorListener,
         BrowsingHistoryListFragment.DataBaseListener,
-        FavouritesListFragment.DataBaseListener {
+        FavouritesListFragment.DataBaseListener,
+        SearchResultListFragment.DetailListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;

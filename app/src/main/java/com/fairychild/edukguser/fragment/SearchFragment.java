@@ -167,7 +167,7 @@ public class SearchFragment extends Fragment {
             ArrayList<Knowledge> content = new ArrayList<Knowledge>();
             content = gson.fromJson(data, new TypeToken<ArrayList<Knowledge>>(){}.getType());
             System.out.println(content);
-            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content.size(), content, searchContentString);
+            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content.size(), content, subject, searchContentString);
             transaction.add(R.id.search_frame_layout, searchResultListFragment);
             if (!firstInit) {
                 transaction.remove(currentFragment);
