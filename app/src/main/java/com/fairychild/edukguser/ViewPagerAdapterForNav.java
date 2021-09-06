@@ -21,7 +21,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.Nullable;
 
-public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
+public class ViewPagerAdapterForNav extends FragmentStatePagerAdapter {
     //碎片集合
     private List<Fragment> mFragments = new ArrayList<>();
     private Context context;
@@ -92,12 +92,13 @@ public class ViewPagerAdapterForNav extends FragmentPagerAdapter {
         FragmentTransaction transaction=fm.beginTransaction();
         transaction.detach(fragment);
         transaction.commitNow();
+        notifyDataSetChanged();
     }
 
-    @Override
+    /*@Override
     public long getItemId(int position){
         return mFragments.get(position).hashCode();
-    }
+    }*/
 
     //@Override
     //public Object instantiateItem(@NonNull ViewGroup container, int position) {

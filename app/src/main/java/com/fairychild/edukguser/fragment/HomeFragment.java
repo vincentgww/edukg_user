@@ -124,6 +124,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
 
         mBtnSearch.setOnClickListener(this);
+        mViewPager.setOffscreenPageLimit(mFragments.size());
         //initData();
         return view;
     }
@@ -268,7 +269,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         tabLayout.addTab(tab);
         mFragments.add(TabFragment.newInstance(title.toLowerCase(Locale.ROOT)));
         mViewPagerAdapterForNav.setFragments(mFragments,mTitles);
-        //mViewPager.setOffscreenPageLimit(mFragments.size());
+        mViewPager.setOffscreenPageLimit(mFragments.size());
     }
     private void delFragment(){
         mTitles.clear();
