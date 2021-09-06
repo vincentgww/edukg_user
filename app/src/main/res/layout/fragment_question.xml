@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    <Button
+        android:id="@+id/back_button_quiz"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_keyboard_return_black_24dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/last_question"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="上一题"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <Button
+            android:id="@+id/next_question"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="210dp"
+            android:text="下一题"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:padding="8dp" />
+    <RadioGroup android:id="@+id/rg_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton
+            android:id="@+id/q_choice1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/cb"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimary" />
+        <RadioButton
+            android:id="@+id/q_choice2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/cb"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimary" />
+        <RadioButton
+            android:id="@+id/q_choice3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/cb"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimary" />
+        <RadioButton
+            android:id="@+id/q_choice4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/cb"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimary" />
+    </RadioGroup>
+    <Button
+        android:id="@+id/submit_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:text="提交答案"
+        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+</LinearLayout>

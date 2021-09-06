@@ -134,7 +134,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                         switch (checkedId){
                             case 2131296376:
                                 id = 0;
-                                //System.out.println(holder.getAbsoluteAdapterPosition());
                                 break;
                             case 2131296377:
                                 id = 1;

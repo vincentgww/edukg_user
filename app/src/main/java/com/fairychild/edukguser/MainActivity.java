@@ -22,6 +22,7 @@ import com.fairychild.edukguser.fragment.MeFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
+import com.fairychild.edukguser.fragment.QuestionFragment;
 import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
@@ -499,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         switchFragments(back_id);
     }
 
-    public void related_quiz(String name, int idx){
+    public void related_question(String name, int idx){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -522,7 +523,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                                 });
                             }
                             else {
-                                Fragment targetFragment = QuizFragment.newInstance(name, mFragments.size(), question_list, idx);
+                                Fragment targetFragment = QuestionFragment.newInstance(name, mFragments.size(), question_list, idx);
                                 mFragments.add(targetFragment);
                                 transaction.add(R.id.frameLayout, targetFragment);
                                 transaction.hide(currentFragment);
@@ -568,7 +569,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
                     case "D":
                         correct = 3;
                 }
-                if(raw.length()<1000) {
+                if(raw.length()<1000 && ans.length()==1) {
                     String[] blocks = raw.split("[A-D]\\.");
                     Question q = new Question(blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
                     question_list.add(q);

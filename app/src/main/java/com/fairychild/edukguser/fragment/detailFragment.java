@@ -44,7 +44,7 @@ public class detailFragment extends Fragment {
     public interface detailListener {
         void get_detail(String entity_name, String course);
         void delete_fragment(int idx);
-        void related_quiz(String name, int idx);
+        void related_question(String name, int idx);
         void back_home();
         void weibo_share(String item_title,String item_content);
     }
@@ -136,7 +136,7 @@ public class detailFragment extends Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.related_quiz(name,idx);
+                listener.related_question(name,idx);
             }
         });
         Button back_button = view.findViewById(R.id.back_button_detail);
@@ -154,7 +154,16 @@ public class detailFragment extends Fragment {
                 /*
                 simple_description为当前entity的简要介绍
                  */
-                simple_description=course;
+                simple_description="名称："+name+"\n";
+                simple_description+="学科："+course+"\n关系：\n";
+                for(Item i:itemList1){
+                    String cha = i.get_sub()? "←":"→";
+                    simple_description+=i.get_label()+cha+i.get_des()+"\n";
+                }
+                simple_description+="属性：\n";
+                for(Item i:itemList1){
+                    simple_description+=i.get_label()+"→"+i.get_des()+"\n";
+                }
                 listener.weibo_share(name,simple_description);
             }
         });

@@ -9,13 +9,13 @@ public class Item{
         des = d;
         subject = s;
     }
-    String get_label(){
+    public String get_label(){
         return label;
     }
-    String get_des(){
+    public String get_des(){
         return des;
     }
-    boolean get_sub(){
+    public boolean get_sub(){
         return subject;
     }
 
