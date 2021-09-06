@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.BrowsingHistory;
@@ -84,9 +85,18 @@ public class BrowsingHistoryListFragment extends Fragment {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BrowsingHistoryListFragmentRefreshNotice notice) {
         Log.d("BrowsingHistoryListFragment", "onMessageEvent BrowsingHistoryListFragmentRefreshNotice");
+        Toast.makeText(getContext(), "onMessageEvent BrowsingHistoryListFragmentRefreshNotice", Toast.LENGTH_SHORT).show();
         try {
-            adapter.setData(mData, true);
-
+            try{
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.setData(mData,true);
+                    }
+                });
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             EventBus.getDefault().removeStickyEvent(notice);
 
         } catch(Exception e){

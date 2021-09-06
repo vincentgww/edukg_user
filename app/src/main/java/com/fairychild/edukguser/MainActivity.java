@@ -211,6 +211,8 @@ public class MainActivity extends AppCompatActivity
         switchFragments(8);
     }
     public void switchToFavourites() {
+        mFragments.remove(9);
+        mFragments.add(FavouritesListFragment.newInstance());
         switchFragments(9);
         EventBus.getDefault().postSticky(new FavouritesListFragmentRefreshNotice());
     }

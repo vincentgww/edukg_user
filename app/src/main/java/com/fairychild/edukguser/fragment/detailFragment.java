@@ -174,6 +174,7 @@ public class detailFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     listener.removeFavourites(course, name);
+                    btnAddFavourites.setText("加入收藏");
                 }
             });
         } else {
