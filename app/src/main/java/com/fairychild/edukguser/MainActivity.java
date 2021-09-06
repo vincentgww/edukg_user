@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,6 +23,7 @@ import com.fairychild.edukguser.datastructure.Favourite;
 import com.fairychild.edukguser.datastructure.FavouritesListFragmentRefreshNotice;
 import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
+import com.fairychild.edukguser.Activity.WebShareActivity;
 import com.fairychild.edukguser.datastructure.Question;
 import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.FavouritesListFragment;
@@ -40,6 +42,10 @@ import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
 import com.fairychild.edukguser.sql.UserDatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.share.WbShareHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -115,6 +121,8 @@ public class MainActivity extends AppCompatActivity
         getId();
 
         initFragments();
+        WbSdk.install(this,new AuthInfo(this,Constants.APP_KEY,Constants.REDIRECT_URL,Constants.SCOPE));
+
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
@@ -146,6 +154,7 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
     };
+
 
     private void initElement(){
         mBottomNavigationView = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation_view);
@@ -270,9 +279,22 @@ public class MainActivity extends AppCompatActivity
         mFragments.remove(idx);
     }
 
+    public void weibo_share(String item_title,String item_content){
+        WbShareHandler shareHandler=new WbShareHandler(MainActivity.this);
+        shareHandler.registerApp();
+        Intent i=new Intent(MainActivity.this, WebShareActivity.class);
+        i.putExtra(WebShareActivity.KEY_SHARE_TYPE,WebShareActivity.SHARE_CLIENT);
+        i.putExtra("itemTitle",item_title);
+        i.putExtra("itemContent",item_content);
+        startActivity(i);
+    }
 
+    public void back_home(){
+        switchFragments(0);
+    }
     @Override
     public void onBackPressed() {
+        System.out.println("you pressed");
         if (mFragments.size() >= 1) {
             //显示最顶部那一个
             showFragment(mFragments.get(mFragments.size()-1));
@@ -558,7 +580,11 @@ public class MainActivity extends AppCompatActivity
         }).start();
     }
 
-    public void related_quiz(String name){
+    public void go_back(int back_id){
+        switchFragments(back_id);
+    }
+
+    public void related_quiz(String name, int idx){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -573,13 +599,24 @@ public class MainActivity extends AppCompatActivity
                             transaction = mSupportFragmentManager.beginTransaction();
                             question_list = new ArrayList<>();
                             handle_quiz(response);
-                            Fragment targetFragment = QuizFragment.newInstance(name,mFragments.size(),question_list);
-                            mFragments.add(targetFragment);
-                            transaction.add(R.id.frameLayout,targetFragment);
-                            transaction.hide(currentFragment);
-                            transaction.show(targetFragment);
-                            transaction.commit();
-                            currentFragment = targetFragment;
+                            if(question_list.isEmpty()){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Toast toast = Toast.makeText(MainActivity.this, "无相关试题！", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                            else {
+                                Fragment targetFragment = QuizFragment.newInstance(name, mFragments.size(), question_list, idx);
+                                mFragments.add(targetFragment);
+                                transaction.add(R.id.frameLayout, targetFragment);
+                                transaction.hide(currentFragment);
+                                transaction.show(targetFragment);
+                                transaction.commit();
+                                currentFragment = targetFragment;
+                            }
                         }
                     });
                 } catch (Exception e) {

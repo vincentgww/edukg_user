@@ -29,9 +29,11 @@ import org.json.JSONObject;
 public class QuizFragment extends Fragment {
     public interface quizListener {
         void delete_quiz(int idx);
+        void go_back(int back_id);
     }
     String name;
     int idx;
+    int back_id;
     private Context mActivity;
     private quizListener listener;
     private RecyclerView quizRecyclerView;
@@ -45,10 +47,11 @@ public class QuizFragment extends Fragment {
     }
 
 
-    public QuizFragment(String name,int idx, List<Question> questionList){
+    public QuizFragment(String name,int idx, List<Question> questionList, int back_id){
         this.name = name;
         this.idx = idx;
         question_list = questionList;
+        this.back_id = back_id;
     }
     @Nullable
     @Override
@@ -69,17 +72,31 @@ public class QuizFragment extends Fragment {
                 adapter.setFooterView(footer);
             }
         });
+        Button back_button = view.findViewById(R.id.back_button_quiz);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.go_back(back_id);
+            }
+        });
         return view;
     }
-    public static QuizFragment newInstance(String name,int idx,List<Question> questionList){
-        QuizFragment indexFragment=new QuizFragment(name,idx,questionList);
+    public static QuizFragment newInstance(String name,int idx,List<Question> questionList, int back_id){
+        QuizFragment indexFragment=new QuizFragment(name,idx,questionList, back_id);
         return indexFragment;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden)
+            listener.delete_quiz(idx);
     }
 
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
-        listener.delete_quiz(idx);
+        //listener.delete_quiz(idx);
         super.onStop();
     }
 }

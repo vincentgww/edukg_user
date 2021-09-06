@@ -23,7 +23,7 @@ public class CategoryArrangement extends AppCompatActivity {
     private DragGridLayout gridLayout2;
     private ArrayList<String> mCategory;
     private ArrayList<String> mDelCategory;
-//    private boolean editFlag = false;
+    //    private boolean editFlag = false;
     private Button backBtn;
 
     @Override
@@ -50,18 +50,27 @@ public class CategoryArrangement extends AppCompatActivity {
         gridLayout1.setOnDragItemClickListener(new DragGridLayout.OnDragItemClickListener() {
             @Override
             public void onDragItemClick(TextView tv) {
-                mCategory.remove(tv.getText().toString().replace("+", ""));
-                mDelCategory.add(tv.getText().toString().replace("+", ""));
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCategory.remove(tv.getText().toString().replace("+", ""));
+                        mDelCategory.add(tv.getText().toString().replace("+", ""));
+                    }
+                }
+                ).start();
                 gridLayout1.removeView(tv);
                 gridLayout2.addGridItem(tv.getText().toString());
-//                editFlag = true;
             }
         });
         gridLayout2.setOnDragItemClickListener(new DragGridLayout.OnDragItemClickListener() {
             @Override
             public void onDragItemClick(TextView tv) {
-                mDelCategory.remove(tv.getText().toString().replace("+", ""));
-                mCategory.add(tv.getText().toString().replace("+", ""));
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDelCategory.remove(tv.getText().toString().replace("+", ""));
+                        mCategory.add(tv.getText().toString().replace("+", ""));
+                    }}).start();
                 gridLayout2.removeView(tv);
                 gridLayout1.addGridItem(tv.getText().toString());
 //                editFlag = true;
@@ -71,8 +80,8 @@ public class CategoryArrangement extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mCategory.size() == 0){
-                    Toast.makeText(getApplicationContext(), "必须至少选择一个学科", Toast.LENGTH_LONG).show();
+                if(mCategory.size() == 0 ){
+                    Toast.makeText(getApplicationContext(), "必须至少选择两个学科", Toast.LENGTH_LONG).show();
                     return;
                 }
                 Intent intent = getIntent();

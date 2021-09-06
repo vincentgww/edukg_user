@@ -12,6 +12,9 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        ndk{
+            abiFilters 'armeabi'  //, 'armeabi-v7a','arm64-v8a'
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.jdsjlzx:LRecyclerView:1.5.4.3'
     implementation 'com.github.tdebatty:java-string-similarity:v2.0.0'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -51,6 +55,8 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.room:room-runtime:2.1.0'
+    compile(name:'core-4.3.1-openDefaultRelease', ext:'aar')
+    //compile(name:'openDefault-11.8.1',ext:'aar')
     annotationProcessor 'androidx.room:room-compiler:2.1.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

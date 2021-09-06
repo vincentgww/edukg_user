@@ -61,7 +61,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //if(rootView==null){
+        if(rootView==null){
             rootView=inflater.inflate(R.layout.fragment_tab,container,false);
             mactivity=getActivity();
             //EventBus.getDefault().register(this);
@@ -71,16 +71,11 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             loadMoreButton=(Button)loadmoreView.findViewById(R.id.loadBtn);
             listView.addFooterView(loadmoreView);
             initAdapter();
-            try {
-                Thread.sleep(500);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
             mAdapter=new SubItemAdapter(mactivity,items);
             listView.setAdapter(mAdapter);
             listView.setOnScrollListener(this);
             loadMoreButton.setOnClickListener(this::LoadMore);
-        //}
+        }
         return rootView;
     }
 
@@ -109,7 +104,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println(cur_subject);
+                System.out.println("tabFragment当前学科为"+cur_subject);
                 String url="http://47.93.101.225:8000/data"+"?course="+cur_subject+"&page="+cur_page;
                 OkHttpClient okHttpClient=new OkHttpClient();
                 Request request=new Request.Builder().get().url(url).build();
@@ -124,7 +119,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String res=response.body().string();
-                        new Thread(new Runnable() {
+                        mactivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 try{
@@ -139,18 +134,20 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                                             tjson=page.getJSONObject(i);
                                             String cur_title=tjson.getString("entity_name");
                                             SubItem cur_item=new SubItem(cur_title,cur_subject,cur_subject);
+                                            //System.out.println(cur_title);
                                             items.add(cur_item);
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
                                     }
-
+                                    mAdapter.notifyDataSetChanged();
+                                    //listView.setSelection(visibleLastIndex - visibleItemCount + 1);
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
 
                             }
-                        }).start();
+                        });
                     }
                 });
 
@@ -229,7 +226,13 @@ public class TabFragment extends ListFragment implements OnScrollListener {
         }).start();
         //loadMoreButton.setText("Load more...");
     }
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (rootView != null) {
+            ((ViewGroup) rootView.getParent()).removeView(rootView);
+        }
+    }
 //    @Subscribe(threadMode = ThreadMode.MAIN)
 //    public void onMessageEvent(MessageEvent event){
 //        Log.d(TAG,event.message.toLowerCase(Locale.ROOT));

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fairychild.edukguser.Item;
 import com.fairychild.edukguser.ItemAdapter;
+import com.fairychild.edukguser.MainActivity;
 import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.Msg;
 import com.fairychild.edukguser.MsgAdapter;
@@ -38,6 +40,7 @@ public class detailFragment extends Fragment {
     private RecyclerView itemRecyclerView2;
     private ItemAdapter adapter1;
     private ItemAdapter adapter2;
+    private LinearLayout linear;
     private int idx;
 
     private Button btnQuiz;
@@ -46,14 +49,19 @@ public class detailFragment extends Fragment {
     public interface detailListener {
         void get_detail(String entity_name, String course);
         void delete_fragment(int idx);
-        void related_quiz(String name);
         void addFavourites(String course, String name);
         void removeFavourites(String course, String name);
         boolean isAddedToFavourites(String course, String name);
+        void related_quiz(String name, int idx);
+        void back_home();
+        void weibo_share(String item_title,String item_content);
     }
 
     detailListener listener;
     String name,course;
+    String simple_description;
+
+
     detailFragment(String entity_name, String course, int idx){
         super();
         name = entity_name;
@@ -62,17 +70,11 @@ public class detailFragment extends Fragment {
     }
 
     public void addNewItems(){
-        /*Item itm = new Item(label,des,subject);
-        if(subject){
-            itemList1.add(itm);
-            adapter1.notifyItemInserted(itemList1.size()-1);
-            msgRecyclerView.scrollToPosition(msgList.size()-1);
-        }
-        itemList.add(message);
-        adapter.notifyItemInserted(msgList.size()-1);
-        msgRecyclerView.scrollToPosition(msgList.size()-1);*/
+        if(itemList1.isEmpty())
+            linear.removeView(itemRecyclerView1);
         adapter1.notifyItemInserted(itemList1.size()-1);
-        itemRecyclerView1.scrollToPosition(itemList1.size()-1);
+        if(itemList2.isEmpty())
+            linear.removeView(itemRecyclerView2);
         adapter2.notifyItemInserted(itemList2.size()-1);
         System.out.println(itemList1.size());
     }
@@ -119,6 +121,7 @@ public class detailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         TextView entity_text= view.findViewById(R.id.entity_name);
+        linear = view.findViewById(R.id.detail_linear);
         entity_text.setText(name);
         listener.get_detail(name, course);
         getActivity().runOnUiThread(new Runnable() {
@@ -142,7 +145,26 @@ public class detailFragment extends Fragment {
         btnQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.related_quiz(name);
+                listener.related_quiz(name,idx);
+            }
+        });
+        Button back_button = view.findViewById(R.id.back_button_detail);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.back_home();
+                listener.delete_fragment(idx);
+            }
+        });
+        Button mShareButton=view.findViewById(R.id.detail_share_btn);
+        mShareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                simple_description为当前entity的简要介绍
+                 */
+                simple_description=course;
+                listener.weibo_share(name,simple_description);
             }
         });
         btnAddFavourites = view.findViewById(R.id.btn_add_favourites);
@@ -169,6 +191,7 @@ public class detailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         listener = (detailListener) context;
+        //mActivity = (MainActivity) context;
         super.onAttach(context);
     }
 
@@ -176,5 +199,18 @@ public class detailFragment extends Fragment {
     public static detailFragment newInstance(String entity_name, String course, int idx){
         detailFragment indexFragment = new detailFragment(entity_name, course, idx);
         return indexFragment;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 }

@@ -6,6 +6,7 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }//gradle-plugin
         maven { url 'https://maven.aliyun.com/repository/central' }//central
         maven { url 'https://maven.aliyun.com/repository/google' }//google
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
         // 原镜像
         google()
         mavenCentral()
@@ -27,6 +28,7 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/google' }//google
         maven { url 'https://esri.jfrog.io/artifactory/arcgis' }
         maven { url 'https://www.jitpack.io' }
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
 
         flatDir{
             dirs 'libs'//A依赖B，B依赖C，要想A能访问C的libs，就得添加这个
