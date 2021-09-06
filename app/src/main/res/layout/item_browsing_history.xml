@@ -37,7 +37,8 @@
             android:textSize="20sp"
             android:textColor="@color/catArrangeHintColor"
             android:maxLines="1"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            android:layout_marginStart="15dp"/>
 
     </LinearLayout>
 

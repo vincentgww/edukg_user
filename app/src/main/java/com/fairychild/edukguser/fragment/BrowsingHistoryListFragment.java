@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,12 @@ import android.widget.ListView;
 
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.BrowsingHistory;
+import com.fairychild.edukguser.datastructure.BrowsingHistoryListFragmentRefreshNotice;
+import com.fairychild.edukguser.datastructure.FavouritesListFragmentRefreshNotice;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -29,6 +36,8 @@ public class BrowsingHistoryListFragment extends Fragment {
     private ArrayList<BrowsingHistory> mData = new ArrayList<BrowsingHistory>();
 
     private BrowsingHistoryListFragment.DataBaseListener listener;
+
+    private BrowsingHistoryListAdapter adapter;
 
     public BrowsingHistoryListFragment() {
     }
@@ -55,7 +64,7 @@ public class BrowsingHistoryListFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_browsing_history_list, container, false);
 
         listView = view.findViewById(R.id.browsing_history_list_view);
-        BrowsingHistoryListAdapter adapter = new BrowsingHistoryListAdapter(getActivity());
+        adapter = new BrowsingHistoryListAdapter(getActivity());
         mData = listener.getBrowsingHistory();
         adapter.setData(mData, false);
         listView.setAdapter(adapter);
@@ -70,5 +79,30 @@ public class BrowsingHistoryListFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(BrowsingHistoryListFragmentRefreshNotice notice) {
+        Log.d("BrowsingHistoryListFragment", "onMessageEvent BrowsingHistoryListFragmentRefreshNotice");
+        try {
+            adapter.setData(mData, true);
+
+            EventBus.getDefault().removeStickyEvent(notice);
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 }

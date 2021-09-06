@@ -17,10 +17,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.fairychild.edukguser.datastructure.BrowsingHistory;
+import com.fairychild.edukguser.datastructure.BrowsingHistoryListFragmentRefreshNotice;
+import com.fairychild.edukguser.datastructure.Favourite;
+import com.fairychild.edukguser.datastructure.FavouritesListFragmentRefreshNotice;
 import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.datastructure.Question;
 import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
+import com.fairychild.edukguser.fragment.FavouritesListFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
@@ -35,14 +39,15 @@ import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
 import com.fairychild.edukguser.sql.UserDatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.textfield.TextInputEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,7 +65,8 @@ public class MainActivity extends AppCompatActivity
         detailFragment.detailListener,
         QuizFragment.quizListener,
         SubItemAdapter.SubItemAdaptorListener,
-        BrowsingHistoryListFragment.DataBaseListener{
+        BrowsingHistoryListFragment.DataBaseListener,
+        FavouritesListFragment.DataBaseListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity
     //Chip Group
     private MenuItem menuItem;
     private String id;
+    private String uid;
     private FragmentTransaction transaction;
     private FragmentManager mSupportFragmentManager;
     private Fragment currentFragment;
@@ -81,6 +88,8 @@ public class MainActivity extends AppCompatActivity
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
     private final String quizUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/questionListByUriName?";
+    private final String getHistoryUrl = "http://47.93.101.225:8080/user/history/";
+    private final String setHistoryUrl = "http://47.93.101.225:8080/history";
     private String str;
     private boolean firstInit = true;
     private List<Question> question_list = new ArrayList<>();
@@ -108,6 +117,9 @@ public class MainActivity extends AppCompatActivity
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
         switchFragments(0);
+
+        id = sharedPreferences.getString("id", null);
+        uid = sharedPreferences.getString("uid", null);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -148,6 +160,7 @@ public class MainActivity extends AppCompatActivity
         mFragments.add(KnowledgeCheckFragment.newInstance());
         mFragments.add(BrowsingHistoryListFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
+        mFragments.add(FavouritesListFragment.newInstance());
     }
 
     public void switchToHome() {
@@ -181,12 +194,14 @@ public class MainActivity extends AppCompatActivity
     }
     public void switchToBrowsingHistory() {
         switchFragments(7);
+        EventBus.getDefault().postSticky(new BrowsingHistoryListFragmentRefreshNotice());
     }
     public void switchToSearch() {
         switchFragments(8);
     }
     public void switchToFavourites() {
         switchFragments(9);
+        EventBus.getDefault().postSticky(new FavouritesListFragmentRefreshNotice());
     }
     public void switchToReport() {
         switchFragments(10);
@@ -206,7 +221,29 @@ public class MainActivity extends AppCompatActivity
         currentFragment = targetFragment;
     }
 
-    public void show_detail_fragment(String label,String course){
+    @Override
+    public ArrayList<Favourite> getFavourites() {
+        String username = sharedPreferences.getString("username", null);
+        ArrayList<Favourite> favouritesArrayList = null;
+        if (id != null && username != null) {
+            Cursor cursor = db.query("FAVOURITES", null, null, null, null, null, "ID DESC");
+            if (cursor.moveToFirst()) {
+                favouritesArrayList = new ArrayList<Favourite>();
+                do {
+                    Integer id = cursor.getInt(cursor.getColumnIndex("ID"));
+                    String course = cursor.getString(cursor.getColumnIndex("COURSE"));
+                    String name = cursor.getString(cursor.getColumnIndex("NAME"));
+                    favouritesArrayList.add(Favourite.newInstance(id, course, name));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } else {
+            Toast.makeText(MainActivity.this, "请先登录，再查看收藏夹", Toast.LENGTH_SHORT).show();
+        }
+        return favouritesArrayList;
+    }
+
+    public void show_detail_fragment(String label, String course){
         transaction = mSupportFragmentManager.beginTransaction();
         Fragment targetFragment = detailFragment.newInstance(label,course,mFragments.size());
         mFragments.add(targetFragment);
@@ -269,9 +306,12 @@ public class MainActivity extends AppCompatActivity
     public void logout() {
         Log.d("MainActivity", "logout");
         id = null;
+        uid = null;
         sharedPreferencesEditor.remove("username");
         sharedPreferencesEditor.remove("password");
         sharedPreferencesEditor.remove("id");
+        sharedPreferencesEditor.remove("uid");
+        sharedPreferencesEditor.apply();
         db.close();
         userDatabaseHelper = null;
         switchToMe();
@@ -288,11 +328,14 @@ public class MainActivity extends AppCompatActivity
                         "}";
                 try {
                     String response = OkHttp.post(url, json);
-                    System.out.println(response);
                     JSONObject jsonObject = new JSONObject(response);
+                    String data = jsonObject.getString("data");
+                    JSONObject dataObject = new JSONObject(data);
+                    uid = dataObject.getString("id");
                     try{
                         sharedPreferencesEditor.putString("username", username);
                         sharedPreferencesEditor.putString("password", password);
+                        sharedPreferencesEditor.putString("uid", uid);
                         sharedPreferencesEditor.apply();
                         runOnUiThread(new Runnable() {
                             @Override
@@ -398,6 +441,7 @@ public class MainActivity extends AppCompatActivity
                         JSONObject jsonObject = new JSONObject(response);
                         try{
                             id = jsonObject.getString("id");
+                            Log.d("id", id);
                             sharedPreferencesEditor.putString("id", id);
                             sharedPreferencesEditor.apply();
 
@@ -485,13 +529,9 @@ public class MainActivity extends AppCompatActivity
                                 + "&id=" + id;
                         response = OkHttp.get(url);
                     }
+                    setBrowsingHistory(course, entity_name);
                     EventBus.getDefault().post(new MessageEvent(response));
                     ContentValues values = new ContentValues();
-                    values.put("COURSE", course);
-                    values.put("NAME", entity_name);
-                    values.put("TIME", df.format(new Date()));
-                    db.insert("BROWSINGHISTORY", null, values);
-                    values.clear();
                     values.put("COURSE", course);
                     values.put("NAME", entity_name);
                     values.put("CONTENT", response);
@@ -553,6 +593,58 @@ public class MainActivity extends AppCompatActivity
         }).start();
     }
 
+    @Override
+    public void addFavourites(String course, String name) {
+        try {
+            if (id == null || db == null) {
+                Toast.makeText(MainActivity.this, "您还没有登录，请先登录", Toast.LENGTH_SHORT).show();
+            } else {
+                ContentValues values = new ContentValues();
+                values.put("COURSE", course);
+                values.put("NAME", name);
+                db.insertWithOnConflict("FAVOURITES", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                values.clear();
+                Toast.makeText(MainActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(MainActivity.this, "收藏出错", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void removeFavourites(String course, String name) {
+        try {
+            if (id == null || db == null) {
+                Toast.makeText(MainActivity.this, "您还没有登录，请先登录", Toast.LENGTH_SHORT).show();
+            } else {
+                db.delete("FAVOURITES", "COURSE=? AND NAME=?", new String[]{course, name});
+                Toast.makeText(MainActivity.this, "取消收藏成功", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(MainActivity.this, "取消收藏出错", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean isAddedToFavourites(String course, String name) {
+        try {
+            if (id == null || db == null) {
+                Toast.makeText(MainActivity.this, "您还没有登录，请先登录", Toast.LENGTH_SHORT).show();
+                return false;
+            } else {
+                Cursor cursor = db.query("FAVOURITES", null, "COURSE=? AND NAME=?",
+                        new String[]{course, name}, null, null, null);
+                return cursor.moveToFirst();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(MainActivity.this, "检查收藏出错", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
     private void handle_quiz (String response){
         try {
             JSONObject obj = new JSONObject(response);
@@ -590,23 +682,117 @@ public class MainActivity extends AppCompatActivity
     @Override
     public ArrayList<BrowsingHistory> getBrowsingHistory() {
         String username = sharedPreferences.getString("username", null);
-        ArrayList<BrowsingHistory> browsingHistoryArrayList = null;
-        if (id != null && username != null) {
-            Cursor cursor = db.query("BROWSINGHISTORY", null, null, null, null, null, "ID DESC");
-            if (cursor.moveToFirst()) {
-                browsingHistoryArrayList = new ArrayList<BrowsingHistory>();
-                do {
-                    Integer id = cursor.getInt(cursor.getColumnIndex("ID"));
-                    String course = cursor.getString(cursor.getColumnIndex("COURSE"));
-                    String name = cursor.getString(cursor.getColumnIndex("NAME"));
-                    String time = cursor.getString(cursor.getColumnIndex("TIME"));
-                    browsingHistoryArrayList.add(BrowsingHistory.newInstance(id, course, name, time));
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
+        ArrayList<BrowsingHistory> browsingHistoryArrayList = new ArrayList<BrowsingHistory>();
+        if (id != null && username != null && uid != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String url = getHistoryUrl + uid;
+                        String response = OkHttp.get(url);
+                        JSONObject responseObject = new JSONObject(response);
+                        String response_code = responseObject.getString("code");
+                        if (response_code.equals("0")) {
+                            String data = responseObject.getString("data");
+                            JSONObject dataObject = new JSONObject(data);
+                            String historys = dataObject.getString("historys");
+                            JSONArray historyArray = new JSONArray(historys);
+                            for (int i = 0; i < historyArray.length(); i++) {
+                                JSONObject history = historyArray.getJSONObject(i);
+                                String course = history.getString("course");
+                                String name = history.getString("label");
+                                String time = history.getString("time");
+                                browsingHistoryArrayList.add(BrowsingHistory.newInstance(i, course, name, time));
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "获取浏览记录成功！", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d("getBrowsingHistory", url);
+                                    Log.d("getBrowsingHistory", response);
+                                    Toast.makeText(MainActivity.this, "获取浏览记录失败！请重新尝试！", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }).start();
         } else {
             Toast.makeText(MainActivity.this, "请先登录，再查看浏览历史记录", Toast.LENGTH_SHORT).show();
         }
+        Log.d("BrowsingHistory", browsingHistoryArrayList.toString());
         return browsingHistoryArrayList;
+    }
+
+    public void setBrowsingHistory(String course, String name) {
+        String username = sharedPreferences.getString("username", null);
+        if (id != null && username != null && uid != null) {
+            String url = setHistoryUrl;
+            String json = "{\n" +
+                    "    \"course\":\"" + course + "\",\n" +
+                    "    \"label\":\"" + name + "\",\n" +
+                    "    \"time\":\"" + df.format(new Date()) + "\",\n" +
+                    "    \"uid\":\"" + uid +
+                    "\"}";
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String response = OkHttp.post(url, json);
+                        Log.d("setBrowsingHistory", response);
+                        JSONObject responseObject = new JSONObject(response);
+                        String response_code = responseObject.getString("code");
+                        if (response_code.equals("0")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "添加历史记录成功", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "添加历史记录失败", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("setBrowsingHistory", url + json);
+                                Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("setBrowsingHistory", id);
+                    Log.d("setBrowsingHistory", username);
+                    Log.d("setBrowsingHistory", uid);
+                    Toast.makeText(MainActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }

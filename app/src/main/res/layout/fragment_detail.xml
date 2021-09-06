@@ -5,23 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        <TextView
+            android:id="@+id/ll_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/entity_name"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            />
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/entity_name"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,14 +31,24 @@
         </LinearLayout>
         <Button
             android:id="@+id/btn_quiz"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/bg_btn_blue_pressed"
-            android:layout_marginStart="200dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/ll_item"
             android:textSize="16sp"
             android:text="关联试题"/>
-    </LinearLayout>
+        <Button
+            android:id="@+id/btn_add_favourites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_btn_blue_pressed"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toEndOf="@+id/btn_quiz"
+            android:textSize="16sp"
+            android:text="收藏"/>
+    </RelativeLayout>
     <View
         android:layout_width="370dp"
         android:layout_height="1dp"

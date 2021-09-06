@@ -36,7 +36,8 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public static final String createFavouritesTable = "CREATE TABLE FAVOURITES ("
             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
             + "COURSE TEXT NOT NULL,"
-            + "SEARCHKEY TEXT NOT NULL);";
+            + "NAME TEXT NOT NULL,"
+            + "UNIQUE(COURSE,NAME) ON CONFLICT REPLACE);";
     public static final String createDetailContentTable = "CREATE TABLE DETAIL ("
             + "COURSE TEXT NOT NULL,"
             + "NAME TEXT NOT NULL,"
