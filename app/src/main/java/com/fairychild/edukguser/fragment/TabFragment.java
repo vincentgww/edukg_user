@@ -139,6 +139,7 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                                             tjson=page.getJSONObject(i);
                                             String cur_title=tjson.getString("entity_name");
                                             SubItem cur_item=new SubItem(cur_title,cur_subject,cur_subject);
+                                            //System.out.println(cur_title);
                                             items.add(cur_item);
                                         }catch (Exception e){
                                             e.printStackTrace();

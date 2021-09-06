@@ -5,6 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
+    <Button
+        android:id="@+id/back_button_quiz"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_keyboard_return_black_24dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/quiz_recycler"
         android:layout_width="match_parent"
