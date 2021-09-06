@@ -23,6 +23,8 @@ public class WebShareActivity extends AppCompatActivity implements View.OnClickL
     public static final int SHARE_ALL_IN_ONE = 2;
     /** 界面标题 */
     private TextView mTitleView;
+    private TextView share_title;
+    private TextView share_content;
     /** 分享按钮 */
     private Button mSharedBtn;
     private WbShareHandler shareHandler;
@@ -38,7 +40,6 @@ public class WebShareActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
-        initViews();
         mShareType=getIntent().getIntExtra(KEY_SHARE_TYPE,SHARE_CLIENT);
         shareHandler=new WbShareHandler(this);
         shareHandler.registerApp();
@@ -46,6 +47,7 @@ public class WebShareActivity extends AppCompatActivity implements View.OnClickL
         Intent intent=getIntent();
         itemTitle=intent.getStringExtra("itemTitle");
         itemContent=intent.getStringExtra("itemContent");
+        initViews();
     }
 
     @Override
@@ -70,6 +72,10 @@ public class WebShareActivity extends AppCompatActivity implements View.OnClickL
         mTitleView.setText(R.string.weibosdk_demo_share_to_weibo_title);
         mSharedBtn=(Button) findViewById(R.id.share_to_btn);
         mSharedBtn.setOnClickListener(this);
+        share_title=(TextView) findViewById(R.id.share_label);
+        share_title.setText(itemTitle);
+        share_content=(TextView) findViewById(R.id.share_content);
+        share_content.setText(itemContent);
     }
 
     /**

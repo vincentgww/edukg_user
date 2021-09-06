@@ -71,8 +71,14 @@
         android:id="@+id/submit_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="50dp"
         android:text="提交答案"
+        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+    <Button
+        android:id="@+id/question_share_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="分享题目"
         style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
 </LinearLayout>

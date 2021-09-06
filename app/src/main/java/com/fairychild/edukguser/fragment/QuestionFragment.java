@@ -44,10 +44,13 @@ public class QuestionFragment extends Fragment {
     private RadioButton choiceA,choiceB,choiceC,choiceD;
     private Button last_question,next_question,submit;
     private RadioGroup rgroup;
+    private detailFragment.detailListener mlistener;
     List<Question> question_list = new ArrayList<>();
+    private Button question_shareBtn;
     @Override
     public void onAttach(Context context) {
         listener = (QuizFragment.quizListener) context;
+        mlistener = (detailFragment.detailListener) context;
         mActivity = context;
         super.onAttach(context);
     }
@@ -136,6 +139,33 @@ public class QuestionFragment extends Fragment {
                         break;
                 }
                 submit.setVisibility(View.INVISIBLE);
+            }
+        });
+        question_shareBtn=view.findViewById(R.id.question_share_btn);
+        question_shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String question_name=name;
+                String question_content="知识点："+name+"\n";
+                question_content+="题目："+"\n";
+                question_content+=title.getText().toString()+"\n";
+                question_content+=choiceA.getText().toString()+"\n"+choiceB.getText().toString()+"\n"+choiceC.getText().toString()+"\n"+choiceD.getText().toString()+"\n";
+                int correct=question_list.get(id).getAns();
+                switch (correct){
+                    case 0:
+                        question_content+="答案："+"A";
+                        break;
+                    case 1:
+                        question_content+="答案："+"B";
+                        break;
+                    case 2:
+                        question_content+="答案："+"C";
+                        break;
+                    case 3:
+                        question_content+="答案："+"D";
+                        break;
+                }
+                mlistener.weibo_share(question_name,question_content);
             }
         });
         rgroup = view.findViewById(R.id.rg_question);
