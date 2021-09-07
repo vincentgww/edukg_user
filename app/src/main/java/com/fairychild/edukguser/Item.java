@@ -4,6 +4,7 @@ public class Item{
     private boolean subject;
     private String label;
     private String des;
+    private String url;
     public Item(String l,String d,boolean s){
         label = l;
         des = d;
@@ -18,5 +19,8 @@ public class Item{
     public boolean get_sub(){
         return subject;
     }
-
+    public String get_url() {return url;}
+    public void set_url(String url){
+        this.url = url;
+    }
 }

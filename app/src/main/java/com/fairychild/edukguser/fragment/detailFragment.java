@@ -1,11 +1,15 @@
 package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,6 +33,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +48,7 @@ public class detailFragment extends Fragment {
     private ItemAdapter adapter1;
     private ItemAdapter adapter2;
     private LinearLayout linear;
+    private View img;
     private int idx;
     public interface detailListener {
         void get_detail(String entity_name, String course);
@@ -67,8 +76,9 @@ public class detailFragment extends Fragment {
         if(itemList2.isEmpty())
             linear.removeView(itemRecyclerView2);
         adapter2.notifyItemInserted(itemList2.size()-1);
-        System.out.println(itemList1.size());
     }
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
@@ -80,10 +90,19 @@ public class detailFragment extends Fragment {
             for(int i=0;i<arr.length();i++){
                 JSONObject o = arr.getJSONObject(i);
                 String label = o.getString("predicateLabel");
-                String des;
-                des = o.getString("object");
-                if(des.charAt(0)!='h')
-                    itemList2.add(new Item(label,des,false));
+                if(label.equals("图片")){
+                   Item item = new Item(label, "", false);
+                   String url = o.getString("object");
+                   item.set_url(url);
+                   itemList2.add(item);
+                }
+                else {
+                    String des;
+                    des = o.getString("object");
+                    if (des.charAt(0) != 'h')
+                        itemList2.add(new Item(label, des, false));
+                }
+
             }
             for(int i=0;i<arr2.length();i++){
                 JSONObject o = arr2.getJSONObject(i);

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -41,6 +43,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
         mSupportFragmentManager = getSupportFragmentManager();
         //QaFragment a = (QaFragment) mSupportFragmentManager.findFragmentById(1);
         switchFragments(0);
+        show_detail_fragment("亚洲","geo");
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -202,6 +209,30 @@ public class MainActivity extends AppCompatActivity implements MeFragment.Fragme
             finish();
         }
     }
+
+    /*public Bitmap getBitmapFromURL(String src) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //Log.e("src",src);
+
+                    URL url = new URL(src);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                    //Log.e("Bitmap","returned");
+                    return myBitmap;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //Log.e("Exception",e.getMessage());
+                    return null;
+                }
+            }
+        }).start();
+    }*/
 
     private void showFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
