@@ -1,52 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/share_title"
+    android:scrollbars="none">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/share_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/weibosdk_demo_share_to_weibo_title"
+            android:textSize="20sp"/>
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/weibosdk_demo_share_to_weibo_title"
-        android:textSize="20sp"/>
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/share_card"
-                    android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:scrollbars="none">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/share_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/share_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/share_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/weibosdk_demo_share_text_title"
-                            android:textAppearance="?attr/textAppearanceHeadline6"/>
+                    android:text="@string/weibosdk_demo_share_text_title"
+                    android:textAppearance="?attr/textAppearanceHeadline6"/>
 
-                        <TextView
-                            android:id="@+id/share_content"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:textAppearance="?attr/textAppearanceBody2"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:text="@string/weibosdk_demo_share_default_text" />
-                    </LinearLayout>
+                <TextView
+                    android:id="@+id/share_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/weibosdk_demo_share_default_text" />
+            </LinearLayout>
 
-                </com.google.android.material.card.MaterialCardView>
-    <Button
-        android:id="@+id/share_to_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="8dp"
-        android:text="分  享"
-        android:textSize="18sp"
-        style="?attr/materialButtonOutlinedStyle"/>
-</LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <Button
+            android:id="@+id/share_to_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:text="分  享"
+            android:textSize="18sp"
+            style="?attr/materialButtonOutlinedStyle"/>
+
+    </LinearLayout>
+</ScrollView>
