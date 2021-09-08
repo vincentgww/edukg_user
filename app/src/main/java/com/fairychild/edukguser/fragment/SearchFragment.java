@@ -21,6 +21,8 @@ import com.fairychild.edukguser.MainActivity;
 import com.fairychild.edukguser.OkHttp;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -29,6 +31,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SearchFragment extends Fragment {
 
@@ -39,8 +42,10 @@ public class SearchFragment extends Fragment {
     private Spinner subjectSpinner;
 
     private String subject;
+    private ArrayList<Knowledge> knowledge_content;
 
-    private EditText searchContent;
+    private TextInputLayout searchContent;
+    private TextInputEditText search_input;
     private String searchContentString;
 
     private Button backBtn;
@@ -107,12 +112,13 @@ public class SearchFragment extends Fragment {
         });
 
         searchContent = view.findViewById(R.id.search_content);
+        search_input=view.findViewById(R.id.search_input_subject);
 
         searchBtn = view.findViewById(R.id.real_search);
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchContentString = searchContent.getText().toString();
+                searchContentString = search_input.getText().toString();
                 System.out.println(searchContentString);
                 String id = listener.getIdFromSP();
                 if (!searchContentString.equals("") && subject != null && id != null) {
@@ -154,7 +160,6 @@ public class SearchFragment extends Fragment {
                 }
             }
         });
-
         mSupportFragmentManager = mainActivity.getSupportFragmentManager();
     }
 
@@ -164,10 +169,10 @@ public class SearchFragment extends Fragment {
             String data = new JSONObject(response).getString("data");
             System.out.println(data);
             Gson gson = new Gson();
-            ArrayList<Knowledge> content = new ArrayList<Knowledge>();
-            content = gson.fromJson(data, new TypeToken<ArrayList<Knowledge>>(){}.getType());
-            System.out.println(content);
-            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(content.size(), content, searchContentString);
+            knowledge_content = new ArrayList<Knowledge>();
+            knowledge_content = gson.fromJson(data, new TypeToken<ArrayList<Knowledge>>(){}.getType());
+            //System.out.println(content);
+            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(knowledge_content.size(), knowledge_content, searchContentString);
             transaction.add(R.id.search_frame_layout, searchResultListFragment);
             if (!firstInit) {
                 transaction.remove(currentFragment);

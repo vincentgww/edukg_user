@@ -16,4 +16,7 @@
         <item>标题长度</item>
         <item>类别名长度</item>
     </string-array>
+    <string-array name="sort_filter">
+        <item>全部</item>
+    </string-array>
 </resources>
