@@ -1,11 +1,15 @@
 package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +34,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +49,7 @@ public class detailFragment extends Fragment {
     private ItemAdapter adapter1;
     private ItemAdapter adapter2;
     private LinearLayout linear;
+    private View img;
     private int idx;
 
     private Button btnQuiz;
@@ -52,7 +61,7 @@ public class detailFragment extends Fragment {
         void addFavourites(String course, String name);
         void removeFavourites(String course, String name);
         boolean isAddedToFavourites(String course, String name);
-        void related_quiz(String name, int idx);
+        void related_question(String name, int idx);
         void back_home();
         void weibo_share(String item_title,String item_content);
     }
@@ -76,8 +85,9 @@ public class detailFragment extends Fragment {
         if(itemList2.isEmpty())
             linear.removeView(itemRecyclerView2);
         adapter2.notifyItemInserted(itemList2.size()-1);
-        System.out.println(itemList1.size());
     }
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
@@ -89,10 +99,19 @@ public class detailFragment extends Fragment {
             for(int i=0;i<arr.length();i++){
                 JSONObject o = arr.getJSONObject(i);
                 String label = o.getString("predicateLabel");
-                String des;
-                des = o.getString("object");
-                if(des.charAt(0)!='h')
-                    itemList2.add(new Item(label,des,false));
+                if(label.equals("图片")){
+                   Item item = new Item(label, "", false);
+                   String url = o.getString("object");
+                   item.set_url(url);
+                   itemList2.add(item);
+                }
+                else {
+                    String des;
+                    des = o.getString("object");
+                    if (des.charAt(0) != 'h')
+                        itemList2.add(new Item(label, des, false));
+                }
+
             }
             for(int i=0;i<arr2.length();i++){
                 JSONObject o = arr2.getJSONObject(i);
@@ -145,7 +164,7 @@ public class detailFragment extends Fragment {
         btnQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.related_quiz(name,idx);
+                listener.related_question(name,idx);
             }
         });
         Button back_button = view.findViewById(R.id.back_button_detail);
@@ -163,7 +182,16 @@ public class detailFragment extends Fragment {
                 /*
                 simple_description为当前entity的简要介绍
                  */
-                simple_description=course;
+                simple_description="名称："+name+"\n";
+                simple_description+="学科："+course+"\n关系：\n";
+                for(Item i:itemList1){
+                    String cha = i.get_sub()? "←":"→";
+                    simple_description+=i.get_label()+cha+i.get_des()+"\n";
+                }
+                simple_description+="属性：\n";
+                for(Item i:itemList1){
+                    simple_description+=i.get_label()+"→"+i.get_des()+"\n";
+                }
                 listener.weibo_share(name,simple_description);
             }
         });
