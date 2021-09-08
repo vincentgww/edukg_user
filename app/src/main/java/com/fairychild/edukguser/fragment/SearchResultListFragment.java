@@ -2,18 +2,17 @@ package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.fairychild.edukguser.MainActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
 
@@ -42,8 +41,13 @@ public class SearchResultListFragment extends Fragment {
     private Jaccard jaccard = new Jaccard();
 
     private ListView listView;
+    ArrayList<Knowledge> cur_content;
 
     private Spinner sortOrderSpinner;
+    private Spinner filterSpinner;
+
+    private String[] value;
+    private ArrayList<CharSequence> values;
 
     public SearchResultListFragment() {
     }
@@ -72,6 +76,8 @@ public class SearchResultListFragment extends Fragment {
             size = getArguments().getInt("size");
             course = getArguments().getString("course");
             content = getArguments().getParcelableArrayList("content");
+            cur_content=new ArrayList<>();
+            cur_content.addAll(content);
             searchContent = getArguments().getString("searchContent");
         }
     }
@@ -93,12 +99,10 @@ public class SearchResultListFragment extends Fragment {
 
             }
         });
-
         listView = view.findViewById(R.id.result_list_view);
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
         adapter.setData(content, false);
         listView.setAdapter(adapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,6 +111,30 @@ public class SearchResultListFragment extends Fragment {
             }
         });
 
+        filterSpinner=view.findViewById(R.id.sort_filter_spinner);
+        value=getResources().getStringArray(R.array.sort_filter);
+        values=new ArrayList<>();
+        for(String s:value){
+            values.add(s);
+        }
+        for(Knowledge k:content){
+            values.add(k.getCategory());
+        }
+        ArrayAdapter<CharSequence> str_adapter=new ArrayAdapter<CharSequence>(getContext(), android.R.layout.simple_spinner_item,values);
+        str_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterSpinner.setAdapter(str_adapter);
+        filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String filter_word=adapterView.getItemAtPosition(i).toString();
+                refreshFragment(filter_word);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         return view;
     }
 
@@ -114,7 +142,7 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
         switch (mode) {
             case 0:
-                content.sort(new Comparator<Knowledge>() {
+                cur_content.sort(new Comparator<Knowledge>() {
                     @Override
                     public int compare(Knowledge knowledge, Knowledge t1) {
                         int result1 =  Double.compare(jaccard.distance(searchContent, knowledge.getLabel()), jaccard.distance(searchContent, t1.getLabel()));
@@ -122,23 +150,36 @@ public class SearchResultListFragment extends Fragment {
                     }
                 });
             case 1:
-                content.sort(new Comparator<Knowledge>() {
+                cur_content.sort(new Comparator<Knowledge>() {
                     @Override
                     public int compare(Knowledge knowledge, Knowledge t1) {
                         return Integer.compare(knowledge.getLabel().length(), t1.getLabel().length());
                     }
                 });
-                adapter.setData(content, true);
+                adapter.setData(cur_content, true);
                 break;
             case 2:
-                content.sort(new Comparator<Knowledge>() {
+                cur_content.sort(new Comparator<Knowledge>() {
                     @Override
                     public int compare(Knowledge knowledge, Knowledge t1) {
                         return Integer.compare(knowledge.getCategory().length(), t1.getCategory().length());
                     }
                 });
-                adapter.setData(content, true);
+                adapter.setData(cur_content, true);
                 break;
         }
     }
+    public void refreshFragment(String filter){
+        if(!filter.equals("全部")){
+            cur_content.clear();
+            for(Knowledge k:content){
+                if(k.getCategory().equals(filter)){
+                    cur_content.add(k);
+                }
+            }
+        }
+        SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
+        adapter.setData(cur_content,true);
+    }
+
 }

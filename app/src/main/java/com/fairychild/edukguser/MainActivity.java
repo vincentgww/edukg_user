@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -33,6 +35,7 @@ import com.fairychild.edukguser.fragment.MeFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
+import com.fairychild.edukguser.fragment.QuestionFragment;
 import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
@@ -56,6 +59,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -237,6 +243,9 @@ public class MainActivity extends AppCompatActivity
         String username = sharedPreferences.getString("username", null);
         ArrayList<Favourite> favouritesArrayList = null;
         if (id != null && username != null) {
+            if (db == null) {
+                System.out.println("db == null");
+            }
             Cursor cursor = db.query("FAVOURITES", null, null, null, null, null, "ID DESC");
             if (cursor.moveToFirst()) {
                 favouritesArrayList = new ArrayList<Favourite>();
@@ -305,6 +314,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*public Bitmap getBitmapFromURL(String src) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //Log.e("src",src);
+
+                    URL url = new URL(src);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                    //Log.e("Bitmap","returned");
+                    return myBitmap;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //Log.e("Exception",e.getMessage());
+                    return null;
+                }
+            }
+        }).start();
+    }*/
+
     private void showFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         for (Fragment f : mFragments) {
@@ -336,7 +369,9 @@ public class MainActivity extends AppCompatActivity
         sharedPreferencesEditor.remove("id");
         sharedPreferencesEditor.remove("uid");
         sharedPreferencesEditor.apply();
-        db.close();
+        if (db != null) {
+            db.close();
+        }
         userDatabaseHelper = null;
         switchToMe();
     }
@@ -365,6 +400,7 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 Toast.makeText(MainActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                                getId();
                             }
                         });
                     } catch(Exception e){
@@ -387,7 +423,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }).start();
-        getId();
     }
 
     public void register(String username, String password){
@@ -472,6 +507,13 @@ public class MainActivity extends AppCompatActivity
                             userDatabaseHelper = new UserDatabaseHelper(MainActivity.this, username + ".db");
                             db = userDatabaseHelper.getWritableDatabase();
 
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "获取网络token成功！", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                         } catch(Exception e){
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -489,6 +531,13 @@ public class MainActivity extends AppCompatActivity
                             }
                         });
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "没有检测到用户名或密码，请重新登录！", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         }).start();
@@ -584,7 +633,7 @@ public class MainActivity extends AppCompatActivity
         switchFragments(back_id);
     }
 
-    public void related_quiz(String name, int idx){
+    public void related_question(String name, int idx){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -609,7 +658,7 @@ public class MainActivity extends AppCompatActivity
                                 });
                             }
                             else {
-                                Fragment targetFragment = QuizFragment.newInstance(name, mFragments.size(), question_list, idx);
+                                Fragment targetFragment = QuestionFragment.newInstance(name, mFragments.size(), question_list, idx);
                                 mFragments.add(targetFragment);
                                 transaction.add(R.id.frameLayout, targetFragment);
                                 transaction.hide(currentFragment);
@@ -707,7 +756,7 @@ public class MainActivity extends AppCompatActivity
                     case "D":
                         correct = 3;
                 }
-                if(raw.length()<1000) {
+                if(raw.length()<1000 && ans.length()==1) {
                     String[] blocks = raw.split("[A-D]\\.");
                     Question q = new Question(blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
                     question_list.add(q);

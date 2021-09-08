@@ -25,9 +25,9 @@
     <string name="register">注册</string>
     <string name="testTitle">试题推荐</string>
     <string name="logout">登出</string>
-    <string name="weibosdk_demo_share_to_weibo_title"><![CDATA[从本应用->微博->本应用]]></string>
+    <string name="weibosdk_demo_share_to_weibo_title">新浪微博分享</string>
     <string name="weibosdk_demo_share_text_title">分享文字</string>
-    <string name="weibosdk_demo_share_default_text">欢迎使用新浪微博 SDK</string>
+    <string name="weibosdk_demo_share_default_text">分享内容</string>
     <string name="weibosdk_demo_share_text_template">我正在使用微博客户端发博器分享文字</string>
     <string name="weibosdk_demo_toast_share_success">分享成功</string>
     <string name="weibosdk_demo_toast_share_failed">分享失败</string>
