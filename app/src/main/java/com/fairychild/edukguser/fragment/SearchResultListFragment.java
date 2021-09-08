@@ -160,6 +160,9 @@ public class SearchResultListFragment extends Fragment {
                 }
             }
         }
+        else{
+            cur_content.addAll(content);
+        }
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
         adapter.setData(cur_content,true);
     }

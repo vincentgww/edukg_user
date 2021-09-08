@@ -179,9 +179,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private void initData(){
         channelBeans = new ArrayList<ChannelBean>();
-        channelBeans.add(new ChannelBean("BIOLOGY",false));
-        channelBeans.add(new ChannelBean("CHEMISTRY",false));
-        channelBeans.add(new ChannelBean("CHINESE",false));
+        channelBeans.add(new ChannelBean("BIOLOGY",true));
+        channelBeans.add(new ChannelBean("CHEMISTRY",true));
+        channelBeans.add(new ChannelBean("CHINESE",true));
         channelBeans.add(new ChannelBean("ENGLISH",false));
         channelBeans.add(new ChannelBean("GEO",false));
         channelBeans.add(new ChannelBean("HISTORY",false));
