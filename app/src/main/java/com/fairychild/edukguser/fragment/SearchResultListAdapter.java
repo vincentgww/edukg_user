@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
@@ -16,12 +17,15 @@ public class SearchResultListAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
+    private SubItemAdapter.SubItemAdaptorListener listener;
 
     private ArrayList<Knowledge> mData = new ArrayList<Knowledge>();
+    private String course;
 
     public SearchResultListAdapter(Context context) {
         this.mContext = context;
         this.mLayoutInflater = LayoutInflater.from(context);
+        this.listener=(SubItemAdapter.SubItemAdaptorListener) context;
     }
 
     public void setData(ArrayList<Knowledge> data, boolean reset) {
@@ -52,6 +56,8 @@ public class SearchResultListAdapter extends BaseAdapter {
     static class ViewHolder{
         public TextView tvLabel;
         public TextView tvCategory;
+        public MaterialButton tvDetailButton;
+        public MaterialButton tvFavButton;
     }
 
     @Override
@@ -62,6 +68,8 @@ public class SearchResultListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tvLabel = view.findViewById(R.id.label);
             holder.tvCategory = view.findViewById(R.id.category);
+            holder.tvDetailButton=view.findViewById(R.id.search_detail_btn);
+            holder.tvFavButton=view.findViewById(R.id.search_fav_btn);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -71,7 +79,16 @@ public class SearchResultListAdapter extends BaseAdapter {
         Knowledge knowledge = getItem(i);
         holder.tvLabel.setText(knowledge.getLabel());
         holder.tvCategory.setText(knowledge.getCategory());
+        holder.tvDetailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.show_detail_fragment(knowledge.getLabel(),course);
+            }
+        });
 
         return view;
+    }
+    public void getSubject(String course){
+        this.course=course;
     }
 }

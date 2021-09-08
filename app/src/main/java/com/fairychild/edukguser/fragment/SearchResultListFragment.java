@@ -16,6 +16,7 @@ import android.widget.Spinner;
 
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,14 +44,18 @@ public class SearchResultListFragment extends Fragment {
     private String[] value;
     private ArrayList<CharSequence> values;
 
+    private String course;
+
+
     public SearchResultListFragment() {
     }
-    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content, String searchContent) {
+    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content, String searchContent,String course) {
         SearchResultListFragment fragment = new SearchResultListFragment();
         Bundle args = new Bundle();
         args.putInt("size", size);
         args.putParcelableArrayList("content", content);
         args.putString("searchContent", searchContent);
+        args.putString("course",course);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,6 +74,7 @@ public class SearchResultListFragment extends Fragment {
             cur_content=new ArrayList<>();
             cur_content.addAll(content);
             searchContent = getArguments().getString("searchContent");
+            course=getArguments().getString("course");
         }
     }
 
@@ -117,6 +123,7 @@ public class SearchResultListFragment extends Fragment {
 
             }
         });
+
         return view;
     }
 
@@ -164,7 +171,7 @@ public class SearchResultListFragment extends Fragment {
             cur_content.addAll(content);
         }
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
+        adapter.getSubject(course);
         adapter.setData(cur_content,true);
     }
-
 }
