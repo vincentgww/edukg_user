@@ -305,15 +305,7 @@ public class MainActivity extends AppCompatActivity
     }
     @Override
     public void onBackPressed() {
-        System.out.println("you pressed");
-        if (mFragments.size() >= 1) {
-            //显示最顶部那一个
-            showFragment(mFragments.get(mFragments.size()-1));
-        }else {
-            System.out.println(mFragments.size());
-            System.out.println("finish!!!!!");
-            finish();
-        }
+        switchFragments(0);
     }
 
     /*public Bitmap getBitmapFromURL(String src) {
