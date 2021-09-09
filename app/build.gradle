@@ -58,6 +58,7 @@ dependencies {
     compile(name:'core-4.3.1-openDefaultRelease', ext:'aar')
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     //compile(name:'openDefault-11.8.1',ext:'aar')
     annotationProcessor 'androidx.room:room-compiler:2.1.0'
     testImplementation 'junit:junit:4.+'

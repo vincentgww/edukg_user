@@ -26,6 +26,7 @@ import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.Msg;
 import com.fairychild.edukguser.MsgAdapter;
 import com.fairychild.edukguser.R;
+import com.fairychild.edukguser.Share;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 
 import org.greenrobot.eventbus.EventBus;
@@ -192,7 +193,7 @@ public class detailFragment extends Fragment {
                 for(Item i:itemList1){
                     simple_description+=i.get_label()+"→"+i.get_des()+"\n";
                 }
-                listener.weibo_share(name,simple_description);
+                Share.share(getContext(),simple_description);
             }
         });
         btnAddFavourites = view.findViewById(R.id.btn_add_favourites);

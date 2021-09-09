@@ -37,7 +37,7 @@ public class FunctionFragment extends Fragment {
         quiz_recommendation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+
             }
         });
         return view;
