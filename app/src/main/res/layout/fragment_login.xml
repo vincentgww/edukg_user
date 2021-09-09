@@ -24,7 +24,7 @@
             android:paddingVertical="30dp"/>
 
         <EditText
-            android:id="@+id/login_phone"
+            android:id="@+id/login_username"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_btn_grey_rounded_rectangle"

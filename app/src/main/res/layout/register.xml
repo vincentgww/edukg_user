@@ -32,7 +32,7 @@
             app:helperTextEnabled="true"
             app:helperText="请输入用户名">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/register_phone"
+                android:id="@+id/register_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>

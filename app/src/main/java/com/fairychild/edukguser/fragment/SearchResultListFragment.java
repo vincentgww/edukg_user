@@ -2,10 +2,6 @@ package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +9,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
@@ -30,6 +29,13 @@ import info.debatty.java.stringsimilarity.Jaccard;
  */
 public class SearchResultListFragment extends Fragment {
 
+    public interface DetailListener {
+        void show_detail_fragment(String subject, String name);
+    }
+
+    private SearchResultListFragment.DetailListener listener;
+
+    private String course;
     private String searchContent;
     private Integer size;
     private ArrayList<Knowledge> content;
@@ -53,6 +59,7 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListFragment fragment = new SearchResultListFragment();
         Bundle args = new Bundle();
         args.putInt("size", size);
+        args.putString("course", course);
         args.putParcelableArrayList("content", content);
         args.putString("searchContent", searchContent);
         args.putString("course",course);
@@ -63,6 +70,7 @@ public class SearchResultListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        listener = (SearchResultListFragment.DetailListener) getActivity();
     }
 
     @Override
@@ -70,6 +78,7 @@ public class SearchResultListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             size = getArguments().getInt("size");
+            course = getArguments().getString("course");
             content = getArguments().getParcelableArrayList("content");
             cur_content=new ArrayList<>();
             cur_content.addAll(content);
@@ -99,6 +108,14 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
         adapter.setData(content, false);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Knowledge knowledge = adapter.getItem(i);
+                listener.show_detail_fragment(knowledge.getLabel(), course);
+            }
+        });
+
         filterSpinner=view.findViewById(R.id.sort_filter_spinner);
         value=getResources().getStringArray(R.array.sort_filter);
         values=new ArrayList<>();

@@ -26,6 +26,7 @@ import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.Msg;
 import com.fairychild.edukguser.MsgAdapter;
 import com.fairychild.edukguser.R;
+import com.fairychild.edukguser.datastructure.LogoutNotice;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,13 +51,21 @@ public class detailFragment extends Fragment {
     private LinearLayout linear;
     private View img;
     private int idx;
+
+    private Button btnQuiz;
+    private Button btnAddFavourites;
+
     public interface detailListener {
         void get_detail(String entity_name, String course);
         void delete_fragment(int idx);
+        void addFavourites(String course, String name);
+        void removeFavourites(String course, String name);
+        boolean isAddedToFavourites(String course, String name);
         void related_question(String name, int idx);
         void back_home();
         void weibo_share(String item_title,String item_content);
     }
+
     detailListener listener;
     String name,course;
     String simple_description;
@@ -151,8 +160,8 @@ public class detailFragment extends Fragment {
                 itemRecyclerView2.setAdapter(adapter2);
             }
         });
-        Button mButton = view.findViewById(R.id.btn_quiz);
-        mButton.setOnClickListener(new View.OnClickListener() {
+        btnQuiz = view.findViewById(R.id.btn_quiz);
+        btnQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.related_question(name,idx);
@@ -186,7 +195,25 @@ public class detailFragment extends Fragment {
                 listener.weibo_share(name,simple_description);
             }
         });
-
+        btnAddFavourites = view.findViewById(R.id.btn_add_favourites);
+        if (listener.isAddedToFavourites(course, name)) {
+            btnAddFavourites.setText("取消收藏");
+            btnAddFavourites.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.removeFavourites(course, name);
+                    btnAddFavourites.setText("加入收藏");
+                }
+            });
+        } else {
+            btnAddFavourites.setText("加入收藏");
+            btnAddFavourites.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.addFavourites(course, name);
+                }
+            });
+        }
         return view;
     }
 

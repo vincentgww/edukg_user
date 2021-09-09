@@ -28,6 +28,15 @@
             android:layout_marginStart="20dp"/>
 
         <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:layout_toEndOf="@+id/btn_register"
+            android:layout_marginStart="20dp"
+            android:visibility="gone"/>
+
+        <Button
             android:id="@+id/btn_favourites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
