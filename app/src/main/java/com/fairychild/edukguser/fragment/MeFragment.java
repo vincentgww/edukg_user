@@ -3,17 +3,22 @@ package com.fairychild.edukguser.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.fairychild.edukguser.CircleImageViewDrawable;
 import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.LoginNotice;
@@ -35,6 +40,8 @@ public class MeFragment extends Fragment {
         String getUsernameFromSP();
         void logout();
     }
+
+    private ImageView mImageview;
 
     private Button btnLogin;
     private Button btnRegister;
@@ -72,6 +79,11 @@ public class MeFragment extends Fragment {
 
         id = listener.getIdFromSP();
         username = listener.getUsernameFromSP();
+
+        mImageview=view.findViewById(R.id.profile_img);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head_img);
+        Drawable drawable = new CircleImageViewDrawable(bitmap);
+        mImageview.setImageDrawable(drawable);
 
         btnLogin = view.findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
