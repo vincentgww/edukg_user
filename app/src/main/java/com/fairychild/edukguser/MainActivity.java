@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mSupportFragmentManager = getSupportFragmentManager();
-        switchFragments(0);
+        switchToHome();
 
         id = sharedPreferences.getString("id", null);
         uid = sharedPreferences.getString("uid", null);
@@ -294,19 +294,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void back_home(){
-        switchFragments(0);
+        switchToHome();
     }
     @Override
     public void onBackPressed() {
-        System.out.println("you pressed");
-        if (mFragments.size() >= 1) {
-            //显示最顶部那一个
-            showFragment(mFragments.get(mFragments.size()-1));
-        }else {
-            System.out.println(mFragments.size());
-            System.out.println("finish!!!!!");
-            finish();
-        }
+        switchToHome();
     }
 
     /*public Bitmap getBitmapFromURL(String src) {
@@ -506,6 +498,7 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     Toast.makeText(MainActivity.this, "获取网络token成功！", Toast.LENGTH_SHORT).show();
+                                    switchToHome();
                                 }
                             });
 

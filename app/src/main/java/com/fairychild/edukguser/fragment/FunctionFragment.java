@@ -33,11 +33,11 @@ public class FunctionFragment extends Fragment {
                     }
                 }
         );
-        MaterialCardView card=view.findViewById(R.id.test_card);
-        card.setOnClickListener(new View.OnClickListener() {
+        ImageView quiz_recommendation=view.findViewById(R.id.quiz_rec_img);
+        quiz_recommendation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.switchToSearch();
+                
             }
         });
         return view;

@@ -6,23 +6,17 @@
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/activity_category_arrangement.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/activity_search.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/bar_top.xml" value="0.12001811594202899" />
-        <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_browsing_history_list.xml" value="0.17135416666666667" />
-        <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_detail.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_favourite.xml" value="0.12047101449275362" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_favourite_list.xml" value="0.12047101449275362" />
-        <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_favourites_list.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_functions.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_item_list.xml" value="0.12047101449275362" />
-        <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_me.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_search.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_search_result.xml" value="0.1" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_search_result_list.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/fragment_tab.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/function_fragment.xml" value="0.17135416666666667" />
-        <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/item_browsing_history.xml" value="0.17135416666666667" />
-        <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/item_favourite.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/item_search_result.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/register.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/menu/top_app_bar.xml" value="0.1" />
@@ -46,7 +40,7 @@
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_item_list.xml" value="0.2346014492753623" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_knowledgecheck.xml" value="0.17255434782608695" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_login.xml" value="0.11" />
-        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_me.xml" value="0.25" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_me.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_qa.xml" value="0.15416666666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_question.xml" value="0.24728260869565216" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_quiz.xml" value="0.2598958333333333" />
@@ -55,12 +49,14 @@
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_search.xml" value="0.335" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_search_result_list.xml" value="0.335" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_tab.xml" value="0.165" />
-        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/function_fragment.xml" value="0.1" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/function_fragment.xml" value="0.125" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/img_detail.xml" value="0.1921875" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/item_browsing_history.xml" value="0.203125" />
-        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/item_search_result.xml" value="0.23777173913043478" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/item_search_result.xml" value="0.25" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/load_more.xml" value="0.11" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/msg_item.xml" value="0.15416666666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/obj_item.xml" value="0.16770833333333332" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/question_quiz.xml" value="0.2598958333333333" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/register.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/sub_item.xml" value="0.13229166666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/sublist_item.xml" value="0.335" />

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,16 +50,17 @@ public class SearchResultListFragment extends Fragment {
     private String[] value;
     private ArrayList<CharSequence> values;
 
+
     public SearchResultListFragment() {
     }
-    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content,
-                                                       String course, String searchContent) {
+    public static SearchResultListFragment newInstance(Integer size, ArrayList<Knowledge> content, String searchContent,String course) {
         SearchResultListFragment fragment = new SearchResultListFragment();
         Bundle args = new Bundle();
         args.putInt("size", size);
         args.putString("course", course);
         args.putParcelableArrayList("content", content);
         args.putString("searchContent", searchContent);
+        args.putString("course",course);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,11 +76,12 @@ public class SearchResultListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             size = getArguments().getInt("size");
-            course = getArguments().getString("course");
+            //course = getArguments().getString("course");
             content = getArguments().getParcelableArrayList("content");
             cur_content=new ArrayList<>();
             cur_content.addAll(content);
             searchContent = getArguments().getString("searchContent");
+            course=getArguments().getString("course");
         }
     }
 
@@ -103,14 +106,6 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
         adapter.setData(content, false);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Knowledge knowledge = adapter.getItem(i);
-                listener.show_detail_fragment(knowledge.getLabel(), course);
-            }
-        });
-
         filterSpinner=view.findViewById(R.id.sort_filter_spinner);
         value=getResources().getStringArray(R.array.sort_filter);
         values=new ArrayList<>();
@@ -118,7 +113,9 @@ public class SearchResultListFragment extends Fragment {
             values.add(s);
         }
         for(Knowledge k:content){
-            values.add(k.getCategory());
+            if((!values.contains(k.getCategory()))&&(!k.getCategory().equals(""))){
+                values.add(k.getCategory());
+            }
         }
         ArrayAdapter<CharSequence> str_adapter=new ArrayAdapter<CharSequence>(getContext(), android.R.layout.simple_spinner_item,values);
         str_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -135,6 +132,7 @@ public class SearchResultListFragment extends Fragment {
 
             }
         });
+
         return view;
     }
 
@@ -178,8 +176,11 @@ public class SearchResultListFragment extends Fragment {
                 }
             }
         }
+        else{
+            cur_content.addAll(content);
+        }
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
+        adapter.getSubject(course);
         adapter.setData(cur_content,true);
     }
-
 }

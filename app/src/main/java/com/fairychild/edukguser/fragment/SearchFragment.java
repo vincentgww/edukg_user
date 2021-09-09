@@ -135,7 +135,7 @@ public class SearchFragment extends Fragment {
                                     public void run() {
                                         Toast.makeText(mainActivity, "搜索成功", Toast.LENGTH_SHORT).show();
                                         System.out.println(response);
-                                        showFragment(response);
+                                        showFragment(response,subject);
                                     }
                                 });
                             } catch (IOException e) {
@@ -161,7 +161,7 @@ public class SearchFragment extends Fragment {
         mSupportFragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void showFragment(String response) {
+    public void showFragment(String response,String course) {
         transaction = mSupportFragmentManager.beginTransaction();
         try {
             String data = new JSONObject(response).getString("data");
@@ -170,7 +170,7 @@ public class SearchFragment extends Fragment {
             knowledge_content = new ArrayList<Knowledge>();
             knowledge_content = gson.fromJson(data, new TypeToken<ArrayList<Knowledge>>(){}.getType());
             //System.out.println(content);
-            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(knowledge_content.size(), knowledge_content, subject, searchContentString);
+            SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(knowledge_content.size(), knowledge_content, searchContentString,course);
             transaction.add(R.id.search_frame_layout, searchResultListFragment);
             if (!firstInit) {
                 transaction.remove(currentFragment);
