@@ -1,12 +1,16 @@
 package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +32,8 @@ public class KnowledgeCheckFragment extends Fragment {
     }
     private KnowledgeCheckListener listener;
     private TextView ansTxt;
+    private Spinner subjectSpinner;
+    private String subject;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,9 +45,22 @@ public class KnowledgeCheckFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String s = txt.getText().toString();
-                listener.search_point(s,"chinese");
+                listener.search_point(s,subject);
             }
         });
+        subjectSpinner = view.findViewById(R.id.subject_spinner);
+        subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                subject = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                subject = null;
+            }
+        });
+
         return view;
     }
 
@@ -85,6 +104,9 @@ public class KnowledgeCheckFragment extends Fragment {
             if(ans.equals(""))
                 ans = "对不起，没有找到相关的实体";
             ansTxt.setText(ans);
+            ansTxt.setTextColor(Color.BLACK);
+            ansTxt.setTextSize(18);
+            ansTxt.setMovementMethod(ScrollingMovementMethod.getInstance());
         } catch(Exception e){
             e.printStackTrace();
         }
