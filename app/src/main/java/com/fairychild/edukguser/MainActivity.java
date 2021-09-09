@@ -67,8 +67,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity
         implements MeFragment.FragmentListener,
@@ -217,16 +219,26 @@ public class MainActivity extends AppCompatActivity
     public void switchToKnowledgeCheck(){
         switchFragments(6);
     }
-    public void switchToBrowsingHistory() {
-        switchFragments(7);
+    public void switchToBrowsingHistory() throws InterruptedException {
+        BrowsingHistoryListFragment browsingHistoryListFragment = (BrowsingHistoryListFragment) mFragments.get(7);
+        ArrayList<BrowsingHistory> browsingHistoryArrayList = getBrowsingHistory();
+        Thread.sleep(500);
+        browsingHistoryListFragment.setmData(browsingHistoryArrayList);
         EventBus.getDefault().postSticky(new BrowsingHistoryListFragmentRefreshNotice());
+        Log.d("switchToBrowsingHistory", browsingHistoryArrayList.toString());
+        switchFragments(7);
     }
     public void switchToSearch() {
         switchFragments(8);
     }
-    public void switchToFavourites() {
-        switchFragments(9);
+    public void switchToFavourites() throws InterruptedException {
+        FavouritesListFragment favouritesListFragment = (FavouritesListFragment) mFragments.get(9);
+        ArrayList<Favourite> favouriteArrayList = getFavourites();
+        Thread.sleep(500);
+        favouritesListFragment.setmData(favouriteArrayList);
         EventBus.getDefault().postSticky(new FavouritesListFragmentRefreshNotice());
+        Log.d("switchToFavourites", favouriteArrayList.toString());
+        switchFragments(9);
     }
     public void switchToReport() {
         switchFragments(10);
@@ -245,7 +257,6 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
         currentFragment = targetFragment;
     }
-
 
     public void show_detail_fragment(String label, String course){
         transaction = mSupportFragmentManager.beginTransaction();
@@ -965,6 +976,7 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     Toast.makeText(MainActivity.this, "获取浏览记录成功！", Toast.LENGTH_SHORT).show();
+                                    Log.d("BrowsingHistory", browsingHistoryArrayList.toString());
                                 }
                             });
                         } else {
@@ -991,7 +1003,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             Toast.makeText(MainActivity.this, "请先登录，再查看浏览历史记录", Toast.LENGTH_SHORT).show();
         }
-        Log.d("BrowsingHistory", browsingHistoryArrayList.toString());
         return browsingHistoryArrayList;
     }
 

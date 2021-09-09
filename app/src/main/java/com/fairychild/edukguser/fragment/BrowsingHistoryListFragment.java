@@ -23,6 +23,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class BrowsingHistoryListFragment extends Fragment {
 
@@ -61,11 +63,11 @@ public class BrowsingHistoryListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("BrowsingHistoryListFragment", "onCreateView");
         View view =  inflater.inflate(R.layout.fragment_browsing_history_list, container, false);
 
         listView = view.findViewById(R.id.browsing_history_list_view);
         adapter = new BrowsingHistoryListAdapter(getActivity());
-        mData = listener.getBrowsingHistory();
         adapter.setData(mData, false);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,8 +87,18 @@ public class BrowsingHistoryListFragment extends Fragment {
     public void onMessageEvent(BrowsingHistoryListFragmentRefreshNotice notice) {
         Log.d("BrowsingHistoryListFragment", "onMessageEvent BrowsingHistoryListFragmentRefreshNotice");
         try {
+            adapter = new BrowsingHistoryListAdapter(getActivity());
             adapter.setData(mData, true);
-
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    BrowsingHistory browsingHistory = adapter.getItem(i);
+                    String name = browsingHistory.getName();
+                    String course = browsingHistory.getCourse();
+                    listener.show_detail_fragment(name, course);
+                }
+            });
             EventBus.getDefault().removeStickyEvent(notice);
 
         } catch(Exception e){
@@ -104,5 +116,9 @@ public class BrowsingHistoryListFragment extends Fragment {
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    public void setmData(ArrayList<BrowsingHistory> mData) {
+        this.mData = mData;
     }
 }

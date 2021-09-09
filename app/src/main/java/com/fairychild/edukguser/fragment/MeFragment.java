@@ -27,8 +27,8 @@ import org.greenrobot.eventbus.ThreadMode;
 public class MeFragment extends Fragment {
     public interface FragmentListener {
         void switchToLogin();
-        void switchToBrowsingHistory();
-        void switchToFavourites();
+        void switchToBrowsingHistory() throws InterruptedException;
+        void switchToFavourites() throws InterruptedException;
         void switchToReport();
         void switchToRegister();
         String getIdFromSP();
@@ -96,7 +96,11 @@ public class MeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // 跳转到浏览历史
-                listener.switchToBrowsingHistory();
+                try {
+                    listener.switchToBrowsingHistory();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         if(btnBrowsingHistory==null)
@@ -107,7 +111,11 @@ public class MeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // 跳转到我的收藏
-                listener.switchToFavourites();
+                try {
+                    listener.switchToFavourites();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         if(btnFavourites==null)

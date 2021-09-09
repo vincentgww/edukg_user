@@ -60,4 +60,13 @@ public class Favourite implements Parcelable {
     public Integer getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "Favourite{" +
+                "id=" + id +
+                ", course='" + course + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

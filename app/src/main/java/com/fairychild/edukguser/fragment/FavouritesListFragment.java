@@ -65,8 +65,6 @@ public class FavouritesListFragment extends Fragment {
 
         listView = view.findViewById(R.id.favourites_list_view);
         adapter = new FavouritesListAdapter(getActivity());
-        mData = listener.getFavourites();
-        adapter.setData(mData, false);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -84,7 +82,18 @@ public class FavouritesListFragment extends Fragment {
     public void onMessageEvent(FavouritesListFragmentRefreshNotice notice) {
         Log.d("FavouritesListFragment", "onMessageEvent FavouritesListFragmentRefreshNotice");
         try {
-            adapter.setData(mData, true);
+            adapter = new FavouritesListAdapter(getActivity());
+            adapter.setData(mData);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Favourite favourite = adapter.getItem(i);
+                    String name = favourite.getName();
+                    String course = favourite.getCourse();
+                    listener.show_detail_fragment(name, course);
+                }
+            });
 
             EventBus.getDefault().removeStickyEvent(notice);
 
@@ -103,5 +112,9 @@ public class FavouritesListFragment extends Fragment {
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    public void setmData(ArrayList<Favourite> mData) {
+        this.mData = mData;
     }
 }

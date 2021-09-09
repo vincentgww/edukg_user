@@ -75,4 +75,14 @@ public class BrowsingHistory implements Parcelable {
     public String getTime() {
         return time;
     }
+
+    @Override
+    public String toString() {
+        return "BrowsingHistory{" +
+                "id=" + id +
+                ", course='" + course + '\'' +
+                ", name='" + name + '\'' +
+                ", time='" + time + '\'' +
+                '}';
+    }
 }

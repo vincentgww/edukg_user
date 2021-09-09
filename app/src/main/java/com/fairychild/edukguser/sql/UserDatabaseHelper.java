@@ -28,16 +28,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
             + "COURSE TEXT NOT NULL,"
             + "SEARCHKEY TEXT NOT NULL,"
             + "TIME TEXT NOT NULL);";
-    public static final String createBrowsingHistoryTable = "CREATE TABLE BROWSINGHISTORY ("
-            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + "COURSE TEXT NOT NULL,"
-            + "NAME TEXT NOT NULL,"
-            + "TIME TEXT NOT NULL);";
-    public static final String createFavouritesTable = "CREATE TABLE FAVOURITES ("
-            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + "COURSE TEXT NOT NULL,"
-            + "NAME TEXT NOT NULL,"
-            + "UNIQUE(COURSE,NAME) ON CONFLICT REPLACE);";
     public static final String createDetailContentTable = "CREATE TABLE DETAIL ("
             + "COURSE TEXT NOT NULL,"
             + "NAME TEXT NOT NULL,"
@@ -68,8 +58,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate");
         db.execSQL(createSearchHistoryTable);
-        db.execSQL(createBrowsingHistoryTable);
-        db.execSQL(createFavouritesTable);
         db.execSQL(createDetailContentTable);
         Log.d(TAG, name + "create successfully");
     }

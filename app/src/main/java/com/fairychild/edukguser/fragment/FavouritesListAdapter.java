@@ -49,6 +49,10 @@ public class FavouritesListAdapter extends BaseAdapter {
         return i;
     }
 
+    public void setData(ArrayList<Favourite> mData) {
+        this.mData = mData;
+    }
+
     static class ViewHolder{
         public TextView tvCourse;
         public TextView tvName;
