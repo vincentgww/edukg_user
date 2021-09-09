@@ -50,8 +50,6 @@ public class SearchResultListFragment extends Fragment {
     private String[] value;
     private ArrayList<CharSequence> values;
 
-    private String course;
-
 
     public SearchResultListFragment() {
     }
@@ -78,7 +76,7 @@ public class SearchResultListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             size = getArguments().getInt("size");
-            course = getArguments().getString("course");
+            //course = getArguments().getString("course");
             content = getArguments().getParcelableArrayList("content");
             cur_content=new ArrayList<>();
             cur_content.addAll(content);
@@ -108,14 +106,6 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
         adapter.setData(content, false);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Knowledge knowledge = adapter.getItem(i);
-                listener.show_detail_fragment(knowledge.getLabel(), course);
-            }
-        });
-
         filterSpinner=view.findViewById(R.id.sort_filter_spinner);
         value=getResources().getStringArray(R.array.sort_filter);
         values=new ArrayList<>();
@@ -123,7 +113,9 @@ public class SearchResultListFragment extends Fragment {
             values.add(s);
         }
         for(Knowledge k:content){
-            values.add(k.getCategory());
+            if((!values.contains(k.getCategory()))&&(!k.getCategory().equals(""))){
+                values.add(k.getCategory());
+            }
         }
         ArrayAdapter<CharSequence> str_adapter=new ArrayAdapter<CharSequence>(getContext(), android.R.layout.simple_spinner_item,values);
         str_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
