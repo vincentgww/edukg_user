@@ -24,6 +24,7 @@ import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.card.MaterialCardView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +35,7 @@ public class MeFragment extends Fragment {
         void switchToLogin();
         void switchToBrowsingHistory() throws InterruptedException;
         void switchToFavourites() throws InterruptedException;
+        void switchToLocalCache();
         void switchToReport();
         void switchToRegister();
         String getIdFromSP();
@@ -46,9 +48,10 @@ public class MeFragment extends Fragment {
     private Button btnLogin;
     private Button btnRegister;
     private Button btnLogout;
-    private Button btnBrowsingHistory;
-    private Button btnFavourites;
-    private Button btnReport;
+    private MaterialCardView cardBrowsingHistory;
+    private MaterialCardView cardFavourites;
+    private MaterialCardView cardReport;
+    private MaterialCardView cardLocalCache;
 
     private FragmentListener listener;
 
@@ -100,11 +103,11 @@ public class MeFragment extends Fragment {
             btnLogin.setText(R.string.login);
             btnLogin.setEnabled(true);
         }
-        if(btnLogin==null)
+        if (btnLogin==null)
             System.out.println("?btnLogin");
 
-        btnBrowsingHistory = view.findViewById(R.id.btn_browsing_history);
-        btnBrowsingHistory.setOnClickListener(new View.OnClickListener() {
+        cardBrowsingHistory = view.findViewById(R.id.his_card);
+        cardBrowsingHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 跳转到浏览历史
@@ -115,11 +118,11 @@ public class MeFragment extends Fragment {
                 }
             }
         });
-        if(btnBrowsingHistory==null)
-            System.out.println("?btnBrowsingHistory");
+        if (cardBrowsingHistory==null)
+            System.out.println("?cardBrowsingHistory");
 
-        btnFavourites = view.findViewById(R.id.btn_favourites);
-        btnFavourites.setOnClickListener(new View.OnClickListener() {
+        cardFavourites = view.findViewById(R.id.fav_card);
+        cardFavourites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 跳转到我的收藏
@@ -130,19 +133,30 @@ public class MeFragment extends Fragment {
                 }
             }
         });
-        if(btnFavourites==null)
-            System.out.println("?btnFavourites");
+        if (cardFavourites==null)
+            System.out.println("?cardFavourites");
 
-        btnReport = view.findViewById(R.id.btn_report);
-        btnReport.setOnClickListener(new View.OnClickListener() {
+        cardReport = view.findViewById(R.id.report_card);
+        cardReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 跳转到学习周报
                 listener.switchToReport();
             }
         });
-        if(btnReport==null)
-            System.out.println("?btnReport");
+        if (cardReport==null)
+            System.out.println("?cardReport");
+
+        cardLocalCache = view.findViewById(R.id.local_cache_card);
+        cardLocalCache.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 跳转到本地缓存
+                listener.switchToLocalCache();
+            }
+        });
+        if (cardLocalCache == null)
+            System.out.println("?cardLocalCache");
 
         btnRegister=view.findViewById(R.id.btn_register);
         btnRegister.setOnClickListener(new View.OnClickListener(){

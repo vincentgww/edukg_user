@@ -28,6 +28,12 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
             + "COURSE TEXT NOT NULL,"
             + "SEARCHKEY TEXT NOT NULL,"
             + "TIME TEXT NOT NULL);";
+    public static final String createLocalCacheTable = "CREATE TABLE LOCALCACHE ("
+            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + "COURSE TEXT NOT NULL,"
+            + "NAME TEXT NOT NULL,"
+            + "TIME TEXT NOT NULL,"
+            + "UNIQUE(COURSE,NAME) ON CONFLICT REPLACE);";
     public static final String createDetailContentTable = "CREATE TABLE DETAIL ("
             + "COURSE TEXT NOT NULL,"
             + "NAME TEXT NOT NULL,"
@@ -59,6 +65,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "onCreate");
         db.execSQL(createSearchHistoryTable);
         db.execSQL(createDetailContentTable);
+        db.execSQL(createLocalCacheTable);
         Log.d(TAG, name + "create successfully");
     }
 

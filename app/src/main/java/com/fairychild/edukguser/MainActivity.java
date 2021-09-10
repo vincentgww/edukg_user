@@ -23,6 +23,8 @@ import com.fairychild.edukguser.datastructure.BrowsingHistory;
 import com.fairychild.edukguser.datastructure.BrowsingHistoryListFragmentRefreshNotice;
 import com.fairychild.edukguser.datastructure.Favourite;
 import com.fairychild.edukguser.datastructure.FavouritesListFragmentRefreshNotice;
+import com.fairychild.edukguser.datastructure.LocalCache;
+import com.fairychild.edukguser.datastructure.LocalCacheListFragmentRefreshNotice;
 import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.Activity.WebShareActivity;
@@ -31,6 +33,7 @@ import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.FavouritesListFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
+import com.fairychild.edukguser.fragment.LocalCacheListFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
@@ -86,7 +89,8 @@ public class MainActivity extends AppCompatActivity
         SubItemAdapter.SubItemAdaptorListener,
         BrowsingHistoryListFragment.DataBaseListener,
         FavouritesListFragment.DataBaseListener,
-        SearchResultListFragment.DetailListener{
+        SearchResultListFragment.DetailListener,
+        LocalCacheListFragment.myListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -188,6 +192,7 @@ public class MainActivity extends AppCompatActivity
         mFragments.add(BrowsingHistoryListFragment.newInstance());
         mFragments.add(SearchFragment.newInstance());
         mFragments.add(FavouritesListFragment.newInstance());
+        mFragments.add(LocalCacheListFragment.newInstance());
     }
 
     public void switchToHome() {
@@ -240,6 +245,22 @@ public class MainActivity extends AppCompatActivity
         Log.d("switchToFavourites", favouriteArrayList.toString());
         switchFragments(9);
     }
+
+    @Override
+    public void switchToLocalCache() {
+        Log.d("MainActivity", "switchToLocalCache");
+        LocalCacheListFragment localCacheListFragment = (LocalCacheListFragment) mFragments.get(10);
+        ArrayList<LocalCache> localCacheArrayList = getLocalCacheList();
+        if (localCacheArrayList != null) {
+            localCacheListFragment.setmData(localCacheArrayList);
+            EventBus.getDefault().postSticky(new LocalCacheListFragmentRefreshNotice());
+            Log.d("switchToLocalCache", localCacheArrayList.toString());
+            switchFragments(10);
+        } else {
+            Log.d("switchToLocalCache", "localCacheArrayList == null");
+        }
+    }
+
     public void switchToReport() {
         switchFragments(10);
     }
@@ -256,6 +277,66 @@ public class MainActivity extends AppCompatActivity
         transaction.show(targetFragment);
         transaction.commit();
         currentFragment = targetFragment;
+    }
+
+    @Override
+    public ArrayList<LocalCache> getLocalCacheList() {
+        Log.d("MainActivity", "getLocalCacheList");
+        String username = sharedPreferences.getString("username", null);
+        id = sharedPreferences.getString("id", id);
+        ArrayList<LocalCache> localCacheArrayList = null;
+        if (username != null && id != null && db != null) {
+            Cursor cursor = db.query("LOCALCACHE", null, null, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                localCacheArrayList = new ArrayList<LocalCache>();
+                do {
+                    Integer id = cursor.getInt(cursor.getColumnIndex("ID"));
+                    String course = cursor.getString(cursor.getColumnIndex("COURSE"));
+                    String name = cursor.getString(cursor.getColumnIndex("NAME"));
+                    String time = cursor.getString(cursor.getColumnIndex("TIME"));
+                    localCacheArrayList.add(LocalCache.newInstance(id, course, name, time));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            if (localCacheArrayList != null) {
+                localCacheArrayList.sort(new Comparator<LocalCache>() {
+                    @Override
+                    public int compare(LocalCache localCache, LocalCache t1) {
+                        try {
+                            Date localCacheTime =  df.parse(localCache.getTime());
+                            Date t1Time = df.parse(t1.getTime());
+                            if (t1Time != null && localCacheTime != null) {
+                                return t1Time.compareTo(localCacheTime);
+                            } else {
+                                return Integer.compare(t1.getId(), localCache.getId());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return Integer.compare(t1.getId(), localCache.getId());
+                        }
+                    }
+                });
+            }
+            Toast.makeText(MainActivity.this, "获取本地缓存成功", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "请先登录，再查看本地缓存", Toast.LENGTH_SHORT).show();
+        }
+        return localCacheArrayList;
+    }
+
+    public void addLocalCacheList(String course, String name) {
+        String username = sharedPreferences.getString("username", null);
+        id = sharedPreferences.getString("id", id);
+        if (username != null && id != null && db != null) {
+            ContentValues values = new ContentValues();
+            values.put("COURSE", course);
+            values.put("NAME", name);
+            values.put("TIME", df.format(new Date()));
+            db.insertWithOnConflict("LOCALCACHE", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            Toast.makeText(MainActivity.this, "添加本地缓存成功", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "请先登录，再添加本地缓存", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void show_detail_fragment(String label, String course){
@@ -597,6 +678,7 @@ public class MainActivity extends AppCompatActivity
                     values.put("NAME", entity_name);
                     values.put("CONTENT", response);
                     db.insertWithOnConflict("DETAIL", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                    addLocalCacheList(course, entity_name);
                     values.clear();
                     runOnUiThread(new Runnable() {
                         @Override

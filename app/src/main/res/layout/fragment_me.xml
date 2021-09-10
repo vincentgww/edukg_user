@@ -26,11 +26,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
-            android:columnCount="3"
+            android:columnCount="4"
             android:padding="10dp">
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/fav_card"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp">
                 <LinearLayout
@@ -38,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="100dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         app:srcCompat="@drawable/archive_box"
                         android:layout_gravity="center"
@@ -55,16 +56,16 @@
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/his_card"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_margin="8dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="100dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         app:srcCompat="@drawable/view_history"
                         android:layout_gravity="center"
@@ -80,8 +81,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/report_card"
-                android:layout_width="wrap_content"
+                android:id="@+id/local_cache_card"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp">
                 <LinearLayout
@@ -89,7 +91,33 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="100dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        app:srcCompat="@drawable/local_cache"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"/>
+                    <Button
+                        android:id="@+id/btn_local_cache"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/local_cache"
+                        android:layout_gravity="center"
+                        android:textAppearance="?attr/textAppearanceBody1"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/report_card"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_row="0"
                         android:layout_column="3"
