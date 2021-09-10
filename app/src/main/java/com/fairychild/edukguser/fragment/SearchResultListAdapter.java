@@ -1,23 +1,38 @@
 package com.fairychild.edukguser.fragment;
 
+import static com.fairychild.edukguser.R.color.mtrl_text_btn_text_color_selector;
+
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.fairychild.edukguser.MainActivity;
 import com.fairychild.edukguser.R;
 import com.fairychild.edukguser.datastructure.Knowledge;
+import com.fairychild.edukguser.sql.UserDatabaseHelper;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 
 public class SearchResultListAdapter extends BaseAdapter {
 
+    public interface myListener {
+        void show_detail_fragment(String label,String course);
+        SQLiteDatabase getSQLiteDatabase();
+    }
+
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    private SubItemAdapter.SubItemAdaptorListener listener;
+    private SearchResultListAdapter.myListener listener;
+    private SQLiteDatabase db;
 
     private ArrayList<Knowledge> mData = new ArrayList<Knowledge>();
     private String course;
@@ -25,16 +40,18 @@ public class SearchResultListAdapter extends BaseAdapter {
     public SearchResultListAdapter(Context context) {
         this.mContext = context;
         this.mLayoutInflater = LayoutInflater.from(context);
-        this.listener=(SubItemAdapter.SubItemAdaptorListener) context;
+        this.listener=(SearchResultListAdapter.myListener) context;
+        db = listener.getSQLiteDatabase();
     }
 
-    public void setData(ArrayList<Knowledge> data, boolean reset) {
+    public void setData(ArrayList<Knowledge> data, String course, boolean reset) {
         if (reset) {
             this.mData.clear();
         }
         if (data != null) {
             this.mData.addAll(data);
         }
+        this.course = course;
         notifyDataSetChanged();
     }
 
@@ -58,6 +75,7 @@ public class SearchResultListAdapter extends BaseAdapter {
         public TextView tvCategory;
         public MaterialButton tvDetailButton;
         public MaterialButton tvFavButton;
+        public MaterialCardView cardSearchResult;
     }
 
     @Override
@@ -70,6 +88,7 @@ public class SearchResultListAdapter extends BaseAdapter {
             holder.tvCategory = view.findViewById(R.id.category);
             holder.tvDetailButton=view.findViewById(R.id.search_detail_btn);
             holder.tvFavButton=view.findViewById(R.id.search_fav_btn);
+            holder.cardSearchResult = view.findViewById(R.id.search_result_card);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -85,6 +104,18 @@ public class SearchResultListAdapter extends BaseAdapter {
                 listener.show_detail_fragment(knowledge.getLabel(),course);
             }
         });
+
+        if (db != null) {
+            Cursor cursor = db.query("DETAIL", new String[]{"NAME"},
+                    "COURSE=? AND NAME=?", new String[]{course, knowledge.getLabel()},
+                    null, null, null);
+            if (cursor.moveToFirst()) {
+                Log.d("SearchResultListAdapter", knowledge.getLabel() + " in cache");
+                holder.cardSearchResult.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            } else {
+                Log.d("SearchResultListAdapter", knowledge.getLabel() + " not in cache");
+            }
+        }
 
         return view;
     }

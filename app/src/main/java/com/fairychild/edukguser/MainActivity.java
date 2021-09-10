@@ -44,6 +44,7 @@ import com.fairychild.edukguser.fragment.QuizFragment;
 import com.fairychild.edukguser.fragment.RegisterFragment;
 
 import com.fairychild.edukguser.fragment.SearchFragment;
+import com.fairychild.edukguser.fragment.SearchResultListAdapter;
 import com.fairychild.edukguser.fragment.SearchResultListFragment;
 import com.fairychild.edukguser.fragment.SubItemAdapter;
 import com.fairychild.edukguser.fragment.detailFragment;
@@ -91,7 +92,8 @@ public class MainActivity extends AppCompatActivity
         BrowsingHistoryListFragment.DataBaseListener,
         FavouritesListFragment.DataBaseListener,
         SearchResultListFragment.DetailListener,
-        LocalCacheListFragment.myListener{
+        LocalCacheListFragment.myListener,
+        SearchResultListAdapter.myListener {
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -359,6 +361,14 @@ public class MainActivity extends AppCompatActivity
         transaction.show(targetFragment);
         transaction.commit();
         currentFragment = targetFragment;
+    }
+
+    @Override
+    public SQLiteDatabase getSQLiteDatabase() {
+        if (userDatabaseHelper != null) {
+            return userDatabaseHelper.getReadableDatabase();
+        }
+        return null;
     }
 
     public void delete_fragment(int idx){

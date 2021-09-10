@@ -104,13 +104,15 @@ public class SearchResultListFragment extends Fragment {
         });
         listView = view.findViewById(R.id.result_list_view);
         SearchResultListAdapter adapter = new SearchResultListAdapter(getActivity());
-        adapter.setData(content, false);
+        adapter.setData(content, course, false);
         listView.setAdapter(adapter);
         filterSpinner=view.findViewById(R.id.sort_filter_spinner);
         value=getResources().getStringArray(R.array.sort_filter);
         values=new ArrayList<>();
         for(String s:value){
-            values.add(s);
+            if (!values.contains(s)) {
+                values.add(s);
+            }
         }
         for(Knowledge k:content){
             if((!values.contains(k.getCategory()))&&(!k.getCategory().equals(""))){
@@ -154,7 +156,7 @@ public class SearchResultListFragment extends Fragment {
                         return Integer.compare(knowledge.getLabel().length(), t1.getLabel().length());
                     }
                 });
-                adapter.setData(cur_content, true);
+                adapter.setData(cur_content, course, true);
                 break;
             case 2:
                 cur_content.sort(new Comparator<Knowledge>() {
@@ -163,7 +165,7 @@ public class SearchResultListFragment extends Fragment {
                         return Integer.compare(knowledge.getCategory().length(), t1.getCategory().length());
                     }
                 });
-                adapter.setData(cur_content, true);
+                adapter.setData(cur_content, course, true);
                 break;
         }
     }
@@ -181,6 +183,6 @@ public class SearchResultListFragment extends Fragment {
         }
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
         adapter.getSubject(course);
-        adapter.setData(cur_content,true);
+        adapter.setData(cur_content,course, true);
     }
 }
