@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fairychild.edukguser.ItemAdapter;
 import com.fairychild.edukguser.QuestionAdapter;
 import com.fairychild.edukguser.R;
+import com.fairychild.edukguser.Share;
 import com.fairychild.edukguser.datastructure.Question;
 
 import org.greenrobot.eventbus.EventBus;
@@ -165,7 +166,7 @@ public class QuestionFragment extends Fragment {
                         question_content+="答案："+"D";
                         break;
                 }
-                mlistener.weibo_share(question_name,question_content);
+                Share.share(getContext(),question_content);
             }
         });
         rgroup = view.findViewById(R.id.rg_question);

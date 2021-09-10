@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.fairychild.edukguser.datastructure.BrowsingHistory;
 import com.fairychild.edukguser.datastructure.BrowsingHistoryListFragmentRefreshNotice;
+import com.fairychild.edukguser.datastructure.DetailMessageEvent;
 import com.fairychild.edukguser.datastructure.Favourite;
 import com.fairychild.edukguser.datastructure.FavouritesListFragmentRefreshNotice;
 import com.fairychild.edukguser.datastructure.LocalCache;
@@ -333,9 +334,19 @@ public class MainActivity extends AppCompatActivity
             values.put("NAME", name);
             values.put("TIME", df.format(new Date()));
             db.insertWithOnConflict("LOCALCACHE", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            Toast.makeText(MainActivity.this, "添加本地缓存成功", Toast.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "添加本地缓存成功", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
-            Toast.makeText(MainActivity.this, "请先登录，再添加本地缓存", Toast.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "请先登录，再添加本地缓存", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -664,15 +675,17 @@ public class MainActivity extends AppCompatActivity
                     String response = null;
                     if (cursor.moveToFirst()) {
                         response = cursor.getString(cursor.getColumnIndex("CONTENT"));
+                        Log.d("getDetailFromDataBase", response);
                     } else {
                         String url = detailUrl
                                 + "course=" + course
                                 + "&name=" + entity_name
                                 + "&id=" + id;
                         response = OkHttp.get(url);
+                        Log.d("getDetailFromInternet", response);
                     }
                     setBrowsingHistory(course, entity_name);
-                    EventBus.getDefault().post(new MessageEvent(response));
+                    EventBus.getDefault().postSticky(new DetailMessageEvent(response));
                     ContentValues values = new ContentValues();
                     values.put("COURSE", course);
                     values.put("NAME", entity_name);

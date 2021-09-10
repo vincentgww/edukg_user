@@ -53,6 +53,11 @@ public class MeFragment extends Fragment {
     private MaterialCardView cardReport;
     private MaterialCardView cardLocalCache;
 
+    private Button btnBrowsingHistory;
+    private Button btnFavourites;
+    private Button btnReport;
+    private Button btnLocalCache;
+
     private FragmentListener listener;
 
     private MaterialToolbar topAppBar;
@@ -106,21 +111,6 @@ public class MeFragment extends Fragment {
         if (btnLogin==null)
             System.out.println("?btnLogin");
 
-        cardBrowsingHistory = view.findViewById(R.id.his_card);
-        cardBrowsingHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 跳转到浏览历史
-                try {
-                    listener.switchToBrowsingHistory();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        if (cardBrowsingHistory==null)
-            System.out.println("?cardBrowsingHistory");
-
         cardFavourites = view.findViewById(R.id.fav_card);
         cardFavourites.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,16 +126,20 @@ public class MeFragment extends Fragment {
         if (cardFavourites==null)
             System.out.println("?cardFavourites");
 
-        cardReport = view.findViewById(R.id.report_card);
-        cardReport.setOnClickListener(new View.OnClickListener() {
+        cardBrowsingHistory = view.findViewById(R.id.his_card);
+        cardBrowsingHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 跳转到学习周报
-                listener.switchToReport();
+                // 跳转到浏览历史
+                try {
+                    listener.switchToBrowsingHistory();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
-        if (cardReport==null)
-            System.out.println("?cardReport");
+        if (cardBrowsingHistory==null)
+            System.out.println("?cardBrowsingHistory");
 
         cardLocalCache = view.findViewById(R.id.local_cache_card);
         cardLocalCache.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +151,69 @@ public class MeFragment extends Fragment {
         });
         if (cardLocalCache == null)
             System.out.println("?cardLocalCache");
+
+        cardReport = view.findViewById(R.id.report_card);
+        cardReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 跳转到学习周报
+                listener.switchToReport();
+            }
+        });
+        if (cardReport==null)
+            System.out.println("?cardReport");
+
+        btnFavourites = view.findViewById(R.id.btn_favourites);
+        btnFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 跳转到我的收藏
+                try {
+                    listener.switchToFavourites();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        if (btnFavourites==null)
+            System.out.println("?btnFavourites");
+
+        btnBrowsingHistory = view.findViewById(R.id.btn_browsing_history);
+        btnBrowsingHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 跳转到浏览历史
+                try {
+                    listener.switchToBrowsingHistory();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        if (btnBrowsingHistory==null)
+            System.out.println("?btnBrowsingHistory");
+
+        btnLocalCache = view.findViewById(R.id.btn_local_cache);
+        btnLocalCache.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 跳转到本地缓存
+                listener.switchToLocalCache();
+            }
+        });
+        if (btnLocalCache == null)
+            System.out.println("?btnLocalCache");
+
+        btnReport = view.findViewById(R.id.btn_report);
+        btnReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 跳转到学习周报
+                listener.switchToReport();
+            }
+        });
+        if (btnReport==null)
+            System.out.println("?btnReport");
 
         btnRegister=view.findViewById(R.id.btn_register);
         btnRegister.setOnClickListener(new View.OnClickListener(){

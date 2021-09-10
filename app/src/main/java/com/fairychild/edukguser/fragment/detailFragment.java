@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.Msg;
 import com.fairychild.edukguser.MsgAdapter;
 import com.fairychild.edukguser.R;
+import com.fairychild.edukguser.Share;
+import com.fairychild.edukguser.datastructure.DetailMessageEvent;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 
 import org.greenrobot.eventbus.EventBus;
@@ -89,10 +92,11 @@ public class detailFragment extends Fragment {
 
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DetailMessageEvent event) {
+        Log.d("detailFragment onMessageEvent", event.getMessage());
         try {
-            JSONObject obj = new JSONObject(event.message);
+            JSONObject obj = new JSONObject(event.getMessage());
             JSONObject j = new JSONObject(obj.getString("data"));
             JSONArray arr = new JSONArray(j.getString("property"));
             JSONArray arr2 = new JSONArray(j.getString("content"));
@@ -133,6 +137,7 @@ public class detailFragment extends Fragment {
         } catch(Exception e){
             e.printStackTrace();
         }
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Nullable
@@ -192,7 +197,7 @@ public class detailFragment extends Fragment {
                 for(Item i:itemList1){
                     simple_description+=i.get_label()+"→"+i.get_des()+"\n";
                 }
-                listener.weibo_share(name,simple_description);
+                Share.share(getContext(),simple_description);
             }
         });
         btnAddFavourites = view.findViewById(R.id.btn_add_favourites);
