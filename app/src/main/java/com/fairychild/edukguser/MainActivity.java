@@ -1012,6 +1012,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private ArrayList<Question> handle_quiz (String response, String label){
+        //System.out.println(response);
         ArrayList<Question> questionArrayList = new ArrayList<Question>();
         try {
             JSONObject obj = new JSONObject(response);
@@ -1040,7 +1041,8 @@ public class MainActivity extends AppCompatActivity
                     String[] blocks = raw.split("([A-D]\\.)|([A-D]．)");
                     // System.out.println(blocks[0]);
                     Question q = new Question(label, id, blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
-                    question_list.add(q);
+                    questionArrayList.add(q);
+                    //System.out.println(q);
                 }
             }
         } catch(Exception e){
