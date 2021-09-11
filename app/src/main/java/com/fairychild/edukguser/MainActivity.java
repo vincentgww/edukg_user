@@ -30,12 +30,14 @@ import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.Activity.WebShareActivity;
 import com.fairychild.edukguser.datastructure.Question;
+import com.fairychild.edukguser.datastructure.outlineItem;
 import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.FavouritesListFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.LocalCacheListFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
+import com.fairychild.edukguser.fragment.OutlineFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
@@ -70,7 +72,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -115,6 +119,7 @@ public class MainActivity extends AppCompatActivity
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
     private final String quizUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/questionListByUriName?";
+    private final String outlineUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/relatedsubject";
     private final String getHistoryUrl = "http://47.93.101.225:8080/user/history/";
     private final String setHistoryUrl = "http://47.93.101.225:8080/history";
     private final String getFavouritesUrl = "http://47.93.101.225:8080/user/collect/";
@@ -124,6 +129,7 @@ public class MainActivity extends AppCompatActivity
     private String str;
     private boolean firstInit = true;
     private List<Question> question_list = new ArrayList<>();
+    private List<outlineItem> outline_list = new ArrayList<>();
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -1208,5 +1214,78 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }).start();
+    }
+
+    public void switchToOutline(String course,String label){
+        //System.out.println(course);
+        //System.out.println(label);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = outlineUrl;
+                String json = "{\n" +
+                        " \"subjectName\":\"" + label + "\",\n" +
+                        " \"course\":\"" + course + "\",\n" +
+                        " \"id\":\"" + id + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    //EventBus.getDefault().post(new MessageEvent(response));
+                    handle_outline(response);
+                    if(outline_list.isEmpty()){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Toast toast = Toast.makeText(MainActivity.this, "无相关知识点！", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                    }
+                    else {
+                        Fragment targetFragment = OutlineFragment.newInstance(label, mFragments.size(), outline_list, 2);
+                        FragmentTransaction transaction = mSupportFragmentManager.beginTransaction();
+                        mFragments.add(targetFragment);
+                        transaction.add(R.id.frameLayout, targetFragment);
+                        transaction.hide(currentFragment);
+                        transaction.show(targetFragment);
+                        transaction.commit();
+                        currentFragment = targetFragment;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void handle_outline(String response){
+        try {
+            outline_list = new ArrayList<>();
+            JSONObject obj = new JSONObject(response);
+            JSONArray arr = new JSONArray(obj.getString("data"));
+            List<outlineItem> outline_titles = new ArrayList<>();
+            Set<String> s = new HashSet<>();
+            for(int i=0;i<arr.length();i++){
+                obj = arr.getJSONObject(i);
+                String sub = obj.getString("subject");
+                String verb = obj.getString("predicate");
+                System.out.println(verb);
+                String object = obj.getString("value");
+                object = object.replaceAll("<br><br>","\n       ");
+                object = object.replaceAll("<br>","\n       ");
+                outlineItem item = new outlineItem(sub,verb,object);
+                outline_titles.add(item);
+                s.add(verb);
+            }
+            for(String verb:s){
+                outline_list.add(new outlineItem(verb,null,null));
+                for(outlineItem item:outline_titles){
+                    if(item.getVerb().equals(verb))
+                        outline_list.add(item);
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
