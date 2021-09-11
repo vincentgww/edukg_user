@@ -3,6 +3,7 @@ import com.fairychild.edukguser.Msg;
 import com.fairychild.edukguser.datastructure.Question;
 import com.google.android.material.internal.CheckableImageButton;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.os.Bundle;
@@ -27,6 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHolder> {
+
+    public interface myListener {
+        void addQuestion(Question question);
+    }
+
+    private QuestionAdapter.myListener listener;
+
     private List<Question> mQuestionList;
     private List<Integer> usr_ans = new ArrayList<>();
     private View mFooterView;
@@ -162,6 +170,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                         submit = true;
                         score = 0;
                         cal_score();
+                        for (int i = 0; i < mQuestionList.size(); i++) {
+                            mQuestionList.get(i).set_usr_ans(usr_ans.get(i));
+                            listener.addQuestion(mQuestionList.get(i));
+                        }
                         //notifyItemRangeChanged(0, mQuestionList.size());
                         notifyDataSetChanged();
                     }
@@ -208,7 +220,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     }
 
 
-    public QuestionAdapter (List<Question> questionList){
+    public QuestionAdapter (Context context, List<Question> questionList){
+        listener = (myListener) context;
         mQuestionList = questionList;
         for(int i=0;i<mQuestionList.size();i++){
             usr_ans.add(-1);

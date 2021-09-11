@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/bottom_navigation_padded_height"
+        android:paddingTop="30dp"
         android:gravity="center_vertical">
 
         <ImageView
@@ -44,14 +44,56 @@
             android:hint="password"
             app:startIconDrawable="@drawable/password"
             app:helperTextEnabled="true"
-            app:helperText="请输入密码"
+            app:helperText="请输入密码，必须包含大小写和数字，长度在8到14之间"
             app:endIconMode="password_toggle">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/register_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"/>
+
         </com.google.android.material.textfield.TextInputLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="7dp">
+            <TextView
+                android:text="密码强度："
+                android:textColor="#333"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/pwd_weak"
+                android:background="#AAAAAA"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="弱"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/pwd_in"
+                android:layout_marginStart="5dp"
+                android:background="#AAAAAA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="中"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/pwd_strong"
+                android:layout_marginStart="5dp"
+                android:background="#AAAAAA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="强"
+                android:textSize="12sp"/>
+        </LinearLayout>
         <Button
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/regBtn"

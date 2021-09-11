@@ -47,7 +47,6 @@ public class QuizFragment extends Fragment {
         super.onAttach(context);
     }
 
-
     public QuizFragment(String name,int idx, List<Question> questionList, int back_id){
         this.name = name;
         this.idx = idx;
@@ -66,7 +65,7 @@ public class QuizFragment extends Fragment {
                         LinearLayoutManager(getActivity());
                 quizRecyclerView = view.findViewById(R.id.quiz_recycler);
                 quizRecyclerView.setLayoutManager(layoutManager);
-                adapter = new QuestionAdapter(question_list);
+                adapter = new QuestionAdapter(getActivity(), question_list);
                 quizRecyclerView.setAdapter(adapter);
                 //adapter.notifyItemInserted(question_list.size()-1);
                 View footer = LayoutInflater.from(getContext()).inflate(R.layout.submit_ans, quizRecyclerView, false);

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,18 @@ public class FunctionFragment extends Fragment {
     private String course;
     private ImageView quiz_test;
     private ImageView rec_exam;
+
+    public static class Utils {
+        private static long lastClickTime;
+        public static boolean isFastDoubleClick() {
+            long time = System.currentTimeMillis();
+            if ( time - lastClickTime < 5000) {
+                return true;
+            }
+            lastClickTime = time;
+            return false;
+        }
+    }
 
     @Nullable
     @Override
@@ -92,9 +105,14 @@ public class FunctionFragment extends Fragment {
 
         rec_exam = view.findViewById(R.id.quiz_exam_img);
         rec_exam.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                if (Utils.isFastDoubleClick()){
+                    return;
+                }
                 try {
+                    Toast.makeText(getActivity(), "生成推荐试题需要3-4秒，请耐心等待，不要重复点击！", Toast.LENGTH_SHORT).show();
                     listener.show_exam();
                 } catch (InterruptedException e) {
                     e.printStackTrace();

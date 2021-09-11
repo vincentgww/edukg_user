@@ -70,6 +70,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -95,7 +96,8 @@ public class MainActivity extends AppCompatActivity
         FavouritesListFragment.DataBaseListener,
         SearchResultListFragment.DetailListener,
         LocalCacheListFragment.myListener,
-        SearchResultListAdapter.myListener {
+        SearchResultListAdapter.myListener,
+        QuestionAdapter.myListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -323,7 +325,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
             }
-            Toast.makeText(MainActivity.this, "获取本地缓存成功", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "获取本地缓存成功", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("getLocalCacheList", username + " " + id + " " + (db == null));
             Toast.makeText(MainActivity.this, "请先登录，再查看本地缓存", Toast.LENGTH_SHORT).show();
@@ -343,7 +345,7 @@ public class MainActivity extends AppCompatActivity
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(MainActivity.this, "添加本地缓存成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "添加本地缓存成功", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -532,7 +534,7 @@ public class MainActivity extends AppCompatActivity
                     "}";
             try {
                 String response = OkHttp.post(url, json, MainActivity.this);
-                System.out.println(response);
+//                System.out.println(response);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -594,7 +596,7 @@ public class MainActivity extends AppCompatActivity
                             "}";
                     try {
                         String response = OkHttp.post(url, json, MainActivity.this);
-                        System.out.println(response);
+//                        System.out.println(response);
                         JSONObject jsonObject = new JSONObject(response);
                         try{
                             id = jsonObject.getString("id");
@@ -608,7 +610,7 @@ public class MainActivity extends AppCompatActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "获取网络token成功！", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "获取网络token成功！", Toast.LENGTH_SHORT).show();
                                     switchToHome();
                                 }
                             });
@@ -716,7 +718,7 @@ public class MainActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "获取详情成功！", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(MainActivity.this, "获取详情成功！", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (Exception e) {
@@ -866,7 +868,7 @@ public class MainActivity extends AppCompatActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "添加收藏夹成功", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "添加收藏夹成功", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
@@ -916,7 +918,7 @@ public class MainActivity extends AppCompatActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
@@ -1012,7 +1014,7 @@ public class MainActivity extends AppCompatActivity
             JSONArray arr = new JSONArray(obj.getString("data"));
             for(int i=0;i<arr.length();i++){
                 obj = arr.getJSONObject(i);
-                System.out.println(obj);
+//                System.out.println(obj);
                 String raw = obj.getString("qBody");
                 String ans = obj.getString("qAnswer");
                 Integer id = obj.getInt("id");
@@ -1087,7 +1089,7 @@ public class MainActivity extends AppCompatActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "获取浏览记录成功！", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "获取浏览记录成功！", Toast.LENGTH_SHORT).show();
                                     Log.d("BrowsingHistory", browsingHistoryArrayList.toString());
                                 }
                             });
@@ -1142,7 +1144,7 @@ public class MainActivity extends AppCompatActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "添加历史记录成功", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "添加历史记录成功", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
@@ -1255,25 +1257,29 @@ public class MainActivity extends AppCompatActivity
                             String questions = dataObject.getString("questions");
                             JSONArray questionArray = new JSONArray(questions);
                             for (int i = 0; i < questionArray.length(); i++) {
-                                JSONObject history = questionArray.getJSONObject(i);
-                                String label = history.getString("label");
-                                int id = history.getInt("id");
-                                String title = history.getString("title");
-                                String choiceA = history.getString("choiceA");
-                                String choiceB = history.getString("choiceB");
-                                String choiceC = history.getString("choiceC");
-                                String choiceD = history.getString("choiceD");
-                                int correct = history.getInt("correct");
-                                int usr_ans = history.getInt("usr_ans");
-                                Question question = new Question(label, id, title,
-                                        choiceA, choiceB, choiceC, choiceD, correct);
-                                question.set_usr_ans(usr_ans);
-                                questionArrayList.add(question);
+                                try{
+                                    JSONObject history = questionArray.getJSONObject(i);
+                                    String label = history.getString("label");
+                                    int id = history.getInt("id");
+                                    String title = history.getString("title");
+                                    String choiceA = history.getString("choiceA");
+                                    String choiceB = history.getString("choiceB");
+                                    String choiceC = history.getString("choiceC");
+                                    String choiceD = history.getString("choiceD");
+                                    int correct = history.getInt("correct");
+                                    int usr_ans = history.getInt("usr_ans");
+                                    Question question = new Question(label, id, title,
+                                            choiceA, choiceB, choiceC, choiceD, correct);
+                                    question.set_usr_ans(usr_ans);
+                                    questionArrayList.add(question);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "获取做题记录成功！", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "获取做题记录成功！", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
@@ -1289,6 +1295,7 @@ public class MainActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+//                                System.out.println("获取做题记录失败");
                                 Toast.makeText(MainActivity.this, "获取做题记录失败", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -1332,6 +1339,7 @@ public class MainActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+//                            System.out.println("获取相关试题列表失败");
                             Toast.makeText(MainActivity.this, "获取相关试题列表失败", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -1345,19 +1353,39 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void show_exam() throws InterruptedException {
+
         String username = sharedPreferences.getString("username", null);
         id = sharedPreferences.getString("id", null);
-        ArrayList<LocalCache> localCacheArrayList;
-        ArrayList<Question> questionArrayList;
-        ArrayList<Question> examQuestions = new ArrayList<Question>();
+
         if (username != null && id != null) {
-            localCacheArrayList = getLocalCacheList();
+            ArrayList<LocalCache> localCacheArrayList;
+            ArrayList<Question> questionArrayList;
+            ArrayList<Question> examQuestions = new ArrayList<Question>();
+
+            Callable<ArrayList<LocalCache>> callable = new Callable<ArrayList<LocalCache>>() {
+                @Override
+                public ArrayList<LocalCache> call() {
+                    return getLocalCacheList();
+                }
+            };
+            FutureTask<ArrayList<LocalCache>> task = new FutureTask<ArrayList<LocalCache>>(callable);
+            Thread localCacheThread = new Thread(task);
+            localCacheThread.start();
+
             questionArrayList = getQuestionArrayList();
-            Thread.sleep(500);
+
+            localCacheThread.join();
+            try {
+                localCacheArrayList = task.get();
+            } catch (Exception e) {
+                localCacheArrayList = null;
+            }
+
             if (localCacheArrayList == null || localCacheArrayList.size() == 0) {
                 if (questionArrayList.size() < 10) {
                     Toast.makeText(MainActivity.this, "您的浏览历史和做题记录太少，无法生成推荐试题！", Toast.LENGTH_SHORT).show();
                 } else {
+                    Collections.shuffle(questionArrayList);
                     questionArrayList.sort(new Comparator<Question>() {
                         @Override
                         public int compare(Question question, Question t1) {
@@ -1373,22 +1401,87 @@ public class MainActivity extends AppCompatActivity
                     for (int i = 0; i < 10; i++) {
                         examQuestions.add(questionArrayList.get(i));
                     }
-                    Toast.makeText(MainActivity.this, "生成推荐试题成功！", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "生成推荐试题成功！", Toast.LENGTH_SHORT).show();
                     Fragment targetFragment = QuizFragment.newInstance(null, mFragments.size(), examQuestions, 2);
                     mFragments.add(targetFragment);
-                    transaction.add(R.id.frameLayout, targetFragment);
-                    transaction.hide(currentFragment);
-                    transaction.show(targetFragment);
-                    transaction.commit();
+                    FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                    transaction1.add(R.id.frameLayout, targetFragment);
+                    transaction1.hide(currentFragment);
+                    transaction1.show(targetFragment);
+                    transaction1.commit();
                     currentFragment = targetFragment;
                 }
             } else {
+//                System.out.println(localCacheArrayList);
+//                double startTime = System.currentTimeMillis();
+                ArrayList<Thread> threadArrayList = new ArrayList<Thread>();
+                int count = 0;
                 for (LocalCache localCache : localCacheArrayList) {
-                    if (examQuestions.size() > 50) {
+                    if (count > 20) {
                         break;
                     }
-                    examQuestions.addAll(getRelatedQuestions(localCache.getName()));
+                    count++;
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String url = quizUrl
+                                    + "uriName=" + localCache.getName()
+                                    + "&id=" + id;
+                            try {
+                                String response = OkHttp.get(url, MainActivity.this);
+                                JSONObject responseObject = new JSONObject(response);
+                                String response_code = responseObject.getString("code");
+                                String response_message = responseObject.getString("msg");
+                                if (response_code.equals("0")) {
+                                    ArrayList<Question> tmpQuestionArrayList = handle_quiz(response, localCache.getName());
+                                    synchronized (examQuestions) {
+                                        examQuestions.addAll(tmpQuestionArrayList);
+                                    }
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(MainActivity.this, response_message, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "获取相关试题列表失败", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    threadArrayList.add(thread);
+                    thread.start();
                 }
+//                System.out.println("count="+count);
+                for (Thread thread : threadArrayList) {
+                    thread.join();
+                }
+
+                Collections.shuffle(examQuestions);
+
+                examQuestions.sort(new Comparator<Question>() {
+                    @Override
+                    public int compare(Question question, Question t1) {
+                        if (question.ansIsRight() && !t1.ansIsRight()) {
+                            return 1;
+                        } else if (!question.ansIsRight() && t1.ansIsRight()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+
+//                double endTime = System.currentTimeMillis();
+//                System.out.println("size:" + examQuestions.size());
+//                System.out.println("duration: " + ((endTime - startTime) / 1000.0));
                 if (examQuestions.size() < 10) {
                     Toast.makeText(MainActivity.this, "您的浏览历史和做题记录太少，无法生成推荐试题！", Toast.LENGTH_SHORT).show();
                 } else {
@@ -1411,14 +1504,15 @@ public class MainActivity extends AppCompatActivity
                             return Integer.compare(questionStatus, t1Status);
                         }
                     });
-                    examQuestions = (ArrayList<Question>) examQuestions.subList(0, 10);
-                    Toast.makeText(MainActivity.this, "生成推荐试题成功！", Toast.LENGTH_SHORT).show();
-                    Fragment targetFragment = QuizFragment.newInstance(null, mFragments.size(), examQuestions, 2);
+//                    System.out.println(examQuestions.subList(0, 10));
+//                    Toast.makeText(MainActivity.this, "生成推荐试题成功！", Toast.LENGTH_SHORT).show();
+                    Fragment targetFragment = QuizFragment.newInstance(null, mFragments.size(), examQuestions.subList(0, 10), 2);
                     mFragments.add(targetFragment);
-                    transaction.add(R.id.frameLayout, targetFragment);
-                    transaction.hide(currentFragment);
-                    transaction.show(targetFragment);
-                    transaction.commit();
+                    FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                    transaction1.add(R.id.frameLayout, targetFragment);
+                    transaction1.hide(currentFragment);
+                    transaction1.show(targetFragment);
+                    transaction1.commit();
                     currentFragment = targetFragment;
                 }
             }
