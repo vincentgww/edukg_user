@@ -28,7 +28,6 @@ public class SubItemAdapter extends BaseAdapter {
         TextView label_text;
         TextView description_text;
         MaterialButton detaiBtn;
-        MaterialButton likeBtn;
         public MaterialCardView cardSubitem;
     }
     private SubItemAdaptorListener listener;
@@ -67,7 +66,6 @@ public class SubItemAdapter extends BaseAdapter {
             holder.label_text=(TextView) convertView.findViewById(R.id.item_title);
             holder.description_text=(TextView) convertView.findViewById(R.id.item_description);
             holder.detaiBtn=(MaterialButton)convertView.findViewById(R.id.detailBtn);
-            holder.likeBtn=(MaterialButton)convertView.findViewById(R.id.likeBtn);
             holder.cardSubitem = convertView.findViewById(R.id.subitem);
             convertView.setTag(holder);
         } else {
