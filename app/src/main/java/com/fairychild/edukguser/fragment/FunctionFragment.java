@@ -112,7 +112,6 @@ public class FunctionFragment extends Fragment {
                     return;
                 }
                 try {
-                    Toast.makeText(getActivity(), "生成推荐试题需要3-4秒，请耐心等待，不要重复点击！", Toast.LENGTH_SHORT).show();
                     listener.show_exam();
                 } catch (InterruptedException e) {
                     e.printStackTrace();

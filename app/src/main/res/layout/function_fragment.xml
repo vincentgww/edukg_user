@@ -167,7 +167,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="根据您的浏览历史记录和做题情况推荐10道练习题"
+                        android:text="根据您的浏览历史记录和做题情况推荐10道练习题（生成推荐试题需要3-4秒，请耐心等待，不要重复点击！）"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
