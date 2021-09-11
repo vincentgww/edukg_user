@@ -57,18 +57,11 @@ public class OutlineFragment extends Fragment {
     private Button btnQuiz;
     private Button btnAddFavourites;
 
-    /*public interface detailListener {
-        void get_detail(String entity_name, String course);
-        void delete_fragment(int idx);
-        void addFavourites(String course, String name);
-        void removeFavourites(String course, String name);
-        boolean isAddedToFavourites(String course, String name);
-        void related_question(String name, int idx);
-        void back_home();
-        void weibo_share(String item_title,String item_content);
-    }*/
+    public interface outlineListener {
+        void back_function(int id);
+    }
 
-    //detailListener listener;
+    outlineListener listener;
     String label,course;
     int back_id;
     String simple_description;
@@ -82,14 +75,6 @@ public class OutlineFragment extends Fragment {
         this.back_id = back_id;
     }
 
-    /*public void addNewItems(){
-        if(itemList1.isEmpty())
-            linear.removeView(itemRecyclerView1);
-        adapter1.notifyItemInserted(itemList1.size()-1);
-        if(itemList2.isEmpty())
-            linear.removeView(itemRecyclerView2);
-        adapter2.notifyItemInserted(itemList2.size()-1);
-    }*/
 
 
 
@@ -101,6 +86,13 @@ public class OutlineFragment extends Fragment {
         //linear = view.findViewById(R.id.detail_linear);
         //entity_text.setText(name);
         //listener.get_detail(name, course);
+        Button backBtn = view.findViewById(R.id.back_button_outline);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.back_function(idx);
+            }
+        });
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -118,7 +110,7 @@ public class OutlineFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        //listener = (detailListener) context;
+        listener = (outlineListener) context;
         //mActivity = (MainActivity) context;
         super.onAttach(context);
     }

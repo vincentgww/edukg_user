@@ -5,10 +5,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:scrollbars="none">
+    <View
+        android:layout_width="370dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/grey"/>
     <TextView
-        android:id="@+id/outline_outline"
+        android:id="@+id/outline_property"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:layout_marginStart="10dp" />
+        android:textColor="@android:color/black"
+        android:layout_marginStart="5dp" />
 </LinearLayout>

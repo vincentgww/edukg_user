@@ -16,6 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -31,8 +33,10 @@ public class outlineAdapter extends RecyclerView.Adapter<outlineAdapter.ViewHold
         View view;
         if(viewType==1)
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.outline_title,parent,false);
-        else
+        else if(viewType == 0)
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.outline_item,parent,false);
+        else
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.outline_property,parent,false);
         return new ViewHolder(view);
     }
     @Override
@@ -43,8 +47,11 @@ public class outlineAdapter extends RecyclerView.Adapter<outlineAdapter.ViewHold
             holder.verb.setText(item.getVerb());
             holder.obj.setText(item.getObj());
         }
-        else {
+        else if(getItemViewType(position)==1) {
             holder.label.setText(item.getSub());
+        }
+        else{
+            holder.property.setText(item.getProperty());
         }
     }
     @Override
@@ -56,18 +63,22 @@ public class outlineAdapter extends RecyclerView.Adapter<outlineAdapter.ViewHold
         TextView label;
         TextView verb;
         TextView obj;
+        TextView property;
         public ViewHolder(@NonNull View view){
             super(view);
             sub = view.findViewById(R.id.outline_label);
             verb = view.findViewById(R.id.outline_verb);
             obj = view.findViewById(R.id.outline_des);
             label = view.findViewById(R.id.outline_outline);
+            property = view.findViewById(R.id.outline_property);
         }
     }
     @Override
     public int getItemViewType(int position) {
         outlineItem item = mItemList.get(position);
-        if(item.getVerb()==null)
+        if(item.getProperty()!=null)
+            return 2;
+        else if(item.getVerb()==null)
             return 1;
         return 0;
     }

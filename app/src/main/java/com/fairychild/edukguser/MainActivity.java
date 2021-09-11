@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity
         FavouritesListFragment.DataBaseListener,
         SearchResultListFragment.DetailListener,
         LocalCacheListFragment.myListener,
-        SearchResultListAdapter.myListener {
+        SearchResultListAdapter.myListener,
+        OutlineFragment.outlineListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -1231,7 +1232,7 @@ public class MainActivity extends AppCompatActivity
                 try {
                     String response = OkHttp.post(url, json);
                     //EventBus.getDefault().post(new MessageEvent(response));
-                    handle_outline(response);
+                    handle_outline(response,label);
                     if(outline_list.isEmpty()){
                         runOnUiThread(new Runnable() {
                             @Override
@@ -1258,13 +1259,15 @@ public class MainActivity extends AppCompatActivity
         }).start();
     }
 
-    private void handle_outline(String response){
+    private void handle_outline(String response,String label){
         try {
             outline_list = new ArrayList<>();
             JSONObject obj = new JSONObject(response);
             JSONArray arr = new JSONArray(obj.getString("data"));
-            List<outlineItem> outline_titles = new ArrayList<>();
-            Set<String> s = new HashSet<>();
+            List<outlineItem> outline_sub = new ArrayList<>();
+            List<outlineItem> outline_obj = new ArrayList<>();
+            Set<String> s_sub = new HashSet<>();
+            Set<String> s_obj = new HashSet<>();
             for(int i=0;i<arr.length();i++){
                 obj = arr.getJSONObject(i);
                 String sub = obj.getString("subject");
@@ -1274,18 +1277,51 @@ public class MainActivity extends AppCompatActivity
                 object = object.replaceAll("<br><br>","\n       ");
                 object = object.replaceAll("<br>","\n       ");
                 outlineItem item = new outlineItem(sub,verb,object);
-                outline_titles.add(item);
-                s.add(verb);
+                if(sub.equals(label)) {
+                    outline_sub.add(item);
+                    s_sub.add(verb);
+                }
+                else {
+                    outline_obj.add(item);
+                    s_obj.add(verb);
+                }
             }
-            for(String verb:s){
+            /*for(String verb:s){
                 outline_list.add(new outlineItem(verb,null,null));
                 for(outlineItem item:outline_titles){
                     if(item.getVerb().equals(verb))
                         outline_list.add(item);
                 }
+            }*/
+            if(!outline_sub.isEmpty()){
+                outlineItem item = new outlineItem(null,null,null);
+                item.setProperty("主属性");
+                outline_list.add(item);
+                for(String verb:s_sub){
+                    outline_list.add(new outlineItem(verb,null,null));
+                    for(outlineItem it:outline_sub){
+                        if(it.getVerb().equals(verb))
+                            outline_list.add(it);
+                    }
+                }
+            }
+            if(!outline_obj.isEmpty()){
+                outlineItem item = new outlineItem(null,null,null);
+                item.setProperty("从属性");
+                outline_list.add(item);
+                for(String verb:s_obj){
+                    outline_list.add(new outlineItem(verb,null,null));
+                    for(outlineItem it:outline_obj){
+                        if(it.getVerb().equals(verb))
+                            outline_list.add(it);
+                    }
+                }
             }
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+    public void back_function(int id){
+        switchToFunction();
     }
 }
