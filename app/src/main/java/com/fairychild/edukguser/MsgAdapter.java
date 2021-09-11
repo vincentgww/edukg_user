@@ -42,6 +42,52 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
             holder.leftLayout.setVisibility(View.GONE);
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.rightMsg.setText(msg.getContent());
+            holder.rightImg.setImageDrawable(null);
+            if(MeFragment.head_id==1){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head12);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==2){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head11);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==3){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head14);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==4){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head13);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==5){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head3);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==6){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head4);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==7){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head9);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==8){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head10);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==9){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head15);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                holder.rightImg.setImageDrawable(drawable);
+            }
         }
     }
     @Override
@@ -61,52 +107,6 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
             leftMsg = view.findViewById(R.id.left_msg);
             rightMsg = view.findViewById(R.id.right_msg);
             rightImg = view.findViewById(R.id.iv_head_my);
-            rightImg.setImageDrawable(null);
-            if(MeFragment.head_id==1){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head12);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==2){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head11);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==3){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head14);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==4){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head13);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==5){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head3);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==6){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head4);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==7){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head9);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==8){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head10);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
-            if(MeFragment.head_id==9){
-                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head15);
-                Drawable drawable = new CircleImageViewDrawable(bitmap);
-                rightImg.setImageDrawable(drawable);
-            }
         }
     }
     public MsgAdapter (List<Msg> msgList,Resources res){
