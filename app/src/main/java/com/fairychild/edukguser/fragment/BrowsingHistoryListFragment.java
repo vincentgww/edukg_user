@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class BrowsingHistoryListFragment extends Fragment {
 
     public interface DataBaseListener {
-        ArrayList<BrowsingHistory> getBrowsingHistory();
+        ArrayList<BrowsingHistory> getBrowsingHistory() throws InterruptedException;
         void show_detail_fragment(String label,String course);
     }
 

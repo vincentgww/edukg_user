@@ -30,6 +30,7 @@ public class QuizFragment extends Fragment {
     public interface quizListener {
         void delete_quiz(int idx);
         void go_back(int back_id);
+        void addQuestion(Question question);
     }
     String name;
     int idx;

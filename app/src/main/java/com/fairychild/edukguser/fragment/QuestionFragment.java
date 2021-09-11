@@ -140,6 +140,9 @@ public class QuestionFragment extends Fragment {
                         break;
                 }
                 submit.setVisibility(View.INVISIBLE);
+                Question question = question_list.get(id);
+                question.set_usr_ans(usr);
+                listener.addQuestion(question);
             }
         });
         question_shareBtn=view.findViewById(R.id.question_share_btn);

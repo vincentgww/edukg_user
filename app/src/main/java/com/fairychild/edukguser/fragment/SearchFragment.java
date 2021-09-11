@@ -161,7 +161,7 @@ public class SearchFragment extends Fragment {
         mSupportFragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-    public void showFragment(String response,String course) {
+    public void showFragment(String response, String course) {
         transaction = mSupportFragmentManager.beginTransaction();
         try {
             String data = new JSONObject(response).getString("data");
@@ -183,5 +183,15 @@ public class SearchFragment extends Fragment {
             System.out.println("showFragment wrong!!!!!!!!!!");
         }
         transaction.commit();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            if (currentFragment != null) {
+                currentFragment.onHiddenChanged(false);
+            }
+        }
     }
 }

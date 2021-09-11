@@ -243,22 +243,4 @@ public class TabFragment extends ListFragment implements OnScrollListener {
             ((ViewGroup) rootView.getParent()).removeView(rootView);
         }
     }
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onMessageEvent(MessageEvent event){
-//        Log.d(TAG,event.message.toLowerCase(Locale.ROOT));
-//        cur_subject=event.message.toLowerCase(Locale.ROOT);
-        //Log.d(TAG,cur_subject);
-//    }
-
-    //@Override
-//    public void onStart(){
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//    }
-
-//    @Override
-//    public void onDestroy(){
-//        super.onDestroy();
-//        EventBus.getDefault().unregister(this);
-//    }
 }

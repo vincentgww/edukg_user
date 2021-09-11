@@ -1,6 +1,7 @@
 package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ public class FunctionFragment extends Fragment {
         void switchToKnowledgeCheck();
         void switchToSearch();
         void show_quiz(String label,String course);
+        void show_exam() throws InterruptedException;
     }
     private TextView title,text;
     private LinearLayout linear;
@@ -33,6 +35,9 @@ public class FunctionFragment extends Fragment {
     private Button quizButton;
     private FunctionListener listener;
     private String course;
+    private ImageView quiz_test;
+    private ImageView rec_exam;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,8 +78,9 @@ public class FunctionFragment extends Fragment {
                     }
                 }
         );
-        ImageView quiz_recommendation=view.findViewById(R.id.quiz_rec_img);
-        quiz_recommendation.setOnClickListener(new View.OnClickListener() {
+
+        quiz_test = view.findViewById(R.id.quiz_test_img);
+        quiz_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 quizButton.setVisibility(View.VISIBLE);
@@ -83,6 +89,19 @@ public class FunctionFragment extends Fragment {
                 text.setVisibility(View.GONE);
             }
         });
+
+        rec_exam = view.findViewById(R.id.quiz_exam_img);
+        rec_exam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    listener.show_exam();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         return view;
     }
 

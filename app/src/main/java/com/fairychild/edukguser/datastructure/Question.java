@@ -1,20 +1,20 @@
 package com.fairychild.edukguser.datastructure;
 
+import java.util.Objects;
+
 public class Question {
 
-    private String course;
     private String label;
-    private Integer number;
+    private Integer id;
     private String title;
     private String choiceA,choiceB,choiceC,choiceD;
     private int correct;
     private int usr_ans = -1;
 
-    public Question(String course, String label, Integer number, String title, String choiceA,
+    public Question(String label, Integer id, String title, String choiceA,
                     String choiceB, String choiceC, String choiceD, int correct){
-        this.course = course;
         this.label = label;
-        this.number = number;
+        this.id = id;
         this.title = title;
         this.choiceA = choiceA;
         this.choiceB = choiceB;
@@ -23,14 +23,11 @@ public class Question {
         this.correct = correct;
     }
 
-    public String getCourse() {
-        return course;
-    }
     public String getLabel() {
         return label;
     }
-    public Integer getNumber() {
-        return number;
+    public Integer getId() {
+        return id;
     }
     public String getTitle(){
         return title;
@@ -57,4 +54,17 @@ public class Question {
         return usr_ans;
     }
     public boolean ansIsRight() {return usr_ans == correct;}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return id.equals(question.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

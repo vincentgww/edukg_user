@@ -70,7 +70,7 @@
                 android:orientation="vertical"
                 android:clickable="true">
                 <ImageView
-                    android:id="@+id/quiz_rec_img"
+                    android:id="@+id/quiz_test_img"
                     android:layout_width="match_parent"
                     android:layout_height="194dp"
                     app:srcCompat="@drawable/test"
@@ -80,26 +80,33 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <LinearLayout
-                        android:id="@+id/quiz_linear"
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-                        <Spinner
-                            android:id="@+id/quiz_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="50dp"
-                            android:layout_gravity="center_horizontal"
-                            android:entries="@array/subjects"
-                            style="@style/Base.Widget.AppCompat.Spinner.Underlined"/>
-                        <EditText
-                            android:id="@+id/quiz_input"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/quiz_linear"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:maxLines="1"
-                            />
-                    </LinearLayout>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+                            <Spinner
+                                android:id="@+id/quiz_spinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:entries="@array/subjects"
+                                style="@style/Base.Widget.AppCompat.Spinner.Underlined"/>
+                            <EditText
+                                android:id="@+id/quiz_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:maxLines="1"
+                                />
+                        </LinearLayout>
+
+                    </ScrollView>
+
                     <TextView
                         android:id="@+id/quiz_title"
                         android:layout_width="wrap_content"
@@ -125,6 +132,54 @@
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/exam_card"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp">
+            <LinearLayout
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:clickable="true">
+                <ImageView
+                    android:id="@+id/quiz_exam_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="194dp"
+                    app:srcCompat="@drawable/test"
+                    android:scaleType="centerCrop"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/exam_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/recommended_exam"
+                        android:textAppearance="?attr/textAppearanceHeadline6"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="根据您的浏览历史记录和做题情况推荐10道练习题"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp">
+        </LinearLayout>
 
     </LinearLayout>
 

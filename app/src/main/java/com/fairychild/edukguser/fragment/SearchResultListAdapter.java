@@ -114,6 +114,7 @@ public class SearchResultListAdapter extends BaseAdapter {
                 holder.cardSearchResult.setBackgroundColor(Color.parseColor("#DDDDDD"));
             } else {
                 Log.d("SearchResultListAdapter", knowledge.getLabel() + " not in cache");
+                holder.cardSearchResult.setBackgroundColor(Color.parseColor("#FFFFFF"));
             }
         }
 

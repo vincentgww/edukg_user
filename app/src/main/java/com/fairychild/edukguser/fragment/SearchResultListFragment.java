@@ -2,6 +2,7 @@ package com.fairychild.edukguser.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -184,5 +185,16 @@ public class SearchResultListFragment extends Fragment {
         SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
         adapter.getSubject(course);
         adapter.setData(cur_content,course, true);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            Log.d("SearchResultListFragment", "onHiddenChanged");
+            SearchResultListAdapter adapter = (SearchResultListAdapter) listView.getAdapter();
+            adapter.getSubject(course);
+            adapter.setData(cur_content, course, true);
+        }
     }
 }

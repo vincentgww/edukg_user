@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity
     private final String addFavouritesUrl = "http://47.93.101.225:8080/collect";
     private final String removeFavouritesUrl = "http://47.93.101.225:8080/removecollect";
     private final String checkFavouritesUrl = "http://47.93.101.225:8080/checkcollect";
+    private final String getQuestionsUrl = "http://47.93.101.225:8080/user/question/";
+    private final String addQuestionsUrl = "http://47.93.101.225:8080/question";
     private String str;
     private boolean firstInit = true;
     private List<Question> question_list = new ArrayList<>();
@@ -233,7 +235,6 @@ public class MainActivity extends AppCompatActivity
     public void switchToBrowsingHistory() throws InterruptedException {
         BrowsingHistoryListFragment browsingHistoryListFragment = (BrowsingHistoryListFragment) mFragments.get(7);
         ArrayList<BrowsingHistory> browsingHistoryArrayList = getBrowsingHistory();
-        Thread.sleep(500);
         browsingHistoryListFragment.setmData(browsingHistoryArrayList);
         EventBus.getDefault().postSticky(new BrowsingHistoryListFragmentRefreshNotice());
         Log.d("switchToBrowsingHistory", browsingHistoryArrayList.toString());
@@ -245,7 +246,6 @@ public class MainActivity extends AppCompatActivity
     public void switchToFavourites() throws InterruptedException {
         FavouritesListFragment favouritesListFragment = (FavouritesListFragment) mFragments.get(9);
         ArrayList<Favourite> favouriteArrayList = getFavourites();
-        Thread.sleep(500);
         favouritesListFragment.setmData(favouriteArrayList);
         EventBus.getDefault().postSticky(new FavouritesListFragmentRefreshNotice());
         Log.d("switchToFavourites", favouriteArrayList.toString());
@@ -749,8 +749,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             transaction = mSupportFragmentManager.beginTransaction();
-                            question_list = new ArrayList<>();
-                            handle_quiz(response);
+                            question_list = handle_quiz(response, name);
                             if(question_list.isEmpty()){
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -785,14 +784,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public ArrayList<Favourite> getFavourites() {
+    public ArrayList<Favourite> getFavourites() throws InterruptedException {
         id = sharedPreferences.getString("id", null);
         uid = sharedPreferences.getString("uid", null);
         ArrayList<Favourite> favouritesArrayList = new ArrayList<Favourite>();
         if (id != null && uid != null) {
             String url = getFavouritesUrl
                     + uid;
-            new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -835,7 +834,9 @@ public class MainActivity extends AppCompatActivity
                         });
                     }
                 }
-            }).start();
+            });
+            thread.start();
+            thread.join();
         } else {
             Toast.makeText(MainActivity.this, "请先登录，再查看收藏夹", Toast.LENGTH_SHORT).show();
         }
@@ -1004,7 +1005,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void handle_quiz (String response){
+    private ArrayList<Question> handle_quiz (String response, String label){
+        ArrayList<Question> questionArrayList = new ArrayList<Question>();
         try {
             JSONObject obj = new JSONObject(response);
             JSONArray arr = new JSONArray(obj.getString("data"));
@@ -1013,6 +1015,7 @@ public class MainActivity extends AppCompatActivity
                 System.out.println(obj);
                 String raw = obj.getString("qBody");
                 String ans = obj.getString("qAnswer");
+                Integer id = obj.getInt("id");
                 int correct=-1;
                 switch (ans){
                     case "A":
@@ -1027,23 +1030,24 @@ public class MainActivity extends AppCompatActivity
                     case "D":
                         correct = 3;
                 }
-                if(raw.length()<1000 && ans.length()==1) {
+                if(raw.length() < 1000 && ans.length()==1) {
                     String[] blocks = raw.split("[A-D]\\.");
-                    Question q = new Question(null, null, null, blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
-                    question_list.add(q);
+                    Question q = new Question(label, id, blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
+                    questionArrayList.add(q);
                 }
             }
         } catch(Exception e){
             e.printStackTrace();
         }
+        return questionArrayList;
     }
 
     @Override
-    public ArrayList<BrowsingHistory> getBrowsingHistory() {
+    public ArrayList<BrowsingHistory> getBrowsingHistory() throws InterruptedException {
         String username = sharedPreferences.getString("username", null);
         ArrayList<BrowsingHistory> browsingHistoryArrayList = new ArrayList<BrowsingHistory>();
         if (id != null && username != null && uid != null) {
-            new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -1107,7 +1111,9 @@ public class MainActivity extends AppCompatActivity
                         });
                     }
                 }
-            }).start();
+            });
+            thread.start();
+            thread.join();
         } else {
             Toast.makeText(MainActivity.this, "请先登录，再查看浏览历史记录", Toast.LENGTH_SHORT).show();
         }
@@ -1193,8 +1199,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             transaction = mSupportFragmentManager.beginTransaction();
-                            question_list = new ArrayList<>();
-                            handle_quiz(response);
+                            question_list = handle_quiz(response, label);
                             if(question_list.isEmpty()){
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -1221,6 +1226,230 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public ArrayList<Question> getQuestionArrayList() {
+        String username = sharedPreferences.getString("username", null);
+        id = sharedPreferences.getString("id", null);
+        uid = sharedPreferences.getString("uid", null);
+        ArrayList<Question> questionArrayList = new ArrayList<Question>();
+        if (username != null && id != null && uid != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String url = getQuestionsUrl
+                            + uid;
+                    try {
+                        String response = OkHttp.get(url, MainActivity.this);
+                        JSONObject responseObject = new JSONObject(response);
+                        String response_code = responseObject.getString("code");
+                        String response_message = responseObject.getString("message");
+                        if (response_code.equals("0")) {
+                            String data = responseObject.getString("data");
+                            JSONObject dataObject = new JSONObject(data);
+                            String questions = dataObject.getString("questions");
+                            JSONArray questionArray = new JSONArray(questions);
+                            for (int i = 0; i < questionArray.length(); i++) {
+                                JSONObject history = questionArray.getJSONObject(i);
+                                String label = history.getString("label");
+                                int id = history.getInt("id");
+                                String title = history.getString("title");
+                                String choiceA = history.getString("choiceA");
+                                String choiceB = history.getString("choiceB");
+                                String choiceC = history.getString("choiceC");
+                                String choiceD = history.getString("choiceD");
+                                int correct = history.getInt("correct");
+                                int usr_ans = history.getInt("usr_ans");
+                                Question question = new Question(label, id, title,
+                                        choiceA, choiceB, choiceC, choiceD, correct);
+                                question.set_usr_ans(usr_ans);
+                                questionArrayList.add(question);
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "获取做题记录成功！", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, response_message, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "获取做题记录失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } else {
+            Toast.makeText(MainActivity.this, "请先登录，再查看做题记录", Toast.LENGTH_SHORT).show();
+        }
+        return questionArrayList;
+    }
+
+    public ArrayList<Question> getRelatedQuestions(String label) throws InterruptedException {
+
+        final ArrayList<Question> questionArrayList = new ArrayList<Question>();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = quizUrl
+                        + "uriName=" + label
+                        + "&id=" + id;
+                try {
+                    String response = OkHttp.get(url, MainActivity.this);
+                    JSONObject responseObject = new JSONObject(response);
+                    String response_code = responseObject.getString("code");
+                    String response_message = responseObject.getString("msg");
+                    if (response_code.equals("0")) {
+                        questionArrayList.addAll(handle_quiz(response, label));
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, response_message, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "获取相关试题列表失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+        thread.start();
+        thread.join();
+        return questionArrayList;
+    }
+
+    @Override
+    public void show_exam() throws InterruptedException {
+        String username = sharedPreferences.getString("username", null);
+        id = sharedPreferences.getString("id", null);
+        ArrayList<LocalCache> localCacheArrayList;
+        ArrayList<Question> questionArrayList;
+        ArrayList<Question> examQuestions = new ArrayList<Question>();
+        if (username != null && id != null) {
+            localCacheArrayList = getLocalCacheList();
+            questionArrayList = getQuestionArrayList();
+            Thread.sleep(500);
+            if (localCacheArrayList == null || localCacheArrayList.size() == 0) {
+                if (questionArrayList.size() < 10) {
+                    Toast.makeText(MainActivity.this, "您的浏览历史和做题记录太少，无法生成推荐试题！", Toast.LENGTH_SHORT).show();
+                } else {
+                    questionArrayList.sort(new Comparator<Question>() {
+                        @Override
+                        public int compare(Question question, Question t1) {
+                            if (question.ansIsRight() && !t1.ansIsRight()) {
+                                return 1;
+                            } else if (!question.ansIsRight() && t1.ansIsRight()) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                    for (int i = 0; i < 10; i++) {
+                        examQuestions.add(questionArrayList.get(i));
+                    }
+                    Toast.makeText(MainActivity.this, "生成推荐试题成功！", Toast.LENGTH_SHORT).show();
+                    Fragment targetFragment = QuizFragment.newInstance(null, mFragments.size(), examQuestions, 2);
+                    mFragments.add(targetFragment);
+                    transaction.add(R.id.frameLayout, targetFragment);
+                    transaction.hide(currentFragment);
+                    transaction.show(targetFragment);
+                    transaction.commit();
+                    currentFragment = targetFragment;
+                }
+            } else {
+                for (LocalCache localCache : localCacheArrayList) {
+                    if (examQuestions.size() > 50) {
+                        break;
+                    }
+                    examQuestions.addAll(getRelatedQuestions(localCache.getName()));
+                }
+                if (examQuestions.size() < 10) {
+                    Toast.makeText(MainActivity.this, "您的浏览历史和做题记录太少，无法生成推荐试题！", Toast.LENGTH_SHORT).show();
+                } else {
+                    examQuestions.sort(new Comparator<Question>() {
+                        @Override
+                        public int compare(Question question, Question t1) {
+                            int questionStatus = 1;
+                            int t1Status = 1;
+
+                            if (questionArrayList != null && questionArrayList.contains(question)) {
+                                boolean right = questionArrayList.get(questionArrayList.indexOf(question)).ansIsRight();
+                                questionStatus = right ? 2 : 0;
+                            }
+
+                            if (questionArrayList != null && questionArrayList.contains(t1)) {
+                                boolean right = questionArrayList.get(questionArrayList.indexOf(t1)).ansIsRight();
+                                t1Status = right ? 2 : 0;
+                            }
+
+                            return Integer.compare(questionStatus, t1Status);
+                        }
+                    });
+                    examQuestions = (ArrayList<Question>) examQuestions.subList(0, 10);
+                    Toast.makeText(MainActivity.this, "生成推荐试题成功！", Toast.LENGTH_SHORT).show();
+                    Fragment targetFragment = QuizFragment.newInstance(null, mFragments.size(), examQuestions, 2);
+                    mFragments.add(targetFragment);
+                    transaction.add(R.id.frameLayout, targetFragment);
+                    transaction.hide(currentFragment);
+                    transaction.show(targetFragment);
+                    transaction.commit();
+                    currentFragment = targetFragment;
+                }
+            }
+        }
+    }
+
+    public void addQuestion(Question question) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = addQuestionsUrl;
+                try {
+                    String json = "{\n" +
+                            "    \"label\":\"" + question.getLabel() +  "\",\n" +
+                            "    \"id\":" + question.getId() + ",\n" +
+                            "    \"title\":\"" + question.getTitle() + "\",\n" +
+                            "    \"choiceA\":\"" + question.getChoiceA() + "\",\n" +
+                            "    \"choiceB\":\"" + question.getChoiceB() + "\",\n" +
+                            "    \"choiceC\":\"" + question.getChoiceC() + "\",\n" +
+                            "    \"choiceD\":\"" + question.getChoiceD() + "\",\n" +
+                            "    \"correct\":" + question.getAns() + ",\n" +
+                            "    \"usr_ans\":" + question.get_usr_ans() + ",\n" +
+                            "    \"uid\":" + uid + "\n" +
+                            "}";
+                    String response = OkHttp.post(url, json, MainActivity.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "上传做题记录失败", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

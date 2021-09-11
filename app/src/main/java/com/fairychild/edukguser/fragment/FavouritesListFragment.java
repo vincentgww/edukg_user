@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class FavouritesListFragment extends Fragment {
 
     public interface DataBaseListener {
-        ArrayList<Favourite> getFavourites();
+        ArrayList<Favourite> getFavourites() throws InterruptedException;
         void show_detail_fragment(String label,String course);
     }
 
