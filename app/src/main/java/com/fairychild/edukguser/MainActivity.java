@@ -32,12 +32,14 @@ import com.fairychild.edukguser.datastructure.LoginNotice;
 import com.fairychild.edukguser.datastructure.LogoutNotice;
 import com.fairychild.edukguser.Activity.WebShareActivity;
 import com.fairychild.edukguser.datastructure.Question;
+import com.fairychild.edukguser.datastructure.outlineItem;
 import com.fairychild.edukguser.fragment.BrowsingHistoryListFragment;
 import com.fairychild.edukguser.fragment.FavouritesListFragment;
 import com.fairychild.edukguser.fragment.FunctionFragment;
 import com.fairychild.edukguser.fragment.KnowledgeCheckFragment;
 import com.fairychild.edukguser.fragment.LocalCacheListFragment;
 import com.fairychild.edukguser.fragment.MeFragment;
+import com.fairychild.edukguser.fragment.OutlineFragment;
 import com.fairychild.edukguser.fragment.QaFragment;
 import com.fairychild.edukguser.fragment.HomeFragment;
 import com.fairychild.edukguser.fragment.LoginFragment;
@@ -72,7 +74,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -95,7 +99,8 @@ public class MainActivity extends AppCompatActivity
         FavouritesListFragment.DataBaseListener,
         SearchResultListFragment.DetailListener,
         LocalCacheListFragment.myListener,
-        SearchResultListAdapter.myListener {
+        SearchResultListAdapter.myListener,
+        OutlineFragment.outlineListener{
     List<Fragment> mFragments;
     //组件
     private BottomNavigationView mBottomNavigationView;
@@ -117,6 +122,7 @@ public class MainActivity extends AppCompatActivity
     private final String searchPointUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/linkInstance";
     private final String detailUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/infoByInstanceName?";
     private final String quizUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/questionListByUriName?";
+    private final String outlineUrl = "http://open.edukg.cn/opedukg/api/typeOpen/open/relatedsubject";
     private final String getHistoryUrl = "http://47.93.101.225:8080/user/history/";
     private final String setHistoryUrl = "http://47.93.101.225:8080/history";
     private final String getFavouritesUrl = "http://47.93.101.225:8080/user/collect/";
@@ -126,6 +132,7 @@ public class MainActivity extends AppCompatActivity
     private String str;
     private boolean firstInit = true;
     private List<Question> question_list = new ArrayList<>();
+    private List<outlineItem> outline_list = new ArrayList<>();
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -1226,5 +1233,113 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }).start();
+    }
+
+    public void switchToOutline(String course,String label){
+        //System.out.println(course);
+        //System.out.println(label);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = outlineUrl;
+                String json = "{\n" +
+                        " \"subjectName\":\"" + label + "\",\n" +
+                        " \"course\":\"" + course + "\",\n" +
+                        " \"id\":\"" + id + "\"\n" +
+                        "}";
+                try {
+                    String response = OkHttp.post(url, json);
+                    //EventBus.getDefault().post(new MessageEvent(response));
+                    handle_outline(response,label);
+                    if(outline_list.isEmpty()){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Toast toast = Toast.makeText(MainActivity.this, "无相关知识点！", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                    }
+                    else {
+                        Fragment targetFragment = OutlineFragment.newInstance(label, mFragments.size(), outline_list, 2);
+                        FragmentTransaction transaction = mSupportFragmentManager.beginTransaction();
+                        mFragments.add(targetFragment);
+                        transaction.add(R.id.frameLayout, targetFragment);
+                        transaction.hide(currentFragment);
+                        transaction.show(targetFragment);
+                        transaction.commit();
+                        currentFragment = targetFragment;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void handle_outline(String response,String label){
+        try {
+            outline_list = new ArrayList<>();
+            JSONObject obj = new JSONObject(response);
+            JSONArray arr = new JSONArray(obj.getString("data"));
+            List<outlineItem> outline_sub = new ArrayList<>();
+            List<outlineItem> outline_obj = new ArrayList<>();
+            Set<String> s_sub = new HashSet<>();
+            Set<String> s_obj = new HashSet<>();
+            for(int i=0;i<arr.length();i++){
+                obj = arr.getJSONObject(i);
+                String sub = obj.getString("subject");
+                String verb = obj.getString("predicate");
+                System.out.println(verb);
+                String object = obj.getString("value");
+                object = object.replaceAll("<br><br>","\n       ");
+                object = object.replaceAll("<br>","\n       ");
+                outlineItem item = new outlineItem(sub,verb,object);
+                if(sub.equals(label)) {
+                    outline_sub.add(item);
+                    s_sub.add(verb);
+                }
+                else {
+                    outline_obj.add(item);
+                    s_obj.add(verb);
+                }
+            }
+            /*for(String verb:s){
+                outline_list.add(new outlineItem(verb,null,null));
+                for(outlineItem item:outline_titles){
+                    if(item.getVerb().equals(verb))
+                        outline_list.add(item);
+                }
+            }*/
+            if(!outline_sub.isEmpty()){
+                outlineItem item = new outlineItem(null,null,null);
+                item.setProperty("主属性");
+                outline_list.add(item);
+                for(String verb:s_sub){
+                    outline_list.add(new outlineItem(verb,null,null));
+                    for(outlineItem it:outline_sub){
+                        if(it.getVerb().equals(verb))
+                            outline_list.add(it);
+                    }
+                }
+            }
+            if(!outline_obj.isEmpty()){
+                outlineItem item = new outlineItem(null,null,null);
+                item.setProperty("从属性");
+                outline_list.add(item);
+                for(String verb:s_obj){
+                    outline_list.add(new outlineItem(verb,null,null));
+                    for(outlineItem it:outline_obj){
+                        if(it.getVerb().equals(verb))
+                            outline_list.add(it);
+                    }
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void back_function(int id){
+        switchToFunction();
     }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:id="@+id/detail_linear">
+    <Button
+        android:id="@+id/back_button_outline"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_keyboard_return_black_24dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/outline_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+
+
+</LinearLayout>
