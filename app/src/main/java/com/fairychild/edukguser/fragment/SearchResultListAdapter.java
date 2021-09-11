@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class SearchResultListAdapter extends BaseAdapter {
 
     public interface myListener {
-        void show_detail_fragment(String label,String course);
+        void show_detail_fragment(String label,String course,int back_id);
         SQLiteDatabase getSQLiteDatabase();
     }
 
@@ -101,7 +101,7 @@ public class SearchResultListAdapter extends BaseAdapter {
         holder.tvDetailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.show_detail_fragment(knowledge.getLabel(),course);
+                listener.show_detail_fragment(knowledge.getLabel(),course,8);
             }
         });
 

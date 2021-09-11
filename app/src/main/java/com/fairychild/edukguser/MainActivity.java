@@ -274,9 +274,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void switchToReport() {
-        switchFragments(10);
-    }
 
     private void switchFragments(int FragmentId) {
         transaction = mSupportFragmentManager.beginTransaction();
@@ -363,9 +360,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void show_detail_fragment(String label, String course){
+    public void show_detail_fragment(String label, String course, int back_id){
         transaction = mSupportFragmentManager.beginTransaction();
-        Fragment targetFragment = detailFragment.newInstance(label,course,mFragments.size());
+        Fragment targetFragment = detailFragment.newInstance(label,course,mFragments.size(), back_id);
         mFragments.add(targetFragment);
         transaction.add(R.id.frameLayout,targetFragment);
         transaction.hide(currentFragment);
@@ -411,8 +408,8 @@ public class MainActivity extends AppCompatActivity
         startActivity(i);
     }
 
-    public void back_home(){
-        switchFragments(8);
+    public void back_home(int back_id){
+        switchFragments(back_id);
     }
     @Override
     public void onBackPressed() {
@@ -1035,7 +1032,8 @@ public class MainActivity extends AppCompatActivity
                         correct = 3;
                 }
                 if(raw.length()<1000 && ans.length()==1) {
-                    String[] blocks = raw.split("[A-D]\\.");
+                    String[] blocks = raw.split("([A-D]\\.)|([A-D]．)");
+                    System.out.println(blocks[0]);
                     Question q = new Question(null, null, null, blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
                     question_list.add(q);
                 }

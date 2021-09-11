@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.fairychild.edukguser.R;
@@ -28,7 +29,8 @@ public class FavouritesListFragment extends Fragment {
 
     public interface DataBaseListener {
         ArrayList<Favourite> getFavourites();
-        void show_detail_fragment(String label,String course);
+        void show_detail_fragment(String label,String course,int back_id);
+        void switchToMe();
     }
 
     private ListView listView;
@@ -72,7 +74,14 @@ public class FavouritesListFragment extends Fragment {
                 Favourite favourite = adapter.getItem(i);
                 String name = favourite.getName();
                 String course = favourite.getCourse();
-                listener.show_detail_fragment(name, course);
+                listener.show_detail_fragment(name, course, 3);
+            }
+        });
+        Button btn = view.findViewById(R.id.back_favor_button);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.switchToMe();
             }
         });
         return view;
@@ -91,7 +100,7 @@ public class FavouritesListFragment extends Fragment {
                     Favourite favourite = adapter.getItem(i);
                     String name = favourite.getName();
                     String course = favourite.getCourse();
-                    listener.show_detail_fragment(name, course);
+                    listener.show_detail_fragment(name, course,9);
                 }
             });
 

@@ -40,7 +40,6 @@ public class MeFragment extends Fragment {
         void switchToBrowsingHistory() throws InterruptedException;
         void switchToFavourites() throws InterruptedException;
         void switchToLocalCache();
-        void switchToReport();
         void switchToRegister();
         String getIdFromSP();
         String getUsernameFromSP();
@@ -165,14 +164,6 @@ public class MeFragment extends Fragment {
         if (cardLocalCache == null)
             System.out.println("?cardLocalCache");
 
-        cardReport = view.findViewById(R.id.report_card);
-        cardReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 跳转到学习周报
-                listener.switchToReport();
-            }
-        });
         if (cardReport==null)
             System.out.println("?cardReport");
 
@@ -217,14 +208,6 @@ public class MeFragment extends Fragment {
         if (btnLocalCache == null)
             System.out.println("?btnLocalCache");
 
-        btnReport = view.findViewById(R.id.btn_report);
-        btnReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 跳转到学习周报
-                listener.switchToReport();
-            }
-        });
         if (btnReport==null)
             System.out.println("?btnReport");
 

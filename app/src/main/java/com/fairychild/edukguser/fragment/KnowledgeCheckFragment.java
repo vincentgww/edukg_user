@@ -29,6 +29,7 @@ import org.json.JSONObject;
 public class KnowledgeCheckFragment extends Fragment {
     public interface KnowledgeCheckListener {
         void search_point(String s,String course);
+        void switchToFunction();
     }
     private KnowledgeCheckListener listener;
     private TextView ansTxt;
@@ -46,6 +47,13 @@ public class KnowledgeCheckFragment extends Fragment {
             public void onClick(View v) {
                 String s = txt.getText().toString();
                 listener.search_point(s,subject);
+            }
+        });
+        Button backBtn = view.findViewById(R.id.back_knowledge_button);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.switchToFunction();
             }
         });
         subjectSpinner = view.findViewById(R.id.subject_spinner);

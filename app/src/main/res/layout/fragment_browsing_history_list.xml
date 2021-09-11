@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".fragment.BrowsingHistoryListFragment">
 
+    <Button
+        android:id="@+id/back_history_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_keyboard_return_black_24dp"/>
+
     <ListView
         android:id="@+id/browsing_history_list_view"
         android:layout_width="match_parent"

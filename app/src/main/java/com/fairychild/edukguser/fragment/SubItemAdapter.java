@@ -21,7 +21,7 @@ import java.util.List;
 
 public class SubItemAdapter extends BaseAdapter {
     public interface SubItemAdaptorListener{
-        void show_detail_fragment(String label,String course);
+        void show_detail_fragment(String label,String course,int back_id);
         SQLiteDatabase getSQLiteDatabase();
     }
     static class ViewHolder{
@@ -80,7 +80,7 @@ public class SubItemAdapter extends BaseAdapter {
             public void onClick(View view) {
                 System.out.println(holder.label_text.getText().toString());
                 System.out.println(holder.description_text.getText().toString());
-                listener.show_detail_fragment(holder.label_text.getText().toString(),holder.description_text.getText().toString());
+                listener.show_detail_fragment(holder.label_text.getText().toString(),holder.description_text.getText().toString(),0);
             }
         });
 

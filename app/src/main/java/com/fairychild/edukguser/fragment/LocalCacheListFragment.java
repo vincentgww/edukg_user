@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -26,7 +27,8 @@ public class LocalCacheListFragment extends Fragment {
 
     public interface myListener{
         ArrayList<LocalCache> getLocalCacheList();
-        void show_detail_fragment(String label,String course);
+        void show_detail_fragment(String label,String course,int back_id);
+        void switchToMe();
     }
 
     private ListView listView;
@@ -73,10 +75,16 @@ public class LocalCacheListFragment extends Fragment {
                 LocalCache localCache = adapter.getItem(i);
                 String name = localCache.getName();
                 String course = localCache.getCourse();
-                listener.show_detail_fragment(name, course);
+                listener.show_detail_fragment(name, course,10);
             }
         });
-
+        Button btn = view.findViewById(R.id.back_cache_button);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.switchToMe();
+            }
+        });
         return view;
     }
 
@@ -93,7 +101,7 @@ public class LocalCacheListFragment extends Fragment {
                     LocalCache localCache = adapter.getItem(i);
                     String name = localCache.getName();
                     String course = localCache.getCourse();
-                    listener.show_detail_fragment(name, course);
+                    listener.show_detail_fragment(name, course, 10);
                 }
             });
             EventBus.getDefault().removeStickyEvent(notice);
