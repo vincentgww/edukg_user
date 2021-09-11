@@ -131,19 +131,13 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                         int id = -1;
-                        switch (checkedId){
-                            case 2131296376:
-                                id = 0;
+                        int count = holder.radioGroup.getChildCount();
+                        for(int i = 0 ;i < count;i++){
+                            RadioButton rb = (RadioButton)holder.radioGroup.getChildAt(i);
+                            if(rb.isChecked()){
+                                id = i;
                                 break;
-                            case 2131296377:
-                                id = 1;
-                                break;
-                            case 2131296378:
-                                id = 2;
-                                break;
-                            case 2131296379:
-                                id = 3;
-                                break;
+                            }
                         }
                         Message message = new Message();
                         Bundle bundle = new Bundle();
