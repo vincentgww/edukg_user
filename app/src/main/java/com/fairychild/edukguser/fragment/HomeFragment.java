@@ -80,15 +80,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         mBtnSearch = view.findViewById(R.id.search);
 
-        Log.d("HomeFragment", "1");
-
         initFragments();
 
-        Log.d("HomeFragment", "2");
-
         initData();
-
-        Log.d("HomeFragment", "3");
 
         mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments,mTitles);
         //mViewPagerAdapterForNav.setFragments(mFragments);
@@ -190,7 +184,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         channelBeans = new ArrayList<ChannelBean>();
         channelBeans.add(new ChannelBean("BIOLOGY",false));
         channelBeans.add(new ChannelBean("CHEMISTRY",false));
-        channelBeans.add(new ChannelBean("CHINESE",true));
+        channelBeans.add(new ChannelBean("CHINESE",false));
         channelBeans.add(new ChannelBean("ENGLISH",false));
         channelBeans.add(new ChannelBean("GEO",false));
         channelBeans.add(new ChannelBean("HISTORY",true));
@@ -202,7 +196,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 addTab(channelBeans.get(i).getName());
                 mFragments.add(TabFragment.newInstance(channelBeans.get(i).getName().toLowerCase(Locale.ROOT)));
                 mTitles.add(channelBeans.get(i).getName());
-                //mViewPagerAdapterForNav.setFragments(mFragments);
+                // mViewPagerAdapterForNav.setFragments(mFragments);
             }
         }
     }

@@ -82,7 +82,7 @@ public class SubItemAdapter extends BaseAdapter {
             }
         });
 
-        if (db != null) {
+        if (db != null && db.isOpen()) {
             Cursor cursor = db.query("DETAIL", new String[]{"NAME"},
                     "COURSE=? AND NAME=?", new String[]{items.get(position).getCourse(), items.get(position).getLabel()},
                     null, null, null);

@@ -149,20 +149,22 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initElement();
+
 
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
 
         getId();
+        initElement();
 
         initFragments();
         WbSdk.install(this,new AuthInfo(this,Constants.APP_KEY,Constants.REDIRECT_URL,Constants.SCOPE));
 
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         mSupportFragmentManager = getSupportFragmentManager();
-        switchToHome();
+        mBottomNavigationView.setSelectedItemId(R.id.navigation_me);
 
         id = sharedPreferences.getString("id", null);
         uid = sharedPreferences.getString("uid", null);
@@ -297,7 +299,7 @@ public class MainActivity extends AppCompatActivity
         String username = sharedPreferences.getString("username", null);
         id = sharedPreferences.getString("id", id);
         ArrayList<LocalCache> localCacheArrayList = null;
-        if (username != null && id != null && db != null) {
+        if (username != null && id != null && db != null && db.isOpen()) {
             Cursor cursor = db.query("LOCALCACHE", null, null, null, null, null, null);
             if (cursor.moveToFirst()) {
                 localCacheArrayList = new ArrayList<LocalCache>();
@@ -340,7 +342,7 @@ public class MainActivity extends AppCompatActivity
     public void addLocalCacheList(String course, String name) {
         String username = sharedPreferences.getString("username", null);
         id = sharedPreferences.getString("id", id);
-        if (username != null && id != null && db != null) {
+        if (username != null && id != null && db != null && db.isOpen()) {
             ContentValues values = new ContentValues();
             values.put("COURSE", course);
             values.put("NAME", name);
@@ -977,12 +979,12 @@ public class MainActivity extends AppCompatActivity
                             });
                             return true;
                         } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainActivity.this, response_message, Toast.LENGTH_SHORT).show();
-                                }
-                            });
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Toast.makeText(MainActivity.this, response_message, Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
                             return false;
                         }
                     } catch (Exception e) {
@@ -990,7 +992,7 @@ public class MainActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MainActivity.this, "查询失败", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "查询是否存在于收藏夹失败", Toast.LENGTH_SHORT).show();
                             }
                         });
                         return false;
