@@ -6,14 +6,16 @@
     android:padding="10dp"
     >
     <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/left_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         >
-        <ImageView
+        <pl.droidsonroids.gif.GifImageView
             android:id="@+id/iv_head_others"
-            android:background="@drawable/headofothers"
+            android:src="@mipmap/robot"
+            android:scaleType="centerCrop"
             android:layout_marginTop="20dp"
             android:layout_width="60dp"
             android:layout_height="60dp" />
@@ -73,7 +75,6 @@
 
         <ImageView
             android:id="@+id/iv_head_my"
-            android:background="@drawable/headofmine"
             android:layout_marginTop="20dp"
             android:layout_width="60dp"
             android:layout_height="60dp" />

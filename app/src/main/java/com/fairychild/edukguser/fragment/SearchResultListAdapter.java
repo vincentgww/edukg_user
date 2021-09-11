@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class SearchResultListAdapter extends BaseAdapter {
 
     public interface myListener {
-        void show_detail_fragment(String label,String course);
+        void show_detail_fragment(String label,String course,int back_id);
         SQLiteDatabase getSQLiteDatabase();
     }
 
@@ -74,7 +74,6 @@ public class SearchResultListAdapter extends BaseAdapter {
         public TextView tvLabel;
         public TextView tvCategory;
         public MaterialButton tvDetailButton;
-        public MaterialButton tvFavButton;
         public MaterialCardView cardSearchResult;
     }
 
@@ -87,7 +86,6 @@ public class SearchResultListAdapter extends BaseAdapter {
             holder.tvLabel = view.findViewById(R.id.label);
             holder.tvCategory = view.findViewById(R.id.category);
             holder.tvDetailButton=view.findViewById(R.id.search_detail_btn);
-            holder.tvFavButton=view.findViewById(R.id.search_fav_btn);
             holder.cardSearchResult = view.findViewById(R.id.search_result_card);
             view.setTag(holder);
         } else {
@@ -101,7 +99,7 @@ public class SearchResultListAdapter extends BaseAdapter {
         holder.tvDetailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.show_detail_fragment(knowledge.getLabel(),course);
+                listener.show_detail_fragment(knowledge.getLabel(),course,8);
             }
         });
 

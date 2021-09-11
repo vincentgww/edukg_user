@@ -31,7 +31,7 @@ import info.debatty.java.stringsimilarity.Jaccard;
 public class SearchResultListFragment extends Fragment {
 
     public interface DetailListener {
-        void show_detail_fragment(String subject, String name);
+        void show_detail_fragment(String subject, String name, int back_id);
     }
 
     private SearchResultListFragment.DetailListener listener;

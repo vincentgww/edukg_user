@@ -23,14 +23,18 @@
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/register.xml" value="0.25" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/layout/sublist_item.xml" value="0.17135416666666667" />
         <entry key="..\:/2021Summer/FairyChild/EdukgUser/app/src/main/res/menu/top_app_bar.xml" value="0.1" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/background_border.xml" value="0.14722222222222223" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/bg_btn_blue_pressed.xml" value="0.13703703703703704" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.15208333333333332" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/shape_border.xml" value="0.12314814814814815" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/spinner_border.xml" value="0.12314814814814815" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/drawable/textview_unselect_border.xml" value="0.17239583333333333" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_category_arrangement.xml" value="0.165" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_login.xml" value="0.11979166666666667" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_main.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_me.xml" value="0.1" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/activity_share.xml" value="0.11" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/avatar_selector.xml" value="0.25" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/bar_top.xml" value="0.23777173913043478" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/bottom_navigation_item_selector.xml" value="0.1" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/bottom_navigation_menu.xml" value="0.1" />
@@ -43,6 +47,7 @@
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_item.xml" value="0.24456521739130435" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_item_list.xml" value="0.2346014492753623" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_knowledgecheck.xml" value="0.25" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_local_cache_list.xml" value="0.1578125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_login.xml" value="0.11" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_me.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/fragment_qa.xml" value="0.11" />
@@ -58,7 +63,7 @@
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/item_browsing_history.xml" value="0.203125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/item_search_result.xml" value="0.25" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/load_more.xml" value="0.11" />
-        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/msg_item.xml" value="0.15416666666666667" />
+        <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/msg_item.xml" value="0.125" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/obj_item.xml" value="0.16770833333333332" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/question_quiz.xml" value="0.2598958333333333" />
         <entry key="..\:/Android2021/edukg_user/app/src/main/res/layout/register.xml" value="0.125" />

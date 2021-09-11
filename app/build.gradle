@@ -13,7 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         ndk{
-            abiFilters 'armeabi'  //, 'armeabi-v7a','arm64-v8a'
+            abiFilters 'armeabi','armeabi-v7a','arm64-v8a',"x86","x86_64"
         }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -58,7 +58,8 @@ dependencies {
     compile(name:'core-4.3.1-openDefaultRelease', ext:'aar')
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
+    implementation 'com.github.Gavras:MultiLineRadioGroup:v1.0.0.6'
     //compile(name:'openDefault-11.8.1',ext:'aar')
     annotationProcessor 'androidx.room:room-compiler:2.1.0'
     testImplementation 'junit:junit:4.+'

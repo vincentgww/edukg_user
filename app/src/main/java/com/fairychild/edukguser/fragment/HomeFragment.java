@@ -188,15 +188,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
     private void initData(){
         channelBeans = new ArrayList<ChannelBean>();
-        channelBeans.add(new ChannelBean("BIOLOGY",true));
-        channelBeans.add(new ChannelBean("CHEMISTRY",true));
+        channelBeans.add(new ChannelBean("BIOLOGY",false));
+        channelBeans.add(new ChannelBean("CHEMISTRY",false));
         channelBeans.add(new ChannelBean("CHINESE",true));
         channelBeans.add(new ChannelBean("ENGLISH",false));
         channelBeans.add(new ChannelBean("GEO",false));
-        channelBeans.add(new ChannelBean("HISTORY",false));
+        channelBeans.add(new ChannelBean("HISTORY",true));
         channelBeans.add(new ChannelBean("MATH",false));
-        channelBeans.add(new ChannelBean("PHYSICS",false));
-        channelBeans.add(new ChannelBean("POLITICS",false));
+        channelBeans.add(new ChannelBean("PHYSICS",true));
+        channelBeans.add(new ChannelBean("POLITICS",true));
         for(int i=0;i<channelBeans.size();i++){
             if(channelBeans.get(i).isSelect()){
                 addTab(channelBeans.get(i).getName());

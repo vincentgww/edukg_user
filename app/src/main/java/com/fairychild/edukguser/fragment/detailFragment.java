@@ -54,6 +54,7 @@ public class detailFragment extends Fragment {
     private LinearLayout linear;
     private View img;
     private int idx;
+    private int back_id;
 
     private Button btnQuiz;
     private Button btnAddFavourites;
@@ -65,7 +66,7 @@ public class detailFragment extends Fragment {
         void removeFavourites(String course, String name);
         boolean isAddedToFavourites(String course, String name);
         void related_question(String name, int idx);
-        void back_home();
+        void back_home(int id);
         void weibo_share(String item_title,String item_content);
     }
 
@@ -73,12 +74,14 @@ public class detailFragment extends Fragment {
     String name,course;
     String simple_description;
 
+    Boolean isAddedToFavourites = false;
 
-    detailFragment(String entity_name, String course, int idx){
+    detailFragment(String entity_name, String course, int idx, int back_id){
         super();
         name = entity_name;
         this.idx = idx;
         this.course = course;
+        this.back_id = back_id;
     }
 
     public void addNewItems(){
@@ -144,6 +147,9 @@ public class detailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        isAddedToFavourites = listener.isAddedToFavourites(course, name);
+
         TextView entity_text= view.findViewById(R.id.entity_name);
         linear = view.findViewById(R.id.detail_linear);
         entity_text.setText(name);
@@ -176,7 +182,7 @@ public class detailFragment extends Fragment {
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.back_home();
+                listener.back_home(back_id);
                 listener.delete_fragment(idx);
             }
         });
@@ -201,24 +207,25 @@ public class detailFragment extends Fragment {
             }
         });
         btnAddFavourites = view.findViewById(R.id.btn_add_favourites);
-        if (listener.isAddedToFavourites(course, name)) {
+        if (isAddedToFavourites) {
             btnAddFavourites.setText("取消收藏");
-            btnAddFavourites.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.removeFavourites(course, name);
-                    btnAddFavourites.setText("加入收藏");
-                }
-            });
         } else {
             btnAddFavourites.setText("加入收藏");
-            btnAddFavourites.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.addFavourites(course, name);
-                }
-            });
         }
+        btnAddFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isAddedToFavourites) {
+                    listener.removeFavourites(course, name);
+                    btnAddFavourites.setText("加入收藏");
+                    isAddedToFavourites = !isAddedToFavourites;
+                } else {
+                    listener.addFavourites(course, name);
+                    btnAddFavourites.setText("取消收藏");
+                    isAddedToFavourites = !isAddedToFavourites;
+                }
+            }
+        });
         return view;
     }
 
@@ -230,8 +237,8 @@ public class detailFragment extends Fragment {
     }
 
 
-    public static detailFragment newInstance(String entity_name, String course, int idx){
-        detailFragment indexFragment = new detailFragment(entity_name, course, idx);
+    public static detailFragment newInstance(String entity_name, String course, int idx, int back_id){
+        detailFragment indexFragment = new detailFragment(entity_name, course, idx, back_id);
         return indexFragment;
     }
 

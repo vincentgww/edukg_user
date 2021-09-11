@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <ImageView
@@ -25,9 +25,8 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:columnCount="4"
-            android:padding="10dp">
+            android:layout_marginTop="30dp"
+            android:columnCount="3">
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/fav_card"
                 android:layout_width="0dp"
@@ -106,38 +105,10 @@
                         android:textAppearance="?attr/textAppearanceBody1"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/report_card"
-                android:layout_width="0dp"
-                android:layout_columnWeight="1"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:layout_row="0"
-                        android:layout_column="3"
-                        android:layout_gravity="center"
-                        android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/daily_report_f"/>
-                    <Button
-                        android:id="@+id/btn_report"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/study_report"
-                        android:textAppearance="?attr/textAppearanceBody1"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
         </GridLayout>
 
         <Button
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/btn_login"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:layout_width="match_parent"

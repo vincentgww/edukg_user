@@ -21,14 +21,13 @@ import java.util.List;
 
 public class SubItemAdapter extends BaseAdapter {
     public interface SubItemAdaptorListener{
-        void show_detail_fragment(String label,String course);
+        void show_detail_fragment(String label,String course,int back_id);
         SQLiteDatabase getSQLiteDatabase();
     }
     static class ViewHolder{
         TextView label_text;
         TextView description_text;
         MaterialButton detaiBtn;
-        MaterialButton likeBtn;
         public MaterialCardView cardSubitem;
     }
     private SubItemAdaptorListener listener;
@@ -67,7 +66,6 @@ public class SubItemAdapter extends BaseAdapter {
             holder.label_text=(TextView) convertView.findViewById(R.id.item_title);
             holder.description_text=(TextView) convertView.findViewById(R.id.item_description);
             holder.detaiBtn=(MaterialButton)convertView.findViewById(R.id.detailBtn);
-            holder.likeBtn=(MaterialButton)convertView.findViewById(R.id.likeBtn);
             holder.cardSubitem = convertView.findViewById(R.id.subitem);
             convertView.setTag(holder);
         } else {
@@ -78,9 +76,9 @@ public class SubItemAdapter extends BaseAdapter {
         holder.detaiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(holder.label_text.getText().toString());
-                System.out.println(holder.description_text.getText().toString());
-                listener.show_detail_fragment(holder.label_text.getText().toString(),holder.description_text.getText().toString());
+//                System.out.println(holder.label_text.getText().toString());
+//                System.out.println(holder.description_text.getText().toString());
+                listener.show_detail_fragment(holder.label_text.getText().toString(),holder.description_text.getText().toString(),0);
             }
         });
 
