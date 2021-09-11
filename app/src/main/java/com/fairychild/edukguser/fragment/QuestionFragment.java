@@ -173,24 +173,13 @@ public class QuestionFragment extends Fragment {
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                System.out.println(checkedId);
-                switch (checkedId){
-                    case 2131296784:
-                        usr = 0;
-                        //choiceA.setChecked(true);
+                int count = rgroup.getChildCount();
+                for(int i = 0 ;i < count;i++){
+                    RadioButton rb = (RadioButton)rgroup.getChildAt(i);
+                    if(rb.isChecked()){
+                        usr = i;
                         break;
-                    case 2131296785:
-                        usr = 1;
-                        //choiceB.setChecked(true);
-                        break;
-                    case 2131296786:
-                        usr = 2;
-                        //choiceC.setChecked(true);
-                        break;
-                    case 2131296787:
-                        usr = 3;
-                        //choiceD.setChecked(true);
-                        break;
+                    }
                 }
             }
         });

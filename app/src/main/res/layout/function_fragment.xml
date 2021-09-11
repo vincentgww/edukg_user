@@ -74,19 +74,47 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
+                <LinearLayout
+                    android:id="@+id/quiz_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+                    <Spinner
+                        android:id="@+id/quiz_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_horizontal"
+                        android:entries="@array/subjects"
+                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"/>
+                    <EditText
+                        android:id="@+id/quiz_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:maxLines="1"
+                        />
+                </LinearLayout>
                 <TextView
+                    android:id="@+id/quiz_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/testTitle"
+                    android:text="专项测试"
                     android:textAppearance="?attr/textAppearanceHeadline6"/>
 
                 <TextView
+                    android:id="@+id/quiz_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="根据输入的知识点提供题目练习巩固"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"/>
+                <Button
+                    android:id="@+id/quiz_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="生成试题"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
             </LinearLayout>
 
         </LinearLayout>

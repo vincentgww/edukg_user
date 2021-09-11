@@ -1161,4 +1161,52 @@ public class MainActivity extends AppCompatActivity
             });
         }
     }
+
+    public void show_quiz(String label,String course){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = quizUrl
+                        + "uriName=" + label
+                        + "&id=" + id;
+                try {
+                    String response = OkHttp.get(url);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            transaction = mSupportFragmentManager.beginTransaction();
+                            question_list = new ArrayList<>();
+                            handle_quiz(response);
+                            if(question_list.isEmpty()){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Toast toast = Toast.makeText(MainActivity.this, "无相关试题！", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                            else {
+                                Fragment targetFragment = QuizFragment.newInstance(label, mFragments.size(), question_list, 2);
+                                mFragments.add(targetFragment);
+                                transaction.add(R.id.frameLayout, targetFragment);
+                                transaction.hide(currentFragment);
+                                transaction.show(targetFragment);
+                                transaction.commit();
+                                currentFragment = targetFragment;
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
 }
