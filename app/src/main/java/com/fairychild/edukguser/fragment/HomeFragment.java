@@ -79,8 +79,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         mImgBtn = view.findViewById(R.id.imgBtn);
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         mBtnSearch = view.findViewById(R.id.search);
+
+        Log.d("HomeFragment", "1");
+
         initFragments();
+
+        Log.d("HomeFragment", "2");
+
         initData();
+
+        Log.d("HomeFragment", "3");
+
         mViewPagerAdapterForNav = new ViewPagerAdapterForNav(getContext(),getChildFragmentManager(),mFragments,mTitles);
         //mViewPagerAdapterForNav.setFragments(mFragments);
         mViewPager.setAdapter(mViewPagerAdapterForNav);

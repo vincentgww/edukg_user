@@ -129,7 +129,7 @@ public class SearchFragment extends Fragment {
                         @Override
                         public void run() {
                             try {
-                                String response = OkHttp.get(url);
+                                String response = OkHttp.get(url, getContext());
                                 mainActivity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

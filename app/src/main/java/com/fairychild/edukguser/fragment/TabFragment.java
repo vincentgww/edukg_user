@@ -112,8 +112,13 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
-                        Log.d(TAG,"get failed");
+                        mactivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
+                                Log.d(TAG,"get failed");
+                            }
+                        });
                     }
 
                     @Override
@@ -185,8 +190,13 @@ public class TabFragment extends ListFragment implements OnScrollListener {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
-                        Log.d(TAG,"get failed");
+                        mactivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mactivity,"get failed",Toast.LENGTH_SHORT).show();
+                                Log.d(TAG,"get failed");
+                            }
+                        });
                     }
 
                     @Override

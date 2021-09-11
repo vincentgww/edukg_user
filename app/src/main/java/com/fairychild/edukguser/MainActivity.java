@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -199,6 +201,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void switchToHome() {
+        Log.d("MainActivity", "switchToHome");
         switchFragments(0);
     }
     public void switchToQa() {
@@ -211,7 +214,7 @@ public class MainActivity extends AppCompatActivity
         switchFragments(3);
         Log.d("MainActivity", "switchToMe");
         String username = sharedPreferences.getString("username", null);
-        if (username != null && id != null) {
+        if (username != null && sharedPreferences.getString("id", null) != null && db != null) {
             EventBus.getDefault().postSticky(new LoginNotice(username));
             Log.d("MainActivity", "post new LoginNotice");
         } else {
@@ -322,6 +325,7 @@ public class MainActivity extends AppCompatActivity
             }
             Toast.makeText(MainActivity.this, "获取本地缓存成功", Toast.LENGTH_SHORT).show();
         } else {
+            Log.d("getLocalCacheList", username + " " + id + " " + (db == null));
             Toast.makeText(MainActivity.this, "请先登录，再查看本地缓存", Toast.LENGTH_SHORT).show();
         }
         return localCacheArrayList;
@@ -366,7 +370,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public SQLiteDatabase getSQLiteDatabase() {
         if (userDatabaseHelper != null) {
-            return userDatabaseHelper.getReadableDatabase();
+            try {
+                return userDatabaseHelper.getReadableDatabase();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
         return null;
     }
@@ -475,7 +484,7 @@ public class MainActivity extends AppCompatActivity
                         " \"password\":\"" + password + "\"\n" +
                         "}";
                 try {
-                    String response = OkHttp.post(url, json);
+                    String response = OkHttp.post(url, json, MainActivity.this);
                     JSONObject jsonObject = new JSONObject(response);
                     String data = jsonObject.getString("data");
                     JSONObject dataObject = new JSONObject(data);
@@ -522,7 +531,7 @@ public class MainActivity extends AppCompatActivity
                     " \"password\":\"" + password + "\"\n" +
                     "}";
             try {
-                String response = OkHttp.post(url, json);
+                String response = OkHttp.post(url, json, MainActivity.this);
                 System.out.println(response);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -555,7 +564,7 @@ public class MainActivity extends AppCompatActivity
                         " \"id\":\"" + id + "\"\n" +
                         "}";
                 try {
-                    String response = OkHttp.post(url, json);
+                    String response = OkHttp.post(url, json, MainActivity.this);
                     EventBus.getDefault().post(new MessageEvent(response));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -584,7 +593,7 @@ public class MainActivity extends AppCompatActivity
                             " \"password\":\"" + "lcs84615" + "\"\n" +
                             "}";
                     try {
-                        String response = OkHttp.post(url, json);
+                        String response = OkHttp.post(url, json, MainActivity.this);
                         System.out.println(response);
                         JSONObject jsonObject = new JSONObject(response);
                         try{
@@ -617,6 +626,7 @@ public class MainActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d("MainActivity", "网络连接失败,请重新打开APP");
                                 Toast.makeText(MainActivity.this, "网络连接失败,请重新打开APP", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -659,7 +669,7 @@ public class MainActivity extends AppCompatActivity
                         " \"id\":\"" + id + "\"\n" +
                         "}";
                 try {
-                    String response = OkHttp.post(url, json);
+                    String response = OkHttp.post(url, json, MainActivity.this);
                     EventBus.getDefault().post(new MessageEvent(response));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -691,7 +701,7 @@ public class MainActivity extends AppCompatActivity
                                 + "course=" + course
                                 + "&name=" + entity_name
                                 + "&id=" + id;
-                        response = OkHttp.get(url);
+                        response = OkHttp.get(url, MainActivity.this);
                         Log.d("getDetailFromInternet", response);
                     }
                     setBrowsingHistory(course, entity_name);
@@ -734,7 +744,7 @@ public class MainActivity extends AppCompatActivity
                         + "uriName=" + name
                         + "&id=" + id;
                 try {
-                    String response = OkHttp.get(url);
+                    String response = OkHttp.get(url, MainActivity.this);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -786,7 +796,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     try {
-                        String response = OkHttp.get(url);
+                        String response = OkHttp.get(url, MainActivity.this);
                         JSONObject responseObject = new JSONObject(response);
                         String response_code = responseObject.getString("code");
                         String response_message = responseObject.getString("message");
@@ -847,7 +857,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     try {
-                        String response = OkHttp.post(url, json);
+                        String response = OkHttp.post(url, json, MainActivity.this);
                         JSONObject responseObject = new JSONObject(response);
                         String response_code = responseObject.getString("code");
                         String response_message = responseObject.getString("message");
@@ -897,7 +907,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     try {
-                        String response = OkHttp.post(url, json);
+                        String response = OkHttp.post(url, json, MainActivity.this);
                         JSONObject responseObject = new JSONObject(response);
                         String response_code = responseObject.getString("code");
                         String response_message = responseObject.getString("message");
@@ -947,7 +957,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public Boolean call() throws Exception {
                     try {
-                        String response = OkHttp.post(url, json);
+                        String response = OkHttp.post(url, json, MainActivity.this);
                         JSONObject responseObject = new JSONObject(response);
                         String response_code = responseObject.getString("code");
                         String response_message = responseObject.getString("message");
@@ -1019,7 +1029,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 if(raw.length()<1000 && ans.length()==1) {
                     String[] blocks = raw.split("[A-D]\\.");
-                    Question q = new Question(blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
+                    Question q = new Question(null, null, null, blocks[0], blocks[1], blocks[2], blocks[3], blocks[4], correct);
                     question_list.add(q);
                 }
             }
@@ -1038,7 +1048,7 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                     try {
                         String url = getHistoryUrl + uid;
-                        String response = OkHttp.get(url);
+                        String response = OkHttp.get(url, MainActivity.this);
                         JSONObject responseObject = new JSONObject(response);
                         String response_code = responseObject.getString("code");
                         if (response_code.equals("0")) {
@@ -1118,7 +1128,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     try {
-                        String response = OkHttp.post(url, json);
+                        String response = OkHttp.post(url, json, MainActivity.this);
                         Log.d("setBrowsingHistory", response);
                         JSONObject responseObject = new JSONObject(response);
                         String response_code = responseObject.getString("code");
@@ -1160,5 +1170,13 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPreferencesEditor.remove("id");
+        id = null;
+        userDatabaseHelper = null;
     }
 }
