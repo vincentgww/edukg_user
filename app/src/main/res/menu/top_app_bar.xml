@@ -6,9 +6,4 @@
         android:icon="@drawable/ic_zoom_in_white_48pt_2x"
         android:title="@string/search"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/more"
-        android:title="@string/more"
-        app:showAsAction="never" />
-
 </menu>

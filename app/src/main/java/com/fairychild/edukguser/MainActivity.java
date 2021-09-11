@@ -615,7 +615,7 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
 //                                    Toast.makeText(MainActivity.this, "获取网络token成功！", Toast.LENGTH_SHORT).show();
-                                    switchToHome();
+                                    switchToMe();
                                 }
                             });
 

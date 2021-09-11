@@ -80,7 +80,7 @@ public class CategoryArrangement extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mCategory.size() == 0 ){
+                if(mCategory.size() <2 ){
                     Toast.makeText(getApplicationContext(), "必须至少选择两个学科", Toast.LENGTH_LONG).show();
                     return;
                 }

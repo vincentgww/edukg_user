@@ -19,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.Objects;
+
 public class RegisterFragment extends Fragment {
     public interface RegisterListener {
         void register(String username, String password);
@@ -30,6 +32,7 @@ public class RegisterFragment extends Fragment {
     private TextView pwd_weak;
     private TextView pwd_in;
     private TextView pwd_strong;
+    private boolean user_is_empty=true;
 
     public static Boolean isNumberLetter(String str) {
         Boolean isNoLetter = false;
@@ -51,6 +54,32 @@ public class RegisterFragment extends Fragment {
         pwd_in = view.findViewById(R.id.pwd_in);
         pwd_strong = view.findViewById(R.id.pwd_strong);
 
+        reg_Btn.setEnabled(false);
+
+        etUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.length()==0){
+                    user_is_empty=true;
+                    reg_Btn.setEnabled(false);
+                }
+                else{
+                    user_is_empty=false;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (Objects.requireNonNull(etUsername.getText()).toString().trim().length() == 0) {
+                    reg_Btn.setEnabled(false);
+                }
+            }
+        });
 
         etPassword.addTextChangedListener(new TextWatcher() {
 
@@ -195,7 +224,9 @@ public class RegisterFragment extends Fragment {
         reg_Btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                listener.register(etUsername.getText().toString(), etPassword.getText().toString());
+                if(!user_is_empty){
+                    listener.register(etUsername.getText().toString(), etPassword.getText().toString());
+                }
             }
         });
         return view;

@@ -287,5 +287,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
         mViewPagerAdapterForNav.setFragments(mFragments,mTitles);
         mViewPager.setOffscreenPageLimit(mFragments.size());
     }
+
+    @Override
+    public void onHiddenChanged(boolean hidd) {
+        if (hidd) {
+        } else {
+            //显示时所作的事情
+            mViewPagerAdapterForNav.notifyDataSetChanged();
+        }
+    }
 }
 
