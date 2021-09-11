@@ -1,7 +1,9 @@
 package com.fairychild.edukguser.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,8 +18,10 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.fairychild.edukguser.Activity.AvatarSelector;
 import com.fairychild.edukguser.CircleImageViewDrawable;
 import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.R;
@@ -44,6 +48,8 @@ public class MeFragment extends Fragment {
     }
 
     private ImageView mImageview;
+    public static int head_id=9 ;
+
 
     private Button btnLogin;
     private Button btnRegister;
@@ -92,6 +98,13 @@ public class MeFragment extends Fragment {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head_img);
         Drawable drawable = new CircleImageViewDrawable(bitmap);
         mImageview.setImageDrawable(drawable);
+        mImageview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent((AppCompatActivity)getActivity(), AvatarSelector.class);
+                startActivityForResult(intent,0);
+            }
+        });
 
         btnLogin = view.findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -234,6 +247,72 @@ public class MeFragment extends Fragment {
 
         topAppBar = (MaterialToolbar) view.findViewById(R.id.top_app_bar);
         topAppBar.setTitle("个人中心");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,@Nullable Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        switch (resultCode){
+            case Activity.RESULT_OK:
+                String idx=data.getStringExtra("idx");
+                if(idx.equals("1")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head12);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=1;
+                }
+                if(idx.equals("2")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head11);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=2;
+                }
+                if(idx.equals("3")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head14);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=3;
+                }
+                if(idx.equals("4")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head13);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=4;
+                }
+                if(idx.equals("5")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head3);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=5;
+                }
+                if(idx.equals("6")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head4);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=6;
+                }
+                if(idx.equals("7")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head9);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=7;
+                }
+                if(idx.equals("8")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head10);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=8;
+                }
+                if(idx.equals("9")){
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head15);
+                    Drawable drawable = new CircleImageViewDrawable(bitmap);
+                    mImageview.setImageDrawable(drawable);
+                    head_id=9;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @SuppressLint("SetTextI18n")

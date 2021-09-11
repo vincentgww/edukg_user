@@ -1,19 +1,27 @@
 package com.fairychild.edukguser;
 import com.fairychild.edukguser.Msg;
+import com.fairychild.edukguser.fragment.MeFragment;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
     private List<Msg> mMsgList;
+    private static Resources resources;
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,int viewType){
@@ -45,16 +53,65 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
         LinearLayout rightLayout;
         TextView leftMsg;
         TextView rightMsg;
+        ImageView rightImg;
         public ViewHolder(@NonNull View view){
             super(view);
             leftLayout = view.findViewById(R.id.left_layout);
             rightLayout = view.findViewById(R.id.right_layout);
             leftMsg = view.findViewById(R.id.left_msg);
             rightMsg = view.findViewById(R.id.right_msg);
+            rightImg = view.findViewById(R.id.iv_head_my);
+            rightImg.setImageDrawable(null);
+            if(MeFragment.head_id==1){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head12);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==2){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head11);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==3){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head14);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==4){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head13);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==5){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head3);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==6){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head4);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==7){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head9);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==8){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head10);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
+            if(MeFragment.head_id==9){
+                Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.head15);
+                Drawable drawable = new CircleImageViewDrawable(bitmap);
+                rightImg.setImageDrawable(drawable);
+            }
         }
     }
-    public MsgAdapter (List<Msg> msgList){
+    public MsgAdapter (List<Msg> msgList,Resources res){
         mMsgList = msgList;
+        resources=res;
     }
 }
 

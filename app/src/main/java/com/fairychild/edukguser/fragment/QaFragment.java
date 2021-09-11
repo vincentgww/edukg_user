@@ -7,6 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,9 +22,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.fairychild.edukguser.CircleImageViewDrawable;
 import com.fairychild.edukguser.MessageEvent;
 import com.fairychild.edukguser.MsgAdapter;
 import com.fairychild.edukguser.R;
@@ -56,6 +62,7 @@ public class QaFragment extends Fragment implements View.OnClickListener{
     private String responseData;
     private int curr;                   //当前显示的消息条数
     private int jsonLen;                //获取到的json列表长度
+    private Resources res;
 
     public void addNewMessage(String msg,int type){
         Msg message = new Msg(msg,type);
@@ -96,8 +103,9 @@ public class QaFragment extends Fragment implements View.OnClickListener{
                 LinearLayoutManager layoutManager = new
                         LinearLayoutManager(getActivity());
                 msgRecyclerView= view.findViewById(R.id.msg_recycler_view);
+                res=getResources();
                 msgRecyclerView.setLayoutManager(layoutManager);
-                adapter = new MsgAdapter(msgList);
+                adapter = new MsgAdapter(msgList,res);
                 msgRecyclerView.setAdapter(adapter);
             }
         });
