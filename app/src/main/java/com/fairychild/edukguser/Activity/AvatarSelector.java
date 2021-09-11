@@ -37,6 +37,8 @@ public class AvatarSelector extends AppCompatActivity{
         head_7=findViewById(R.id.head7_radio);
         head_8=findViewById(R.id.head8_radio);
         head_9=findViewById(R.id.head9_radio);
+        head_9.setChecked(false);
+        idx="9";
         head_1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

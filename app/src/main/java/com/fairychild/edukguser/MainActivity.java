@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void back_home(){
-        switchToHome();
+        switchFragments(8);
     }
     @Override
     public void onBackPressed() {
@@ -1248,7 +1248,7 @@ public class MainActivity extends AppCompatActivity
                         " \"id\":\"" + id + "\"\n" +
                         "}";
                 try {
-                    String response = OkHttp.post(url, json);
+                    String response = OkHttp.post(url, json,MainActivity.this);
                     //EventBus.getDefault().post(new MessageEvent(response));
                     handle_outline(response,label);
                     if(outline_list.isEmpty()){
