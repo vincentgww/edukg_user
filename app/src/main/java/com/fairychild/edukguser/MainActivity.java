@@ -514,7 +514,7 @@ public class MainActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MainActivity.this, "连接服务器失败，请重新打开APP!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "登录失败！请重试!", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -523,7 +523,7 @@ public class MainActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "登录失败！", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -540,20 +540,35 @@ public class MainActivity extends AppCompatActivity
                     "}";
             try {
                 String response = OkHttp.post(url, json, MainActivity.this);
+
+                JSONObject responseObject = new JSONObject(response);
+                String response_code = responseObject.getString("code");
+                String response_message = responseObject.getString("message");
+
 //                System.out.println(response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "注册成功，请登录！", Toast.LENGTH_SHORT).show();
-                        switchToLogin();
-                    }
-                });
+                if (response_code.equals("0")) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "注册成功，请登录！", Toast.LENGTH_SHORT).show();
+                            switchToLogin();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, response_message, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "注册失败！请重试！", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
